@@ -1,17 +1,42 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Input from '../../components/Input';
+import { validateEmail, validatePassword } from '../../utils/helper';
 
 const Login = ({ setCurrentPage }) => {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState(null);
 
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // TODO: Add your login logic here
+
+    if(!validateEmail(email)) {
+      setError("Please enter a valid email address!");
+      return;
+    }
+
+    if (!validatePassword(password)) {
+      setError("Password must be at least 8 characters long.");
+      return;
+    }
+
+
+    setError("");
+
+    // Login API call
+    try {
+
+    } catch(error) {
+      if (error.response && error.response.data.message) {
+        setError(error.response.data.message);
+      } else {
+        setError("Something went wrong. Plz try again!");
+      }
+    }
   };
 
   return (
@@ -36,7 +61,7 @@ const Login = ({ setCurrentPage }) => {
           type="password"
         />
 
-        {/* {error && <p className='text-red-500 text-sm pb-2.5'>{error}</p>} */}
+        {error && <p className='text-red-500 text-sm pb-2.5'>{error}</p>}
 
         <button
           type="submit"
