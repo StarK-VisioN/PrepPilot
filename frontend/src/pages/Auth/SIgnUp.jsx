@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Input from '../../components/Input';
 import ProfilePhotoSelector from '../../components/ProfilePhotoSelector';
+import { validateEmail, validatePassword } from '../../utils/helper';
 
 const SignUp = ({ setCurrentPage }) => {
 
@@ -15,7 +16,35 @@ const SignUp = ({ setCurrentPage }) => {
 
   const handleSignUp = async (e) => {
     e.preventDefault();
-    // TODO: Add your signup logic here
+    
+    let profileImageUrl = "";
+    if(!fullName) {
+      setError("Please enter full name!");
+      return;
+    }
+
+    if(!validateEmail(email)) {
+          setError("Please enter a valid email address!");
+          return;
+    }
+    
+    if (!validatePassword(password)) {
+          setError("Password must be at least 8 characters long.");
+          return;
+    }
+
+    setError("");
+
+    // SignUp API call
+    try {
+
+    } catch(error) {
+      if (error.response && error.response.data.message) {
+        setError(error.response.data.message);
+      } else {
+        setError("Something went wrong. Plz try again!");
+      }
+    }
   };
 
   return (
