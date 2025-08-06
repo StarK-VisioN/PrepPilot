@@ -1,13 +1,25 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import hero_img from "../assets/hero-img.png";
 import { APP_FEATURES } from "../utils/data.js";
 import { LuSparkles } from "react-icons/lu";
+import { UserContext } from "../context/userContext.jsx";
+import { useNavigate } from "react-router-dom";
 
 
 const LandingPage = () => {
+  const {user} = useContext(UserContext);
+  const navigate = useNavigate();
+
+  const [openAuthModel, setOpenAuthModel] = useState(false);
   const [currentPage, setCurrentPage] = useState("login");
 
-  const handleC = () => {};
+  const handleC = () => {
+    if(!user) {
+      setOpenAuthModel(true);
+    } else {
+      navigate("/dashboard");
+    }
+  };
   return (
     <>
     {/* Hero Content */}

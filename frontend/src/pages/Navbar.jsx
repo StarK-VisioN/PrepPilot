@@ -1,18 +1,27 @@
-import React from "react";
+import React, { useContext } from "react";
 
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import Login from "./Auth/Login";
 import Model from "../components/Model";
 import SignUp from "./Auth/SIgnUp";
+import ProfileInfoCard from "../components/ProfileInfoCard";
+import { UserContext } from "../context/userContext";
 
 const Navbar = () => {
+  const {user} = useContext(UserContext);
   const navigate = useNavigate();
 
   const [openAuthModel, setOpenAuthModel] = useState(false);
   const [currentPage, setCurrentPage] = useState("login");
 
-  const handleC = () => {};
+  const handleC = () => {
+    if(!user) {
+      setOpenAuthModel(true);
+    } else {
+      navigate("/dashboard");
+    }
+  };
 
   return (
     <>
@@ -23,11 +32,14 @@ const Navbar = () => {
           {/* Header */}
           <header className="flex justify-between items-cnter mb-16">
             <div className="text-xl text-black font-bold">Interview Prep AI</div>
-            <button onClick={() => setOpenAuthModel(true)}
-              className="bg-orange-500 text-sm font-semibold text-white px-7 py-2 rounded-full hover:bg-black border border-yellow-500 hover:border-yellow-300 transition-color cursor-pointer"
-            >
-              Login / SignUp
-            </button>
+            {user ? 
+            (<ProfileInfoCard />) : 
+                ( <button onClick={() => setOpenAuthModel(true)}
+                    className="bg-orange-500 text-sm font-semibold text-white px-7 py-2 rounded-full hover:bg-black border border-yellow-500 hover:border-yellow-300 transition-color cursor-pointer"
+                  >
+                  Login / SignUp
+                </button>
+              )}
           </header>
         </div>
       </div>
