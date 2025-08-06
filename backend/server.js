@@ -28,6 +28,10 @@ connectDB();
 // Middleware
 app.use(express.json());
 
+app.get('/',(req,res)=>{
+    res.json({message:"server running"})
+})
+
 // Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/sessions", sessionRoutes);
