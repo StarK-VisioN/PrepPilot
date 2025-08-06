@@ -16,7 +16,7 @@ const app = express();
 // Middleware to handle CORS
 app.use(
     cors({
-        origin: "https://prep-pilot-sssb.vercel.app/",
+        origin: "https://prep-pilot-sssb.vercel.app",
         methods: ["GET", "POST", "PUT", "DELETE"],
         allowedHeaders: ["Content-Type", "Authorization"],
         credentials: true,
