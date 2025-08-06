@@ -79,7 +79,7 @@ const SignUp = ({ setCurrentPage }) => {
 
       <form onSubmit={handleSignUp} className='flex flex-col gap-2'>
 
-        <ProfilePhotoSelector image={profilePic} setImage={setProfilePic} />
+        {/* <ProfilePhotoSelector image={profilePic} setImage={setProfilePic} /> */}
 
         <Input
           value={fullName}
