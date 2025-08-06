@@ -8,14 +8,13 @@ export const validatePassword = (password) => {
 };
 
 export const getInitials = (title) => {
-  if(!title) return "";
+  if (!title) return "";
 
-  const words = title.split(" ");
-  let initials = "";
+  const words = title.trim().split(/\s+/); // split on any space, remove extras
 
-  for(let i=0; i<Math.min(words.length, 2); i++) {
-    initials += words[i][0];
+  if (words.length === 1) {
+    return words[0][0].toUpperCase(); // just one word
   }
 
-  return initials.toUpperCase();
-}
+  return (words[0][0] + words[1][0]).toUpperCase(); // first two words
+};

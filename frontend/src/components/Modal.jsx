@@ -1,7 +1,7 @@
 import React from 'react';
 import { RxCross2 } from "react-icons/rx";
 
-const Model = ({ children, isOpen, onClose, title, hideHeader}) => {
+const Modal = ({ children, isOpen, onClose, title, hideHeader}) => {
     if(!isOpen) return null;
     
   return (
@@ -34,4 +34,4 @@ const Model = ({ children, isOpen, onClose, title, hideHeader}) => {
   );
 };
 
-export default Model;
+export default Modal;

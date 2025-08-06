@@ -3,7 +3,7 @@ import React, { useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import Login from "./Auth/Login";
-import Model from "../components/Model";
+import Model from "../components/Modal";
 import SignUp from "./Auth/SIgnUp";
 import ProfileInfoCard from "../components/ProfileInfoCard";
 import { UserContext } from "../context/userContext";
@@ -30,7 +30,7 @@ const Navbar = () => {
 
         <div className="container mx-auto px-4 pt-10 pb-[40px] relative z-10">
           {/* Header */}
-          <header className="flex justify-between items-cnter mb-16">
+          <header className="flex justify-between items-cnter mb-10">
             <div className="text-xl text-black font-bold">Interview Prep AI</div>
             {user ? 
             (<ProfileInfoCard />) : 
