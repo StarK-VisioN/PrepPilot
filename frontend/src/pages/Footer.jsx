@@ -6,7 +6,7 @@ const Footer = () => {
         <div className='flex flex-col sm:grid grid-cols-[2fr_1fr] gap-14 my-10 mt-40 text-sm'>
             <div>
                 <p className='w-full sm:w-2/3 text-gray-600 ml-15 mt-4'>
-                    Lorem, ipsum dolor sit amet consectetur adipisicing elit. Labore dignissimos, deserunt neque doloribus molestiae natus ratione laborum itaque ipsum ab aperiam, animi sunt, tenetur id iste obcaecati magnam deleniti inventore.</p>
+                   Interview Prep is your go-to platform for mastering interviews, building confidence, and achieving your career goals. From curated questions to expert tips and personalized guidance, we help you prepare smarter and succeed faster.</p>
             </div>
 
         
