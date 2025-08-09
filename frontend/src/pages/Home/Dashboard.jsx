@@ -11,6 +11,8 @@ import moment from "moment";
 import Modal from '../../components/Modal';
 import CreateSessionForm from './CreateSessionForm';
 import DeleteAlertContent from '../../components/DeleteAlertContent';
+import Lottie from "lottie-react";
+import emptyAnimation from "../../assets/empty-state.json";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -55,18 +57,18 @@ const Dashboard = () => {
       <div className="container mx-auto pt-4 pb-4">
         {sessions.length === 0 ? (
           <div className="flex flex-col items-center justify-center text-center py-20">
-            <img
-              src="/empty-state.svg"
-              alt="No sessions"
-              className="w-48 h-48 mb-6 opacity-80"
-            />
-            <h2 className="text-xl font-semibold mb-2">No Sessions Yet</h2>
-            <p className="text-gray-500 max-w-sm">
-              You haven’t created any interview prep sessions yet. Click the{" "}
-              <span className="font-medium text-orange-500">Add New</span> button
-              below to get started.
-            </p>
-          </div>
+      <Lottie
+        animationData={emptyAnimation}
+        loop={true}
+        className="w-48 h-48 mb-6 opacity-90"
+      />
+      <h2 className="text-xl font-bold mb-2">No Sessions Yet</h2>
+      <p className="text-gray-500 max-w-sm">
+        You haven’t created any interview prep sessions yet. Click the{" "}
+        <span className="font-medium text-orange-500">Add New</span> button
+        below to get started.
+      </p>
+    </div>
         ) : (
           <div className='grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-7 pt-1 pb-6 px-4 md:px-0'>
             {sessions?.map((data, index) => (
