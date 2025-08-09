@@ -10,6 +10,9 @@ Featuring a responsive and intuitive UI, secure JWT authentication, Interview Pr
 
 It’s your all-in-one solution for interview readiness — from technical quizzes and behavioral questions to tracking your preparation progress in real time.
 
+🌐 Live Demo
+🔗 [Click here to visit the live app](https://prep-pilot-sssb.vercel.app/)
+
 
 ## 🚀 **Features**
 
