@@ -1,98 +1,116 @@
-// server.js - Updated CORS configuration
 require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const path = require("path");
 const connectDB = require("./config/db");
 
-const authRoutes = require("./routes/authRoutes");
-const sessionRoutes = require("./routes/sessionRoutes");
-const questionRoutes = require("./routes/questionRoutes");
-const { protect } = require("./middlewares/authMiddleware");
-const { generateInterviewQuestions, generateConceptExplanation } = require("./controllers/aiController");
-
 const app = express();
 
-// Connect to database
-connectDB();
-
-// Enhanced CORS configuration
+// Enhanced CORS for Vercel
 app.use(cors({
-    origin: function (origin, callback) {
-        // Allow requests with no origin (like mobile apps or curl requests)
-        if (!origin) return callback(null, true);
-        
-        const allowedOrigins = [
-            "https://prep-pilot-sssb.vercel.app",
-            "https://prep-pilot-six.vercel.app",
-            "http://localhost:3000",
-            "http://localhost:5173"
-        ];
-        
-        if (allowedOrigins.indexOf(origin) !== -1) {
-            callback(null, true);
-        } else {
-            callback(new Error('Not allowed by CORS'));
-        }
-    },
-    credentials: true,
+    origin: [
+        "https://prep-pilot-sssb.vercel.app",
+        "https://prep-pilot-six.vercel.app",
+        "http://localhost:3000",
+        "http://localhost:5173"
+    ],
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"]
+    allowedHeaders: ["Content-Type", "Authorization"],
+    credentials: true,
 }));
 
 // Handle preflight requests
-app.options('*', cors());
+app.options("*", cors());
 
 // Middleware
-app.use(express.json({ limit: '10mb' }));
+app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Test route
+// Basic test route (works without DB)
 app.get('/', (req, res) => {
     res.json({ 
-        message: "Server running successfully",
-        timestamp: new Date().toISOString(),
-        environment: process.env.NODE_ENV || 'development'
+        message: "PrepPilot Server is running!",
+        status: "OK",
+        timestamp: new Date().toISOString()
     });
 });
 
-// Health check route
+// Health check (works without DB)
 app.get('/health', (req, res) => {
-    res.status(200).json({ 
-        status: 'OK', 
-        database: 'Connected', 
-        timestamp: new Date().toISOString() 
+    res.json({ 
+        status: "OK", 
+        server: "running",
+        timestamp: new Date().toISOString()
     });
 });
 
-// Routes
-app.use("/api/auth", authRoutes);
-app.use("/api/sessions", sessionRoutes);
-app.use("/api/questions", questionRoutes);
-app.use("/api/ai/generate-questions", protect, generateInterviewQuestions);     
-app.use("/api/ai/generate-explanation", protect, generateConceptExplanation);
+// Async function to initialize database and routes
+async function initializeApp() {
+    try {
+        console.log("🔄 Initializing application...");
+        
+        // Connect to database
+        await connectDB();
+        console.log("✅ Database connected successfully");
+        
+        // Import routes after successful DB connection
+        const authRoutes = require("./routes/authRoutes");
+        const sessionRoutes = require("./routes/sessionRoutes");
+        const questionRoutes = require("./routes/questionRoutes");
+        const { protect } = require("./middlewares/authMiddleware");
+        const { generateInterviewQuestions, generateConceptExplanation } = require("./controllers/aiController");
 
-// Serve uploads folder
-app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+        // Apply routes
+        app.use("/api/auth", authRoutes);
+        app.use("/api/sessions", sessionRoutes);
+        app.use("/api/questions", questionRoutes);
+        app.post("/api/ai/generate-questions", protect, generateInterviewQuestions);
+        app.post("/api/ai/generate-explanation", protect, generateConceptExplanation);
+
+        // Serve uploads folder
+        app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+
+        console.log("✅ All routes loaded successfully");
+        
+    } catch (error) {
+        console.error("❌ Failed to initialize application:", error);
+        
+        // Provide fallback routes if DB connection fails
+        app.use("/api/*", (req, res) => {
+            res.status(503).json({ 
+                error: "Service temporarily unavailable",
+                message: "Database connection failed"
+            });
+        });
+    }
+}
 
 // Error handling middleware
 app.use((error, req, res, next) => {
-    console.error('Error:', error);
+    console.error("💥 Server Error:", error);
     res.status(500).json({ 
-        message: 'Internal server error',
-        error: process.env.NODE_ENV === 'production' ? {} : error.message 
+        message: "Internal server error",
+        error: process.env.NODE_ENV === "production" ? undefined : error.message
     });
 });
 
 // 404 handler
-app.use('*', (req, res) => {
-    res.status(404).json({ message: 'Route not found' });
+app.use("*", (req, res) => {
+    res.status(404).json({ message: "Route not found" });
 });
 
-// Start server
+// Initialize the application
+initializeApp();
+
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-    console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
-    console.log(`Health check: http://localhost:${PORT}/health`);
-});
+
+// Start server only if this file is run directly (not in Vercel serverless)
+if (require.main === module) {
+    app.listen(PORT, () => {
+        console.log(`🚀 Server running on port ${PORT}`);
+        console.log(`📍 Environment: ${process.env.NODE_ENV || "development"}`);
+    });
+}
+
+// Export for Vercel
+module.exports = app;
