@@ -23,7 +23,7 @@ async function connectDB() {
 
     if (!cached.promise) {
         console.log("🔌 Creating new database connection...");
-        
+
         const opts = {
             bufferCommands: false,
             serverSelectionTimeoutMS: 10000,

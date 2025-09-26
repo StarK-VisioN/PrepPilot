@@ -20,12 +20,7 @@ const { testDBConnection } = require("./controllers/authController");
 
 const app = express();
 
-console.log("Connecting to database...");
-connectDB().catch(err => {
-    console.error("Failed to connect to database:", err);
-    process.exit(1);
-});
-
+// Middleware 
 console.log("Setting up CORS...");
 app.use(cors({
     origin: true,
@@ -43,6 +38,7 @@ app.use((req, res, next) => {
     next();
 });
 
+// Routes 
 app.get('/', (req, res) => {
     res.json({ 
         message: "Server running successfully",
@@ -78,6 +74,7 @@ app.post("/api/ai/generate-explanation", protect, aiController.generateConceptEx
 
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
+// Error Handling 
 app.use((req, res) => {
     console.log(`404 - Route not found: ${req.method} ${req.originalUrl}`);
     res.status(404).json({ 
@@ -95,15 +92,30 @@ app.use((error, req, res, next) => {
     });
 });
 
+// Start Server Only After DB Connect 
 const PORT = process.env.PORT || 8000;
-app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-    console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
-    console.log(`Health check: http://localhost:${PORT}/health`);
-    console.log(`Database test: http://localhost:${PORT}/api/test-db`);
-    console.log(`Registration: http://localhost:${PORT}/api/auth/register`);
-    console.log("=== SERVER READY ===");
-});
+
+const startServer = async () => {
+    try {
+        console.log("Connecting to database...");
+        await connectDB(); // Wait for DB connection
+
+        app.listen(PORT, () => {
+            console.log(`Server running on port ${PORT}`);
+            console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
+            console.log(`Health check: http://localhost:${PORT}/health`);
+            console.log(`Database test: http://localhost:${PORT}/api/test-db`);
+            console.log(`Registration: http://localhost:${PORT}/api/auth/register`);
+            console.log("=== SERVER READY ===");
+        });
+
+    } catch (err) {
+        console.error("Failed to connect to database:", err);
+        process.exit(1);
+    }
+};
+
+startServer();
 
 process.on('uncaughtException', (error) => {
     console.error('Uncaught Exception:', error);
