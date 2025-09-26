@@ -6,50 +6,65 @@ import axiosInstance from '../../utils/axiosInstance';
 import { API_PATHS } from '../../utils/apiPaths';
 import { UserContext } from '../../context/userContext';
 
-const Login = ({ setCurrentPage }) => {
-
+const Login = ({ setCurrentPage, onSuccess }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
 
-  const {updateUser} = useContext(UserContext);
-
+  const { updateUser } = useContext(UserContext);
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
+    setError("");
 
-    if(!validateEmail(email)) {
+    if (!validateEmail(email)) {
       setError("Please enter a valid email address!");
+      setLoading(false);
       return;
     }
 
     if (!validatePassword(password)) {
       setError("Password must be at least 8 characters long.");
+      setLoading(false);
       return;
     }
 
-
-    setError("");
-
-    // Login API call
     try {
-        const response = await axiosInstance.post(API_PATHS.AUTH.LOGIN, {email, password,});
+      console.log("🔐 Attempting login for:", email);
+      
+      const response = await axiosInstance.post(API_PATHS.AUTH.LOGIN, {
+        email: email.toLowerCase().trim(),
+        password,
+      });
 
-        const {token} = response.data;
+      console.log("✅ Login response received:", response.data);
 
-        if(token) {
-          localStorage.setItem("token", token);
-          updateUser(response.data);
-          navigate("/dashboard");
-          // setCurrentPage(null);
-        }
-    } catch(error) {
-      if (error.response && error.response.data.message) {
-        setError(error.response.data.message);
+      // Handle response structure
+      if (response.data.data) {
+        updateUser(response.data);
+        console.log("👤 User context updated");
+        
+        // Close modal and navigate
+        if (onSuccess) onSuccess();
+        navigate("/dashboard", { replace: true });
       } else {
-        setError("Something went wrong. Plz try again!");
+        throw new Error("Invalid response structure from server");
       }
+    } catch (error) {
+      console.error("❌ Login error:", error);
+      
+      if (error.response?.data?.message) {
+        setError(error.response.data.message);
+      } else if (!error.response) {
+        setError("Cannot connect to server. Please check your internet connection.");
+      } else {
+        setError("Login failed. Please try again.");
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -64,7 +79,9 @@ const Login = ({ setCurrentPage }) => {
           onChange={({ target }) => setEmail(target.value)}
           label="Email Address"
           placeholder="xxx@gmail.com"
-          type="text"
+          type="email"
+          disabled={loading}
+          required
         />
 
         <Input
@@ -73,23 +90,43 @@ const Login = ({ setCurrentPage }) => {
           label="Password"
           placeholder="Min 8 characters"
           type="password"
+          disabled={loading}
+          required
         />
 
-        {error && <p className='text-red-500 text-sm pb-2.5'>{error}</p>}
+        {error && (
+          <div className='bg-red-50 border border-red-200 rounded-md p-3'>
+            <p className='text-red-600 text-sm'>{error}</p>
+          </div>
+        )}
 
         <button
           type="submit"
-          className='w-full bg-black hover:bg-gray-600 text-white font-semibold py-3 rounded-md text-sm sm:text-base transition min-h-[44px] mt-2'
+          disabled={loading}
+          className={`w-full text-white font-semibold py-3 rounded-md text-sm sm:text-base transition min-h-[44px] mt-2 ${
+            loading 
+              ? 'bg-gray-400 cursor-not-allowed' 
+              : 'bg-black hover:bg-gray-800'
+          }`}
         >
-          Log In
+          {loading ? (
+            <div className="flex items-center justify-center">
+              <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
+              Logging in...
+            </div>
+          ) : (
+            'Log In'
+          )}
         </button>
       </form>
 
       <p className='text-sm text-slate-600 mt-6 text-center'>
         Don't have an account?{" "}
         <span
-          onClick={() => setCurrentPage("signup")}
-          className='text-orange-500 font-medium cursor-pointer hover:underline'
+          onClick={() => !loading && setCurrentPage("signup")}
+          className={`font-medium cursor-pointer hover:underline ${
+            loading ? 'text-gray-400' : 'text-orange-500'
+          }`}
         >
           Sign Up
         </span>

@@ -1,21 +1,21 @@
-import axios from "axios";
-import {BASE_URL} from "./apiPaths";
+// utils/axiosInstance.js
+import axios from 'axios';
+import { BASE_URL } from './apiPaths';
 
 const axiosInstance = axios.create({
     baseURL: BASE_URL,
-    timeout: 80000,
+    timeout: 60000, // Increased from 10000 to 60000 (60 seconds)
     headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
+        'Content-Type': 'application/json',
     },
 });
 
-// Request Interceptor
+// Request interceptor to add auth token
 axiosInstance.interceptors.request.use(
     (config) => {
-        const accessToken = localStorage.getItem("token");
-        if(accessToken) {
-            config.headers.Authorization = `Bearer ${accessToken}`;
+        const token = localStorage.getItem('token');
+        if (token) {
+            config.headers.Authorization = `Bearer ${token}`;
         }
         return config;
     },
@@ -24,22 +24,13 @@ axiosInstance.interceptors.request.use(
     }
 );
 
-// Response Interceptor
+// Response interceptor for error handling
 axiosInstance.interceptors.response.use(
-    (response) => {
-        return response;
-    },
+    (response) => response,
     (error) => {
-        // Handle common errors globally
-        if(error.response) {
-            if(error.response.status === 401) {
-                // Redirect to login page
-                window.location.href = "/";
-            } else if (error.response.status === 500) {
-                console.error("Server error.Plz try again later");
-            }
-        } else if (error.code === "ECONNABORTED") {
-            console.error("Request timeout. Plz try again!!");
+        if (error.response?.status === 401) {
+            localStorage.removeItem('token');
+            window.location.href = '/login';
         }
         return Promise.reject(error);
     }

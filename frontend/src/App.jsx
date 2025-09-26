@@ -1,5 +1,5 @@
 import React from "react";
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, Navigate } from "react-router-dom";
 import LandingPage from "./pages/LandingPage";
 import Login from "./pages/Auth/Login";
 import Dashboard from "./pages/Home/Dashboard";
@@ -9,24 +9,26 @@ import UserProvider from "./context/userContext";
 import PublicLayout from "./components/PublicLayout";
 import DashboardLayout from "./components/DashboardLayout";
 
-
 function App() {
   return (
     <UserProvider>
       <ToastContainer />
 
       <Routes>
-        {/* Public Routes */}
+        {/* Public Routes - Landing Page accessible to all */}
         <Route element={<PublicLayout />}>
           <Route path="/" element={<LandingPage />} />
           <Route path="/login" element={<Login />} />
         </Route>
 
-        {/* Dashboard Routes */}
+        {/* Protected Dashboard Routes */}
         <Route element={<DashboardLayout />}>
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/interview-prep/:sessionId" element={<InterviewPrep />} />
         </Route>
+
+        {/* Redirect any unknown routes to HOME PAGE */}
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </UserProvider>
   );

@@ -1,5 +1,4 @@
 import React, { useContext } from "react";
-
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import Login from "./Auth/Login";
@@ -30,8 +29,10 @@ const Navbar = () => {
 
         <div className="container mx-auto px-4 pt-10 pb-[40px] relative z-10">
           {/* Header */}
-          <header className="flex justify-between items-cnter mb-10">
-            <div className="text-xl text-black font-bold">Interview Prep AI</div>
+          <header className="flex justify-between items-center mb-10">
+            <div className="text-3xl font-bold text-gray-900 font-sans border-b-4 border-orange-500 pb-1">
+  Interview Prep AI
+</div>
             {user ? 
             (<ProfileInfoCard />) : 
                 ( <button onClick={() => setOpenAuthModel(true)}

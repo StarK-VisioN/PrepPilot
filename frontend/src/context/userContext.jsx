@@ -6,12 +6,11 @@ export const UserContext = createContext();
 
 const UserProvider = ({children}) => {
     const [user, setUser] = useState(null);
-    const [loading, setLoading] = useState(true);// new state to track loading
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        if(user) return;
-
         const accessToken = localStorage.getItem("token");
+        
         if(!accessToken) {
             setLoading(false);
             return;
@@ -19,10 +18,17 @@ const UserProvider = ({children}) => {
 
         const fetchUser = async() => {
             try {
+                console.log("🔄 Fetching user profile...");
                 const response = await axiosInstance.get(API_PATHS.AUTH.GET_PROFILE);
-                setUser(response.data);
+                console.log("✅ User profile fetched:", response.data);
+                
+                if (response.data && response.data.data) {
+                    setUser(response.data.data);
+                } else {
+                    throw new Error("Invalid user data received");
+                }
             } catch (error) {
-                console.error("User not authenticated", error);
+                console.error("❌ User not authenticated", error);
                 clearUser();
             } finally {
                 setLoading(false);
@@ -33,18 +39,38 @@ const UserProvider = ({children}) => {
     }, []);
 
     const updateUser = (userData) => {
-        setUser(userData);
-        localStorage.setItem("token", userData.token); // save token
+        console.log("🔄 Updating user context:", userData);
+        
+        if (userData.data) {
+            setUser(userData.data);
+            if (userData.data.token) {
+                localStorage.setItem("token", userData.data.token);
+            }
+        } else if (userData.token) {
+            setUser(userData);
+            localStorage.setItem("token", userData.token);
+        } else {
+            console.error("❌ Invalid user data structure:", userData);
+        }
         setLoading(false);
     };
 
     const clearUser = () => {
+        console.log("🧹 Clearing user data");
         setUser(null);
         localStorage.removeItem("token");
     };
 
+    const value = {
+        user, 
+        loading, 
+        updateUser, 
+        clearUser,
+        isAuthenticated: !!user && !!localStorage.getItem("token")
+    };
+
     return (
-        <UserContext.Provider value={{user, loading, updateUser, clearUser}}>
+        <UserContext.Provider value={value}>
             {children}
         </UserContext.Provider>
     );

@@ -1,42 +1,41 @@
+// utils/prompts.js
 const questionAnswerPrompt = (role, experience, topicsToFocus, numberOfQuestions) => `
-You are an AI trained to generate technical interview questions and answers.
+You are an expert technical interviewer. Generate exactly ${numberOfQuestions} interview questions for a ${role} position requiring ${experience} years of experience.
 
-Task:
-- Role: ${role}
-- Candidate Experience: ${experience} years
-- Focus Topics: ${topicsToFocus}
-- Write ${numberOfQuestions} interview questions.
-- For each question, generate a detailed but beginner-friendly answer.
-- If the answer needs a code example, add a small code block inside.
-- Keep formatting very clean.
-- Return a pure JSON array like:
+Focus on these specific topics: ${topicsToFocus}.
+
+IMPORTANT: 
+- Return ONLY valid JSON array, no other text
+- Each object must have "question" and "answer" fields
+- Answers should be detailed but beginner-friendly
+- Include code examples where appropriate
+- Ensure the JSON is properly formatted
+
+Format:
 [
   {
-    "question": "Question here?",
-    "answer": "Answer here."
-  },
-  ...
+    "question": "Question text here?",
+    "answer": "Detailed answer here with code examples if needed."
+  }
 ]
-Important: Do NOT add any extra text. Only return valid JSON.
 `;
 
 const conceptExplainPrompt = (question) => `
-You are an AI trained to generate explanations for a given interview question.
+Explain the following interview question in depth for a beginner developer: "${question}"
 
-Task:
-- Explain the following interview question and its concept in depth as if you're teaching a beginner developer.
-- Question: ${question}
-- After the explanation, provide a short and clear title that summarizes the concept for the article or page header.
-- If the explanation includes a code example, provide a small code block.
-- Keep the formatting very clean and clear.
-- Return the result as a valid JSON object in the following format:
+IMPORTANT:
+- Return ONLY valid JSON object, no other text
+- The object must have "title" and "explanation" fields
+- Title should be concise (max 10 words)
+- Explanation should be comprehensive but easy to understand
+- Include code examples if relevant
+- Ensure the JSON is properly formatted
 
+Format:
 {
-  "title": "Short title here?",
-  "explanation": "Explanation here."
+  "title": "Concise title here",
+  "explanation": "Detailed explanation here"
 }
-
-Important: Do NOT add any extra text outside the JSON format. Only return valid JSON.
 `;
 
 module.exports = { questionAnswerPrompt, conceptExplainPrompt };

@@ -4,7 +4,7 @@ const mongoose = require("mongoose");
 const MONGODB_URI = process.env.MONGO_URL;
 
 if (!MONGODB_URI) {
-    console.error("❌ MONGO_URL is missing in environment variables");
+    console.error("MONGO_URL is missing in environment variables");
     throw new Error("Please define the MONGO_URL environment variable");
 }
 
@@ -17,7 +17,7 @@ if (!cached) {
 
 async function connectDB() {
     if (cached.conn) {
-        console.log("✅ Using cached database connection");
+        console.log("Using cached database connection");
         return cached.conn;
     }
 
@@ -32,11 +32,11 @@ async function connectDB() {
 
         cached.promise = mongoose.connect(MONGODB_URI, opts)
             .then((mongoose) => {
-                console.log("✅ MongoDB connected successfully");
+                console.log("MongoDB connected successfully");
                 return mongoose;
             })
             .catch((error) => {
-                console.error("❌ MongoDB connection error:", error);
+                console.error("MongoDB connection error:", error);
                 cached.promise = null;
                 throw error;
             });
@@ -47,7 +47,7 @@ async function connectDB() {
         return cached.conn;
     } catch (error) {
         cached.promise = null;
-        console.error("❌ Failed to connect to MongoDB:", error);
+        console.error("Failed to connect to MongoDB:", error);
         throw error;
     }
 }

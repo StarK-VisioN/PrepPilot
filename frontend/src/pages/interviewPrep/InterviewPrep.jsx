@@ -1,3 +1,4 @@
+// pages/interviewPrep/InterviewPrep.jsx
 import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import moment from 'moment'
@@ -19,12 +20,18 @@ const InterviewPrep = () => {
 
   const [sessionData, setSessionData] = useState(null);
   const [errorMsg, setErrorMsg] = useState("");
-
-  const [openLeanMoreDrawer, setOpenLeanMoreDrawer] = useState(false);
-  const [explanation, setExplanation] = useState(null);
-
   const [isLoading, setIsLoading] = useState(false);
   const [isUpdateLoader, setIsUpdateLoader] = useState(false);
+  const [openLeanMoreDrawer, setOpenLeanMoreDrawer] = useState(false);
+  const [explanation, setExplanation] = useState(null);
+  const [isFallbackExplanation, setIsFallbackExplanation] = useState(false);
+
+  // Helper function to check for duplicate questions
+  const isDuplicateQuestion = (newQuestion, existingQuestions) => {
+    return existingQuestions.some(q => 
+      q.question.toLowerCase().trim() === newQuestion.question.toLowerCase().trim()
+    );
+  };
 
   // fetch session data by session id
   const fetchSessionDetailsById = async () => {
@@ -38,14 +45,16 @@ const InterviewPrep = () => {
       }
     } catch (error) {
       console.error("Error:", error);
+      setErrorMsg("Failed to fetch session details");
     }
   };
 
   // generate concept explanation
   const generateConceptExplanation = async(question) => {
     try {
-      setErrorMsg();
+      setErrorMsg("");
       setExplanation(null);
+      setIsFallbackExplanation(false);
 
       setIsLoading(true);
       setOpenLeanMoreDrawer(true);
@@ -59,10 +68,15 @@ const InterviewPrep = () => {
 
       if(response.data) {
         setExplanation(response.data);
+        setIsFallbackExplanation(false);
       }
     } catch (error) {
-      setExplanation(null);
-      setErrorMsg("Failed to generate explanation, try again!!");
+      setExplanation({
+        title: "Concept Explanation",
+        explanation: `We're sorry, but our AI service is currently unavailable to provide an explanation for the question: "${question}". Please try again later or search for resources online to learn more about this topic.`
+      });
+      setIsFallbackExplanation(true);
+      setErrorMsg("Failed to generate explanation, using fallback content.");
       console.error("Error", error);
     } finally {
       setIsLoading(false);
@@ -84,6 +98,7 @@ const InterviewPrep = () => {
       }
     } catch(error) {
       console.error("Error:", error);
+      setErrorMsg("Failed to pin question");
     }
   };
 
@@ -91,6 +106,7 @@ const InterviewPrep = () => {
   const uploadMoreQuestions = async() => {
     try {
       setIsUpdateLoader(true);
+      setErrorMsg("");
 
       // call AI api to generate questions
       const aiResponse = await axiosInstance.post(
@@ -104,25 +120,39 @@ const InterviewPrep = () => {
       );
 
       // should be array like [{question, answer}, {question, answer}, ... ]
-      const generatedQuestions = aiResponse.data;
+      let generatedQuestions = aiResponse.data;
+
+      // Filter out duplicate questions
+      const existingQuestions = sessionData?.questions || [];
+      const uniqueQuestions = generatedQuestions.filter(q => 
+        !isDuplicateQuestion(q, existingQuestions)
+      );
+
+      if (uniqueQuestions.length === 0) {
+        setErrorMsg("No new unique questions could be generated. Try a different topic or role.");
+        setIsUpdateLoader(false);
+        return;
+      }
 
       const response = await axiosInstance.post(
-        API_PATHS.QUESTION.ADD_TO_SESSION, {
+        API_PATHS.QUESTION.ADD_TO_SESSION, 
+        {
           sessionId,
-          questions: generatedQuestions,
+          questions: uniqueQuestions,
         }
       );
 
       if(response.data) {
-        toast.success("Added more Q & A");
+        toast.success(`Added ${uniqueQuestions.length} new Q&A`);
         fetchSessionDetailsById();
       }
     } catch (error) {
       if(error.response && error.response.data.message) {
-        setError(error.response.data.message);
+        setErrorMsg(error.response.data.message);
       } else {
-        setError("Something went wrong. Plz try again!!");
+        setErrorMsg("Something went wrong. Please try again!!");
       } 
+      console.error("Error:", error);
     } finally {
       setIsUpdateLoader(false);
     }
@@ -154,6 +184,16 @@ const InterviewPrep = () => {
     <div className='container mx-auto pt-4 pb-4 px-4 md:px-0'>
       <h2 className='ml-3 text-lg font-semibold color-black'>Interview Q & A</h2>
 
+      {/* Display error message if any */}
+      {errorMsg && (
+        <div className="bg-red-50 border border-red-200 rounded-md p-3 m-3">
+          <p className="text-red-600 text-sm flex items-center">
+            <LuCircleAlert className="mr-2" />
+            {errorMsg}
+          </p>
+        </div>
+      )}
+
       <div className='grid grid-cols-12 gap-4 mt-5 mb-10'>
         <div 
           className={`col-span-12 ${
@@ -174,8 +214,8 @@ const InterviewPrep = () => {
                       delay: index *0.1,
                       damping: 15,
                     }}
-                    layout // this is the key prop that animates position changes
-                    layoutId={`question-${data._id || index}`} // helps framer track specific index
+                    layout
+                    layoutId={`question-${data._id || index}`}
                     >
                       <>
                         <QuestionCard
@@ -221,23 +261,35 @@ const InterviewPrep = () => {
           title={!isLoading && explanation?.title}
         >
           {errorMsg && (
-            <p className='flex gap-2 text-sm text-amber-600 font-medium'>
+            <p className='flex gap-2 text-sm text-amber-600 font-medium mb-4'>
               <LuCircleAlert className='mt-1'/> {errorMsg}
             </p>
           )}
 
           {isLoading && <SkeletonLoader />}
 
-          {!isLoading && explanation &&(
-            <AIResponsePreview content={explanation?.explanation} />
+          {!isLoading && explanation && (
+            <>
+              {isFallbackExplanation && (
+                <div className="bg-yellow-50 border border-yellow-200 rounded-md p-3 mb-4">
+                  <p className="text-yellow-700 text-sm flex items-center">
+                    <LuCircleAlert className="mr-2" />
+                    Using fallback explanation due to AI service unavailability.
+                  </p>
+                </div>
+              )}
+              <AIResponsePreview content={explanation?.explanation} />
+            </>
           )}
         </Drawer>
       </div>
 
     </div>
 
+  
+      <ToastContainer />
     </>
   )
 }
 
-export default InterviewPrep
+export default InterviewPrep;

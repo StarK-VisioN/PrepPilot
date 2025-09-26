@@ -1,74 +1,87 @@
 import React, { useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Input from '../../components/Input';
-import ProfilePhotoSelector from '../../components/ProfilePhotoSelector';
 import { validateEmail, validatePassword } from '../../utils/helper';
 import { UserContext } from '../../context/userContext';
 import axiosInstance from '../../utils/axiosInstance';
 import { API_PATHS } from '../../utils/apiPaths';
-import uploadImage from '../../utils/uploadImage';
 
-const SignUp = ({ setCurrentPage }) => {
-
+const SignUp = ({ setCurrentPage, onSuccess }) => {
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [profilePic, setProfilePic] = useState("");
-
   const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
 
-  const {updateUser} = useContext(UserContext);
+  const { updateUser } = useContext(UserContext);
   const navigate = useNavigate();
 
   const handleSignUp = async (e) => {
     e.preventDefault();
-    
-    let profileImageUrl = "";
-    if(!fullName) {
+    setLoading(true);
+    setError("");
+
+    if (!fullName.trim()) {
       setError("Please enter full name!");
+      setLoading(false);
       return;
     }
 
-    if(!validateEmail(email)) {
-          setError("Please enter a valid email address!");
-          return;
+    if (!validateEmail(email)) {
+      setError("Please enter a valid email address!");
+      setLoading(false);
+      return;
     }
-    
+
     if (!validatePassword(password)) {
-          setError("Password must be at least 8 characters long.");
-          return;
+      setError("Password must be at least 8 characters long.");
+      setLoading(false);
+      return;
     }
 
-    setError("");
-
-    // SignUp API call
     try {
-      // upload img if present
-      if(profilePic) {
-        const imgUploadRes = await uploadImage(profilePic);
-        profileImageUrl = imgUploadRes.imageUrl || "";
-      }
+      console.log("📝 Attempting registration for:", email);
 
       const response = await axiosInstance.post(API_PATHS.AUTH.REGISTER, {
-        name: fullName,
-        email,
+        name: fullName.trim(),
+        email: email.toLowerCase().trim(),
         password,
-        profileImageUrl,
+        profileImageUrl: "",
       });
 
-      const {token} = response.data;
+      console.log("✅ Registration response:", response.data);
 
-      if(token) {
-        localStorage.setItem("token", token);
+      // Handle both response structures
+      if (response.data.success && response.data.data) {
         updateUser(response.data);
-        navigate("/dashboard");
-      }
-    } catch(error) {
-      if (error.response && error.response.data.message) {
-        setError(error.response.data.message);
+        console.log("👤 User context updated");
+        
+        // Close modal and navigate
+        if (onSuccess) onSuccess();
+        navigate("/dashboard", { replace: true });
+      } else if (response.data.token) {
+        updateUser(response.data);
+        console.log("👤 User context updated");
+        
+        // Close modal and navigate
+        if (onSuccess) onSuccess();
+        navigate("/dashboard", { replace: true });
       } else {
-        setError("Something went wrong. Plz try again!");
+        throw new Error("Invalid response structure from server");
       }
+    } catch (error) {
+      console.error("❌ Registration error:", error);
+      console.error("❌ Error response:", error.response?.data);
+      
+      if (error.response?.data?.message) {
+        setError(error.response.data.message);
+      } else if (error.code === "NETWORK_ERROR" || !error.response) {
+        setError("Cannot connect to server. Please check your internet connection.");
+      } else {
+        setError("Registration failed. Please try again.");
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -78,15 +91,13 @@ const SignUp = ({ setCurrentPage }) => {
       <p className='text-sm sm:text-base text-slate-700 mb-2 sm:mb-6'>Join us today</p>
 
       <form onSubmit={handleSignUp} className='flex flex-col gap-2'>
-
-        {/* <ProfilePhotoSelector image={profilePic} setImage={setProfilePic} /> */}
-
         <Input
           value={fullName}
           onChange={({ target }) => setFullName(target.value)}
           label="Full Name"
           placeholder="Your name"
           type="text"
+          disabled={loading}
         />
 
         <Input
@@ -95,6 +106,7 @@ const SignUp = ({ setCurrentPage }) => {
           label="Email Address"
           placeholder="xxx@gmail.com"
           type="text"
+          disabled={loading}
         />
 
         <Input
@@ -103,23 +115,42 @@ const SignUp = ({ setCurrentPage }) => {
           label="Password"
           placeholder="Min 8 characters"
           type="password"
+          disabled={loading}
         />
 
-        {error && <p className='text-red-500 text-sm pb-2.5'>{error}</p>}
+        {error && (
+          <div className='bg-red-50 border border-red-200 rounded-md p-3 mt-2'>
+            <p className='text-red-600 text-sm'>{error}</p>
+          </div>
+        )}
 
         <button
           type='submit'
-          className='w-full bg-black hover:bg-gray-600 text-white font-semibold py-3 rounded-md text-sm sm:text-base transition min-h-[44px] mt-2'
+          disabled={loading}
+          className={`w-full text-white font-semibold py-3 rounded-md text-sm sm:text-base transition min-h-[44px] mt-2 ${
+            loading 
+              ? 'bg-gray-400 cursor-not-allowed' 
+              : 'bg-black hover:bg-gray-800'
+          }`}
         >
-          Sign Up
+          {loading ? (
+            <div className="flex items-center justify-center">
+              <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
+              Signing up...
+            </div>
+          ) : (
+            'Sign Up'
+          )}
         </button>
       </form>
 
       <p className='text-sm text-slate-600 mt-6 text-center'>
         Already have an account?{" "}
         <span
-          onClick={() => setCurrentPage("login")}
-          className='text-orange-500 font-medium cursor-pointer hover:underline'
+          onClick={() => !loading && setCurrentPage("login")}
+          className={`font-medium cursor-pointer hover:underline ${
+            loading ? 'text-gray-400' : 'text-orange-500'
+          }`}
         >
           Log In
         </span>
