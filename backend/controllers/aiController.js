@@ -10,7 +10,7 @@ async function callGeminiWithRetry(prompt, maxRetries = 3) {
         try {
             console.log(`Gemini attempt ${attempt}/${maxRetries}`);
             const response = await ai.models.generateContent({
-                model: "gemini-2.0-flash-lite",
+                model: "gemini-2.0-flash",
                 contents: prompt,
             });
             return response.text;
@@ -18,7 +18,7 @@ async function callGeminiWithRetry(prompt, maxRetries = 3) {
             // Check if it's a retryable error
             if ((error.status === 503 || error.status === 429) && attempt < maxRetries) {
                 const delay = Math.min(1000 * Math.pow(2, attempt), 10000); // Max 10s delay
-                console.log(`Gemini overloaded. Retrying in ${delay}ms...`);
+                console.log(`Gemini retryable error ${error.status}. Retrying in ${delay}ms...`);
                 await new Promise(resolve => setTimeout(resolve, delay));
                 continue;
             }
