@@ -1,29 +1,33 @@
 // controllers/aiController.js
-const { GoogleGenAI } = require("@google/genai");
+const Groq = require("groq-sdk");
 const { conceptExplainPrompt, questionAnswerPrompt } = require("../utils/prompts");
 
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+const groq = new Groq({
+    apiKey: process.env.GROQ_API_KEY,
+  });
 
 // Retry function with exponential backoff
-async function callGeminiWithRetry(prompt, maxRetries = 3) {
+async function callAIWithRetry(prompt, maxRetries = 3) {
     for (let attempt = 1; attempt <= maxRetries; attempt++) {
-        try {
-            console.log(`Gemini attempt ${attempt}/${maxRetries}`);
-            const response = await ai.models.generateContent({
-                model: "gemini-2.0-flash",
-                contents: prompt,
-            });
-            return response.text;
-        } catch (error) {
-            // Check if it's a retryable error
-            if ((error.status === 503 || error.status === 429) && attempt < maxRetries) {
-                const delay = Math.min(1000 * Math.pow(2, attempt), 10000); // Max 10s delay
-                console.log(`Gemini retryable error ${error.status}. Retrying in ${delay}ms...`);
-                await new Promise(resolve => setTimeout(resolve, delay));
-                continue;
-            }
-            throw error;
+      try {
+        console.log(`Groq attempt ${attempt}/${maxRetries}`);
+  
+        const response = await groq.chat.completions.create({
+          model: "llama-3.3-70b-versatile",
+          messages: [{ role: "user", content: prompt }],
+          temperature: 0.7,
+        });
+  
+        return response.choices[0].message.content;
+      } catch (error) {
+        if ((error.status === 429 || error.status === 503) && attempt < maxRetries) {
+          const delay = Math.min(1000 * Math.pow(2, attempt), 10000);
+          console.log(`Groq retryable error ${error.status}. Retrying in ${delay}ms...`);
+          await new Promise(resolve => setTimeout(resolve, delay));
+          continue;
         }
+        throw error;
+      }
     }
 }
 
@@ -67,7 +71,7 @@ const generateInterviewQuestions = async (req, res) => {
         const prompt = questionAnswerPrompt(role, experience, topicsToFocus, numberOfQuestions);
         console.log("Sending prompt to Gemini");
 
-        const rawText = await callGeminiWithRetry(prompt);
+        const rawText = await callAIWithRetry(prompt);
         console.log("Raw response from Gemini");
 
         const data = cleanAndParseGeminiResponse(rawText);
@@ -119,7 +123,7 @@ const generateConceptExplanation = async (req, res) => {
         const prompt = conceptExplainPrompt(question);
         console.log("Sending explanation prompt to Gemini");
 
-        const rawText = await callGeminiWithRetry(prompt);
+        const rawText = await callAIWithRetry(prompt);
         console.log("Raw explanation response");
 
         const data = cleanAndParseGeminiResponse(rawText);
