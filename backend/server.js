@@ -23,13 +23,31 @@ const aiController = require("./controllers/aiController");
 
 const app = express();
 
-const allowedOrigins = [
-    "http://localhost:5173",
-    "http://127.0.0.1:5173",
-    process.env.FRONTEND_URL,
-].filter(Boolean);
-
 const isDev = (process.env.NODE_ENV || "development") !== "production";
+
+function buildAllowedOrigins() {
+    const origins = [
+        "http://localhost:5173",
+        "http://127.0.0.1:5173",
+        "https://prep-pilot-sssb.vercel.app",
+        process.env.FRONTEND_URL,
+    ];
+
+    if (process.env.ALLOWED_ORIGINS) {
+        origins.push(
+            ...process.env.ALLOWED_ORIGINS.split(",")
+                .map((value) => value.trim())
+                .filter(Boolean)
+        );
+    }
+
+    return [...new Set(origins.filter(Boolean))];
+}
+
+const allowedOrigins = buildAllowedOrigins();
+
+console.log("FRONTEND_URL:", process.env.FRONTEND_URL || "(not set)");
+console.log("CORS allowed origins:", allowedOrigins.join(", ") || "(none)");
 
 function isAllowedOrigin(origin) {
     if (!origin) return true;
@@ -40,28 +58,40 @@ function isAllowedOrigin(origin) {
     return false;
 }
 
-// Middleware 
-console.log("Setting up CORS...");
-app.use(cors({
+const corsOptions = {
     origin(origin, callback) {
+        console.log(`CORS check — incoming origin: ${origin || "(none)"}`);
+
         if (isAllowedOrigin(origin)) {
+            console.log(`CORS allowed — origin: ${origin || "(none)"}`);
             callback(null, true);
-        } else {
-            console.warn(`CORS blocked origin: ${origin}`);
-            callback(new Error("Not allowed by CORS"));
+            return;
         }
+
+        console.warn(`CORS rejected — origin: ${origin}`);
+        console.warn(`CORS whitelist: ${allowedOrigins.join(", ")}`);
+        // Use false (not Error) so the cors package responds without breaking headers
+        callback(null, false);
     },
     credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
-}));
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+    optionsSuccessStatus: 204,
+};
+
+// Middleware — CORS must run before body parsers and routes (handles OPTIONS preflight)
+console.log("Setting up CORS...");
+app.use(cors(corsOptions));
+app.options(/.*/, cors(corsOptions));
 
 console.log("Setting up body parsers...");
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 
 app.use((req, res, next) => {
-    console.log(`${new Date().toISOString()} ${req.method} ${req.path}`);
+    console.log(
+        `${new Date().toISOString()} ${req.method} ${req.path} origin=${req.headers.origin || "(none)"}`
+    );
     next();
 });
 
@@ -124,7 +154,6 @@ app.use((error, req, res, next) => {
     if (
         error.message &&
         (error.message.includes("Only JPEG") ||
-            error.message.includes("CORS") ||
             error.message.includes("PDF") ||
             error.message.includes("DOCX"))
     ) {
