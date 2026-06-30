@@ -1,8 +1,9 @@
 const resumeExtractPrompt = (resumeText) => `
 You are an expert resume parser. Extract structured data from the resume below.
 
-IMPORTANT:
-- Return ONLY valid JSON object, no other text
+CRITICAL:
+- Return ONLY a single valid JSON object (not an array, not markdown, no extra text)
+- Keep each array to at most 12 concise items
 - Use empty strings or empty arrays when data is not found
 
 Resume:
@@ -25,8 +26,9 @@ Format:
 const jdExtractPrompt = (jdText) => `
 You are an expert job description analyzer. Extract structured hiring requirements from the JD below.
 
-IMPORTANT:
-- Return ONLY valid JSON object, no other text
+CRITICAL:
+- Return ONLY a single valid JSON object (not an array, not markdown, no extra text)
+- Keep each array to at most 12 concise items
 - Use empty strings or empty arrays when data is not found
 
 Job Description:
@@ -34,7 +36,7 @@ Job Description:
 ${jdText.slice(0, 12000)}
 """
 
-Format:
+Format (JSON object only):
 {
   "role": "Job title",
   "experience": "Required years of experience as a number string e.g. 5",
