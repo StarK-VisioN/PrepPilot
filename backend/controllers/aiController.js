@@ -22,6 +22,27 @@ const {
     conceptExplainPrompt,
     topicQuestionPrompt,
 } = require("../utils/prompts");
+const {
+    questionsCacheKey,
+    buildTopicCachePayload,
+    topicCacheKey,
+    buildDeepDiveCachePayload,
+    deepDiveCacheKey,
+} = require("../utils/aiCacheKeys");
+const {
+    getCachedRawAiResponse,
+    setCachedRawAiResponse,
+    registerTopicCacheRef,
+    invalidateTopicAiCache,
+} = require("../services/aiCacheService");
+const {
+    logAiCacheLooking,
+    logAiCacheHit,
+    logAiCacheMiss,
+    logAiCacheSaving,
+    logAiCacheSaved,
+    estimatePayloadSize,
+} = require("../utils/redisDebug");
 
 function buildTopicsFromExtracted(extractedData, fallback = "") {
     const parts = [
@@ -172,6 +193,64 @@ function validateGenerateRequest(body, ctx) {
     return null;
 }
 
+async function persistTopicQuestionsToSession(
+    session,
+    normalizedTopic,
+    validQuestions,
+    isAppend
+) {
+    if (!session) return validQuestions.length;
+
+    session.topicQuestionCache = session.topicQuestionCache || [];
+    const cacheIndex = session.topicQuestionCache.findIndex(
+        (entry) => entry.topic.toLowerCase() === normalizedTopic.toLowerCase()
+    );
+
+    let totalCount = validQuestions.length;
+
+    if (cacheIndex >= 0 && isAppend) {
+        session.topicQuestionCache[cacheIndex].questions.push(...validQuestions);
+        session.topicQuestionCache[cacheIndex].generatedAt = new Date();
+        totalCount = session.topicQuestionCache[cacheIndex].questions.length;
+    } else if (cacheIndex >= 0 && !isAppend) {
+        session.topicQuestionCache[cacheIndex] = {
+            topic: normalizedTopic,
+            questions: validQuestions,
+            generatedAt: new Date(),
+        };
+        totalCount = validQuestions.length;
+    } else if (cacheIndex < 0) {
+        session.topicQuestionCache.push({
+            topic: normalizedTopic,
+            questions: validQuestions,
+            generatedAt: new Date(),
+        });
+    }
+
+    session.topicQuestionCache = session.topicQuestionCache.filter(
+        (entry) => entry.questions?.length > 0
+    );
+
+    await session.save();
+    return totalCount;
+}
+
+function filterValidTopicQuestions(questions, excludeQuestions = []) {
+    const existingTexts = new Set(
+        excludeQuestions.map((q) => q.toLowerCase().trim())
+    );
+
+    return questions
+        .map((q) => ({ question: q.question, answer: q.answer }))
+        .filter((q) => {
+            if (!q?.question || !q?.answer) return false;
+            const key = q.question.toLowerCase().trim();
+            if (existingTexts.has(key)) return false;
+            existingTexts.add(key);
+            return true;
+        });
+}
+
 const generateInterviewQuestions = async (req, res) => {
     try {
         const ctx = await resolveGenerationContext(req.body, getUserId(req));
@@ -188,7 +267,22 @@ const generateInterviewQuestions = async (req, res) => {
             }`
         );
 
-        const rawText = await callAIWithRetry(prompt, 3, { max_tokens: 4096 });
+        const cacheKey = questionsCacheKey(prompt);
+        logAiCacheLooking(cacheKey);
+        let rawText = await getCachedRawAiResponse(cacheKey);
+        let cachedFromRedis = false;
+
+        if (rawText) {
+            logAiCacheHit(cacheKey);
+            cachedFromRedis = true;
+        } else {
+            logAiCacheMiss(cacheKey);
+            rawText = await callAIWithRetry(prompt, 3, { max_tokens: 4096 });
+            logAiCacheSaving(cacheKey);
+            await setCachedRawAiResponse(cacheKey, rawText);
+            logAiCacheSaved(cacheKey, estimatePayloadSize(rawText));
+        }
+
         const data = cleanAndParseAIResponse(rawText);
 
         res.status(200).json({
@@ -202,6 +296,7 @@ const generateInterviewQuestions = async (req, res) => {
                 topicsToFocus: ctx.topicsToFocus,
                 resumeDocumentId: ctx.resumeDoc?._id || null,
                 jdDocumentId: ctx.jdDoc?._id || null,
+                cachedFromRedis,
             },
         });
     } catch (error) {
@@ -220,10 +315,28 @@ const generateConceptExplanation = async (req, res) => {
         }
 
         const prompt = conceptExplainPrompt(question, answer || "", role || "");
-        const rawText = await callAIWithRetry(prompt, 2, {
-            temperature: 0.5,
-            max_tokens: 3072,
+        const deepDivePayload = buildDeepDiveCachePayload({
+            question,
+            answer: answer || "",
+            role: role || "",
         });
+        const cacheKey = deepDiveCacheKey(deepDivePayload);
+        logAiCacheLooking(cacheKey);
+        let rawText = await getCachedRawAiResponse(cacheKey);
+
+        if (rawText) {
+            logAiCacheHit(cacheKey);
+        } else {
+            logAiCacheMiss(cacheKey);
+            rawText = await callAIWithRetry(prompt, 2, {
+                temperature: 0.5,
+                max_tokens: 3072,
+            });
+            logAiCacheSaving(cacheKey);
+            await setCachedRawAiResponse(cacheKey, rawText);
+            logAiCacheSaved(cacheKey, estimatePayloadSize(rawText));
+        }
+
         const data = parseDeepDiveResponse(rawText);
 
         if (!data.explanation?.trim()) {
@@ -303,6 +416,18 @@ const generateTopicQuestions = async (req, res) => {
         const { company: resolvedCompany, customCompanyName: resolvedCustomName } =
             resolveCompanyFields(company, customCompanyName);
 
+        if (!isAppend) {
+            await invalidateTopicAiCache({
+                sessionId: session?._id?.toString(),
+                topic: normalizedTopic,
+                role: role.trim(),
+                experience: experience.toString().trim(),
+                company: resolvedCompany,
+                customCompanyName: resolvedCustomName,
+                numberOfQuestions: questionCount,
+            });
+        }
+
         const prompt = topicQuestionPrompt(
             normalizedTopic,
             role.trim(),
@@ -313,14 +438,47 @@ const generateTopicQuestions = async (req, res) => {
             excludeQuestions
         );
 
+        const topicPayload = buildTopicCachePayload({
+            topic: normalizedTopic,
+            role: role.trim(),
+            experience: experience.toString().trim(),
+            company: resolvedCompany,
+            customCompanyName: resolvedCustomName,
+            numberOfQuestions: questionCount,
+            excludeQuestions,
+        });
+        const cacheKey = topicCacheKey(topicPayload);
+
         console.log(
             `Generating topic questions — topic: ${normalizedTopic}, role: ${role}, append: ${isAppend}`
         );
 
-        const rawText = await callAIWithRetry(prompt, 2, {
-            temperature: 0.4,
-            max_tokens: 2048,
-        });
+        logAiCacheLooking(cacheKey);
+        let rawText = await getCachedRawAiResponse(cacheKey);
+        let cachedFromRedis = false;
+
+        if (rawText) {
+            logAiCacheHit(cacheKey);
+            cachedFromRedis = true;
+        } else {
+            logAiCacheMiss(cacheKey);
+            rawText = await callAIWithRetry(prompt, 2, {
+                temperature: 0.4,
+                max_tokens: 2048,
+            });
+            logAiCacheSaving(cacheKey);
+            await setCachedRawAiResponse(cacheKey, rawText);
+            logAiCacheSaved(cacheKey, estimatePayloadSize(rawText));
+
+            if (session && !isAppend) {
+                await registerTopicCacheRef(
+                    session._id.toString(),
+                    normalizedTopic,
+                    cacheKey
+                );
+            }
+        }
+
         const questions = parseTopicQuestionsResponse(rawText);
 
         if (!Array.isArray(questions) || questions.length === 0) {
@@ -330,19 +488,7 @@ const generateTopicQuestions = async (req, res) => {
             });
         }
 
-        const existingTexts = new Set(
-            excludeQuestions.map((q) => q.toLowerCase().trim())
-        );
-
-        const validQuestions = questions
-            .map((q) => ({ question: q.question, answer: q.answer }))
-            .filter((q) => {
-                if (!q?.question || !q?.answer) return false;
-                const key = q.question.toLowerCase().trim();
-                if (existingTexts.has(key)) return false;
-                existingTexts.add(key);
-                return true;
-            });
+        const validQuestions = filterValidTopicQuestions(questions, excludeQuestions);
 
         if (validQuestions.length === 0) {
             return res.status(422).json({
@@ -354,35 +500,12 @@ const generateTopicQuestions = async (req, res) => {
         let totalCount = validQuestions.length;
 
         if (session) {
-            session.topicQuestionCache = session.topicQuestionCache || [];
-            const cacheIndex = session.topicQuestionCache.findIndex(
-                (entry) => entry.topic.toLowerCase() === normalizedTopic.toLowerCase()
+            totalCount = await persistTopicQuestionsToSession(
+                session,
+                normalizedTopic,
+                validQuestions,
+                isAppend
             );
-
-            if (cacheIndex >= 0 && isAppend) {
-                session.topicQuestionCache[cacheIndex].questions.push(...validQuestions);
-                session.topicQuestionCache[cacheIndex].generatedAt = new Date();
-                totalCount = session.topicQuestionCache[cacheIndex].questions.length;
-            } else if (cacheIndex >= 0 && !isAppend) {
-                session.topicQuestionCache[cacheIndex] = {
-                    topic: normalizedTopic,
-                    questions: validQuestions,
-                    generatedAt: new Date(),
-                };
-                totalCount = validQuestions.length;
-            } else if (cacheIndex < 0) {
-                session.topicQuestionCache.push({
-                    topic: normalizedTopic,
-                    questions: validQuestions,
-                    generatedAt: new Date(),
-                });
-            }
-
-            session.topicQuestionCache = session.topicQuestionCache.filter(
-                (entry) => entry.questions?.length > 0
-            );
-
-            await session.save();
         }
 
         res.status(200).json({
@@ -391,6 +514,7 @@ const generateTopicQuestions = async (req, res) => {
             newQuestions: isAppend ? validQuestions : [],
             totalCount,
             cached: false,
+            cachedFromRedis,
             appended: isAppend,
         });
     } catch (error) {

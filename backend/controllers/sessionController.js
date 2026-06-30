@@ -6,6 +6,7 @@ const {
     loadOwnedSession,
     sendOwnershipError,
 } = require("../utils/sessionOwnership");
+const { invalidateTopicAiCache } = require("../services/aiCacheService");
 
 // @desc    Create a new session and linked questions
 // @route   POST /api/sessions/create
@@ -185,6 +186,15 @@ exports.deleteTopicQuestions = async (req, res) => {
         if (session.user.toString() !== userId.toString()) {
             return res.status(403).json({ success: false, message: "Not authorized to access this session" });
         }
+
+        await invalidateTopicAiCache({
+            sessionId: session._id.toString(),
+            topic,
+            role: session.role,
+            experience: session.experience,
+            company: session.company,
+            customCompanyName: session.customCompanyName,
+        });
 
         const before = session.topicQuestionCache?.length || 0;
         session.topicQuestionCache = (session.topicQuestionCache || []).filter(

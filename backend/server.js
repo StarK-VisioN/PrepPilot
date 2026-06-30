@@ -8,6 +8,17 @@ console.log("JWT Secret exists:", !!process.env.JWT_SECRET);
 console.log("Groq API key exists:", !!process.env.GROQ_API_KEY);
 console.log("Groq model:", process.env.GROQ_MODEL || "llama-3.3-70b-versatile");
 
+const { initRedis, isRedisAvailable } = require("./config/redis");
+const { logRedisStartupSummary } = require("./utils/redisDebug");
+
+initRedis();
+console.log("Redis enabled:", isRedisAvailable());
+logRedisStartupSummary({
+    redisEnabled: isRedisAvailable(),
+    upstashUrlConfigured: Boolean(process.env.UPSTASH_REDIS_REST_URL),
+});
+console.log("AI daily limit:", process.env.AI_DAILY_LIMIT || "20");
+
 const express = require("express");
 const cors = require("cors");
 const path = require("path");
@@ -18,7 +29,9 @@ const sessionRoutes = require("./routes/sessionRoutes");
 const questionRoutes = require("./routes/questionRoutes");
 const documentRoutes = require("./routes/documentRoutes");
 const companyRoutes = require("./routes/companyRoutes");
+const debugRoutes = require("./routes/debugRoutes");
 const { protect } = require("./middlewares/authMiddleware");
+const aiRateLimitMiddleware = require("./middlewares/aiRateLimitMiddleware");
 const aiController = require("./controllers/aiController");
 
 const app = express();
@@ -125,9 +138,14 @@ app.use("/api/questions", questionRoutes);
 app.use("/api/documents", documentRoutes);
 app.use("/api/companies", companyRoutes);
 
-app.post("/api/ai/generate-questions", protect, aiController.generateInterviewQuestions);     
-app.post("/api/ai/generate-explanation", protect, aiController.generateConceptExplanation);
-app.post("/api/ai/generate-topic-questions", protect, aiController.generateTopicQuestions);
+app.post("/api/ai/generate-questions", protect, aiRateLimitMiddleware, aiController.generateInterviewQuestions);
+app.post("/api/ai/generate-explanation", protect, aiRateLimitMiddleware, aiController.generateConceptExplanation);
+app.post("/api/ai/generate-topic-questions", protect, aiRateLimitMiddleware, aiController.generateTopicQuestions);
+
+if (isDev) {
+    console.log("Setting up development-only debug routes...");
+    app.use("/api/debug", debugRoutes);
+}
 
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
