@@ -5,8 +5,9 @@ const upload = require("../middlewares/uploadMiddleware");
 
 const router = express.Router();
 
-// Test route
-router.get("/test-db", testDBConnection);
+if (process.env.NODE_ENV !== "production") {
+    router.get("/test-db", protect, testDBConnection);
+}
 
 // Auth Routes
 router.post("/register", registerUser);
@@ -14,7 +15,7 @@ router.post("/login", loginUser);
 router.get("/profile", protect, getUserProfile);
 
 // Image upload route
-router.post("/upload-image", upload.single("image"), (req, res) => {
+router.post("/upload-image", protect, upload.single("image"), (req, res) => {
     try {
         if (!req.file) {
             return res.status(400).json({ message: "No file uploaded" });

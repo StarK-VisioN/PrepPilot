@@ -12,20 +12,23 @@ const storage = multer.diskStorage({
   },
 });
 
-// updated file filter using extension
+const allowedImageMimes = ["image/jpeg", "image/jpg", "image/png"];
+
 const fileFilter = (req, file, cb) => {
   const ext = path.extname(file.originalname).toLowerCase();
   const allowedExts = [".jpeg", ".jpg", ".png"];
 
-//   console.log("File extension is:", ext);
-
-  if (allowedExts.includes(ext)) {
+  if (allowedExts.includes(ext) && allowedImageMimes.includes(file.mimetype)) {
     cb(null, true);
   } else {
-    cb(new Error("Only .jpeg, .jpg, and .png extensions are allowed"), false);
+    cb(new Error("Only JPEG and PNG images are allowed"), false);
   }
 };
 
-const upload = multer({ storage, fileFilter });
+const upload = multer({
+  storage,
+  fileFilter,
+  limits: { fileSize: 5 * 1024 * 1024 },
+});
 
 module.exports = upload;
