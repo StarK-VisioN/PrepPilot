@@ -5,6 +5,7 @@ import Login from "./pages/Auth/Login";
 import Dashboard from "./pages/Home/Dashboard";
 import InterviewPrep from "./pages/interviewPrep/InterviewPrep";
 import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import UserProvider from "./context/userContext";
 import PublicLayout from "./components/PublicLayout";
 import DashboardLayout from "./components/DashboardLayout";
@@ -12,7 +13,10 @@ import DashboardLayout from "./components/DashboardLayout";
 function App() {
   return (
     <UserProvider>
-      <ToastContainer />
+      <ToastContainer
+        position="top-right"
+        style={{ top: '4.5rem', zIndex: 9999 }}
+      />
 
       <Routes>
         {/* Public Routes - Landing Page accessible to all */}

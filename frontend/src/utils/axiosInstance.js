@@ -4,7 +4,7 @@ import { BASE_URL } from './apiPaths';
 
 const axiosInstance = axios.create({
     baseURL: BASE_URL,
-    timeout: 60000, // Increased from 10000 to 60000 (60 seconds)
+    timeout: 120000,
     headers: {
         'Content-Type': 'application/json',
     },
@@ -16,6 +16,10 @@ axiosInstance.interceptors.request.use(
         const token = localStorage.getItem('token');
         if (token) {
             config.headers.Authorization = `Bearer ${token}`;
+        }
+        // Let the browser set multipart boundary — do not force application/json on FormData
+        if (config.data instanceof FormData) {
+            delete config.headers['Content-Type'];
         }
         return config;
     },

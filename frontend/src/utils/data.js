@@ -1,3 +1,74 @@
+export const SESSION_SOURCE_CONFIG = {
+    jd: {
+        label: 'Job Description',
+        sectionTitle: 'From Job Description',
+        sectionHint: 'Created by pasting or uploading a job description',
+        ribbonClass: 'bg-blue-600 text-white',
+        borderClass: 'border-l-blue-500',
+        headerBg: 'linear-gradient(135deg, #bfdbfe 0%, #eff6ff 100%)',
+        badgeClass: 'bg-blue-50 text-blue-800 border-blue-200',
+    },
+    resume: {
+        label: 'Resume',
+        sectionTitle: 'From Resume',
+        sectionHint: 'Created from your uploaded resume',
+        ribbonClass: 'bg-emerald-600 text-white',
+        borderClass: 'border-l-emerald-500',
+        headerBg: 'linear-gradient(135deg, #a7f3d0 0%, #ecfdf5 100%)',
+        badgeClass: 'bg-emerald-50 text-emerald-800 border-emerald-200',
+    },
+    combined: {
+        label: 'Resume + JD',
+        sectionTitle: 'From Resume & Job Description',
+        sectionHint: 'Matched your resume against a job description',
+        ribbonClass: 'bg-violet-600 text-white',
+        borderClass: 'border-l-violet-500',
+        headerBg: 'linear-gradient(135deg, #ddd6fe 0%, #f5f3ff 100%)',
+        badgeClass: 'bg-violet-50 text-violet-800 border-violet-200',
+    },
+    manual: {
+        label: 'Manual',
+        sectionTitle: 'Manual Prep',
+        sectionHint: 'Created with role, experience, and topics you entered',
+        ribbonClass: 'bg-orange-500 text-white',
+        borderClass: 'border-l-orange-400',
+        headerBg: 'linear-gradient(135deg, #fed7aa 0%, #fff7ed 100%)',
+        badgeClass: 'bg-orange-50 text-orange-800 border-orange-200',
+    },
+};
+
+export const SESSION_SECTION_ORDER = ['jd', 'resume', 'combined', 'manual'];
+
+export const COMPANY_LABELS = {
+    generic: 'Generic',
+    google: 'Google',
+    amazon: 'Amazon',
+    microsoft: 'Microsoft',
+    netflix: 'Netflix',
+    uber: 'Uber',
+    startup: 'Startup',
+    custom: 'Custom',
+};
+
+export function getCompanyDisplayName(company, customCompanyName) {
+    if (company === 'custom' && customCompanyName?.trim()) {
+        return customCompanyName.trim();
+    }
+    return COMPANY_LABELS[company] || company;
+}
+
+export function getSessionSourceConfig(sourceType) {
+    return SESSION_SOURCE_CONFIG[sourceType] || SESSION_SOURCE_CONFIG.manual;
+}
+
+export function groupSessionsBySource(sessions) {
+    return SESSION_SECTION_ORDER.map((type) => ({
+        type,
+        config: SESSION_SOURCE_CONFIG[type],
+        sessions: sessions.filter((s) => (s.sourceType || 'manual') === type),
+    })).filter((group) => group.sessions.length > 0);
+}
+
 export const CARD_BG = [
     { id: 1, bgcolor: 'linear-gradient(135deg, #e6f8f3 0%, #f7fcfa 100%)' },
     { id: 2, bgcolor: 'linear-gradient(135deg, #fefcea 0%, #f1da36 100%)' },
@@ -12,30 +83,87 @@ export const CARD_BG = [
 ];
 
 
+export const PHASE1_FEATURES = [
+    {
+        id: 'jd',
+        title: 'Job Description Prep',
+        description: 'Paste or upload a JD. We extract skills and requirements, then generate questions tailored to that role.',
+        cta: 'Prep from JD',
+        mode: 'jd',
+        icon: 'jd',
+        badge: 'New',
+        gradient: 'from-blue-500 to-indigo-600',
+    },
+    {
+        id: 'resume',
+        title: 'Resume-Based Questions',
+        description: 'Upload your resume and get questions on your actual stack — Docker, Redis, Next.js, and everything you list.',
+        cta: 'Prep from Resume',
+        mode: 'resume',
+        icon: 'resume',
+        badge: 'New',
+        gradient: 'from-emerald-500 to-teal-600',
+    },
+    {
+        id: 'company',
+        title: 'Company-Specific Style',
+        description: 'Practice like it\'s the real interview — Amazon LP, Google depth, startup hands-on, and more.',
+        cta: 'Choose Company',
+        mode: 'manual',
+        icon: 'company',
+        badge: 'New',
+        gradient: 'from-violet-500 to-purple-600',
+        highlightCompany: true,
+    },
+    {
+        id: 'manual',
+        title: 'Classic Role Prep',
+        description: 'Pick your role, experience, and topics. Get AI-generated Q&A plus deep concept explanations.',
+        cta: 'Start Manual Prep',
+        mode: 'manual',
+        icon: 'manual',
+        badge: null,
+        gradient: 'from-orange-500 to-amber-600',
+    },
+];
+
+export const COMING_SOON_FEATURES = [
+    {
+        id: 'mock',
+        title: 'AI Mock Interview',
+        description: 'Live chat-based interview simulator with dynamic follow-ups.',
+    },
+    {
+        id: 'behavioral',
+        title: 'STAR Behavioral Eval',
+        description: 'Behavioral questions scored with STAR method feedback.',
+    },
+    {
+        id: 'coding',
+        title: 'Coding Round Simulator',
+        description: 'Monaco editor with AI code review and test cases.',
+    },
+    {
+        id: 'analytics',
+        title: 'Weakness Analytics',
+        description: 'Track weak topics and get a personalized learning roadmap.',
+    },
+];
+
 export const APP_FEATURES = [
     {
-        id:'01',
-        title: "Tailored Just for you",
-        description: "get interview questions and model answers based on your experience,a dn specific focus areas."
+        id: '01',
+        title: 'AI-Generated Q&A',
+        description: 'Get interview questions and model answers tuned to your role, experience, and focus areas.',
     },
     {
-        id:'02',
-        title: "Tailored Just for you",
-        description: "get interview questions and model answers based on your experience,a dn specific focus areas."
+        id: '02',
+        title: 'Concept Deep Dives',
+        description: 'Tap Learn More on any question for an AI-powered explanation with examples.',
     },
     {
-        id:'03',
-        title: "Tailored Just for you",
-        description: "get interview questions and model answers based on your experience,a dn specific focus areas."
+        id: '03',
+        title: 'Session Management',
+        description: 'Organize prep sessions, pin important questions, and load more anytime.',
     },
-    {
-        id:'04',
-        title: "Tailored Just for you",
-        description: "get interview questions and model answers based on your experience,a dn specific focus areas."
-    },
-    {
-        id:'05',
-        title: "Tailored Just for you",
-        description: "get interview questions and model answers based on your experience,a dn specific focus areas."
-    },
-]
+];

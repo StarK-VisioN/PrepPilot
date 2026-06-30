@@ -1,8 +1,8 @@
 import React, { useEffect, useState, useContext } from 'react';
-import { LuPlus } from 'react-icons/lu';
-import { CARD_BG } from "../../utils/data";
+import { LuPlus, LuFileText, LuUser, LuLayers, LuTarget } from 'react-icons/lu';
+import { groupSessionsBySource } from "../../utils/data";
 import { toast } from 'react-toastify';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import axiosInstance from '../../utils/axiosInstance';
 import { API_PATHS } from '../../utils/apiPaths';
 import SummaryCard from '../../components/SummaryCard';
@@ -14,11 +14,20 @@ import Lottie from "lottie-react";
 import emptyAnimation from "../../assets/empty-state.json";
 import { UserContext } from '../../context/userContext';
 
+const SECTION_ICONS = {
+  jd: LuFileText,
+  resume: LuUser,
+  combined: LuLayers,
+  manual: LuTarget,
+};
+
 const Dashboard = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { user, loading } = useContext(UserContext);
 
   const [openCreateModel, setOpenCreateModel] = useState(false);
+  const [createIntent, setCreateIntent] = useState({ mode: 'manual', company: 'generic' });
   const [sessions, setSessions] = useState([]);
   const [sessionsLoading, setSessionsLoading] = useState(true);
   const [openDeleteAlert, setOpenDeleteAlert] = useState({
@@ -55,10 +64,42 @@ const Dashboard = () => {
   };
 
   useEffect(() => {
+    const stored = sessionStorage.getItem('createSessionIntent');
+    if (stored) {
+      try {
+        const intent = JSON.parse(stored);
+        sessionStorage.removeItem('createSessionIntent');
+        setCreateIntent({
+          mode: intent.generationMode || 'manual',
+          company: intent.company || 'generic',
+        });
+        setOpenCreateModel(true);
+      } catch {
+        sessionStorage.removeItem('createSessionIntent');
+      }
+      return;
+    }
+
+    if (location.state?.openCreate) {
+      setCreateIntent({
+        mode: location.state.generationMode || 'manual',
+        company: location.state.company || 'generic',
+      });
+      setOpenCreateModel(true);
+      navigate('/dashboard', { replace: true, state: {} });
+    }
+  }, [location.state, navigate]);
+
+  useEffect(() => {
     if (user) {
       fetchAllSessions();
     }
   }, [user]);
+
+  const openCreateModal = (mode = 'manual', company = 'generic') => {
+    setCreateIntent({ mode, company });
+    setOpenCreateModel(true);
+  };
 
   // Show loading while checking authentication
   if (loading) {
@@ -93,11 +134,29 @@ const Dashboard = () => {
         <div className="absolute top-1/2 left-1/4 w-60 h-60 bg-gradient-to-r from-purple-100 to-pink-100 rounded-full opacity-30 blur-lg"></div>
       </div>
 
-      <div className="container mx-auto pt-4 pb-20 relative z-10">
-        
+      <div className="container mx-auto max-w-7xl px-6 sm:px-8 md:px-12 lg:px-16 pt-6 pb-16 relative z-10">
+        {/* Page header + primary action */}
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
+          <div>
+            <h1 className="text-2xl md:text-3xl font-bold text-gray-900">Your Prep Sessions</h1>
+            <p className="text-sm text-gray-500 mt-1">
+              {sessions.length > 0
+                ? `${sessions.length} session${sessions.length === 1 ? "" : "s"} · grouped by prep mode`
+                : "Create your first personalized interview prep session"}
+            </p>
+          </div>
+          <button
+            type="button"
+            className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-[#FF9324] to-[#e99a4b] text-sm font-semibold text-white px-5 py-2.5 rounded-full hover:from-[#e99a4b] hover:to-[#FF9324] transition-all cursor-pointer shadow-md hover:shadow-lg shrink-0 self-start sm:self-auto"
+            onClick={() => openCreateModal()}
+          >
+            <LuPlus className="text-lg" />
+            <span>Add New Session</span>
+          </button>
+        </div>
 
         {sessions.length === 0 ? (
-          <div className="flex flex-col items-center justify-center text-center py-20">
+          <div className="flex flex-col items-center justify-center text-center py-16 px-4">
             <Lottie
               animationData={emptyAnimation}
               loop={true}
@@ -105,42 +164,58 @@ const Dashboard = () => {
             />
             <h2 className="text-xl font-bold mb-2">No Sessions Yet</h2>
             <p className="text-gray-500 max-w-sm mb-6">
-              You haven't created any interview prep sessions yet. Click the{" "}
-              <span className="font-medium text-orange-500">Add New</span> button
-              below to get started.
+              Use the <span className="font-medium text-orange-500">Add New Session</span> button
+              above to get started with manual, JD, or resume-based prep.
             </p>
           </div>
         ) : (
-          <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 px-4 md:px-0'>
-            {sessions?.map((data, index) => (
-              <SummaryCard
-                key={data?._id}
-                colors={CARD_BG[index % CARD_BG.length]}
-                role={data?.role || ""}
-                topicsToFocus={data?.topicsToFocus || ""}
-                experience={data?.experience || "-"}
-                questions={data?.questions || "-"}
-                description={data?.description || ""}
-                lastUpdated={
-                  data?.updatedAt
-                    ? moment(data.updatedAt).format("Do MMM YYYY")
-                    : ""
-                }
-                onSelect={() => navigate(`/interview-prep/${data?._id}`)}
-                onDelete={() => setOpenDeleteAlert({ open: true, data })}
-              />
-            ))}
+          <div className="space-y-12">
+            {groupSessionsBySource(sessions).map((group) => {
+              const SectionIcon = SECTION_ICONS[group.type] || LuTarget;
+              return (
+                <section key={group.type}>
+                  <div className="flex items-start gap-3 mb-5">
+                    <div className={`p-2 rounded-lg ${group.config.badgeClass} border`}>
+                      <SectionIcon size={20} />
+                    </div>
+                    <div>
+                      <h2 className="text-lg font-bold text-gray-900">
+                        {group.config.sectionTitle}
+                        <span className="ml-2 text-sm font-normal text-gray-500">
+                          ({group.sessions.length})
+                        </span>
+                      </h2>
+                      <p className="text-sm text-gray-500">{group.config.sectionHint}</p>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6 items-stretch">
+                    {group.sessions.map((data) => (
+                      <SummaryCard
+                        key={data?._id}
+                        role={data?.role || ""}
+                        topicsToFocus={data?.topicsToFocus || ""}
+                        experience={data?.experience || "-"}
+                        questions={Array.isArray(data?.questions) ? data.questions : []}
+                        description={data?.description || ""}
+                        company={data?.company}
+                        customCompanyName={data?.customCompanyName}
+                        sourceType={data?.sourceType || "manual"}
+                        lastUpdated={
+                          data?.updatedAt
+                            ? moment(data.updatedAt).format("Do MMM YYYY")
+                            : ""
+                        }
+                        onSelect={() => navigate(`/interview-prep/${data?._id}`)}
+                        onDelete={() => setOpenDeleteAlert({ open: true, data })}
+                      />
+                    ))}
+                  </div>
+                </section>
+              );
+            })}
           </div>
         )}
-
-        {/* Add New Button */}
-        <button
-          className='h-10 flex items-center justify-center gap-2 bg-gradient-to-r from-[#FF9324] to-[#e99a4b] text-sm font-semibold text-white px-6 py-3 rounded-full hover:from-[#e99a4b] hover:to-[#FF9324] transition-all cursor-pointer shadow-lg hover:shadow-xl fixed bottom-8 right-8 z-50'
-          onClick={() => setOpenCreateModel(true)}
-        >
-          <LuPlus className='text-xl text-white' /> 
-          <span>Add New</span>
-        </button>
       </div>
 
       {/* Create Session Modal */}
@@ -150,12 +225,16 @@ const Dashboard = () => {
           setOpenCreateModel(false);
         }}
         hideHeader
+        size="lg"
       >
-        <CreateSessionForm 
+        <CreateSessionForm
+          key={`${createIntent.mode}-${createIntent.company}-${openCreateModel}`}
+          initialMode={createIntent.mode}
+          initialCompany={createIntent.company}
           onSuccess={() => {
             setOpenCreateModel(false);
             fetchAllSessions();
-          }} 
+          }}
         />
       </Modal>
 

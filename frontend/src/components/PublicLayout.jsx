@@ -25,9 +25,11 @@ const PublicLayout = () => {
 
   // Show public layout (landing page should be visible to all)
   return (
-    <div className="px-4 sm:px-[5vw] md:px-[7vw] lg:px-[8vw] bg-[#d8c2ec] min-h-screen">
-      <Navbar />
-      <Outlet />
+    <div className="bg-[#d8c2ec] min-h-screen">
+      <div className="px-4 sm:px-[5vw] md:px-[7vw] lg:px-[8vw]">
+        <Navbar />
+        <Outlet />
+      </div>
       <Footer />
     </div>
   );

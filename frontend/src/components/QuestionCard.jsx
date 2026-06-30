@@ -1,97 +1,154 @@
-import React, { useEffect, useState, useRef } from "react";
-import { LuChevronDown, LuPin, LuPinOff, LuSparkles } from "react-icons/lu";
+import React, { useState } from "react";
+import {
+  LuChevronDown,
+  LuPin,
+  LuPinOff,
+  LuSparkles,
+  LuBookOpen,
+} from "react-icons/lu";
 import AIResponsePreview from "../pages/interviewPrep/components/AIResponsePreview";
 
 const QuestionCard = ({
+  index,
   question,
   answer,
+  isExpanded,
+  onToggle,
   onLearnMore,
   isPinned,
   onTogglePin,
+  showPin = true,
 }) => {
-    const [isExpanded, setIsExpanded] = useState(false);
-    const [height, setHeight] = useState(0);
-    const contentRef = useRef(null);
+  const handleHeaderClick = () => onToggle();
 
-    useEffect(()=> {
-        if(isExpanded) {
-            const contentHeight = contentRef.current.scrollHeight;
-            setHeight(contentHeight + 10);
-        } else {
-            setHeight(0);
-        }
-    }, [isExpanded]);
+  const stopProp = (e) => e.stopPropagation();
 
-    const toggleExpand = () => {
-        setIsExpanded(!isExpanded)
-    };
-    
-    
-    return (
-    <>
-        <div className="bg-white rounded-lg mb-4 overflow-hidden py-4 px-5 shadow-xl shadow-gray-100/70 border border-gray-100/60 group">
-            <div className="flex items-start justify-between cursor-pointer">
-                <div className="flex items-start gap-3.5">
-                    <span className="text-xs md:text-[15px] font-semibold text-gray-400 leading-[18px]">
-                        Q
-                    </span>
+  return (
+    <article
+      className={`rounded-2xl border bg-white transition-all duration-300 overflow-hidden ${
+        isExpanded
+          ? "border-orange-200 shadow-lg shadow-orange-100/40 ring-1 ring-orange-100"
+          : "border-gray-200/80 shadow-sm hover:border-gray-300 hover:shadow-md"
+      } ${isPinned ? "border-l-4 border-l-orange-400" : ""}`}
+    >
+      {/* Header — tap to expand/collapse */}
+      <button
+        type="button"
+        onClick={handleHeaderClick}
+        className="w-full text-left px-4 sm:px-5 py-4 flex items-start gap-3 sm:gap-4 group"
+        aria-expanded={isExpanded}
+      >
+        <span
+          className={`flex-shrink-0 w-8 h-8 rounded-xl flex items-center justify-center text-xs font-bold transition-colors ${
+            isExpanded
+              ? "bg-orange-500 text-white"
+              : "bg-gray-100 text-gray-600 group-hover:bg-orange-100 group-hover:text-orange-700"
+          }`}
+        >
+          {index}
+        </span>
 
-                    <h3 className="text-xs md:text-[14px] font-medium text-gray-800 mr-0 md:mr-20"
-                        onClick={toggleExpand}    
-                    >
-                        {question}
-                    </h3>
-                </div>
-
-                <div className="flex items-center justify-end ml-4 relative">
-                    <div className={`flex ${
-                        isExpanded ? "md:flex" : "md:hidden group-hover:flex"
-                    }`}>
-                        <button className="flex items-center gap-2 text-xs text-indigo-800 font-medium bg-indigo-50 px-3 py-1 mr-2 rounded text-nowrap border border-indigo-50 hover:border-indigo-200 cursor-pointer"
-                        onClick={onTogglePin}>
-                            {isPinned ? (
-                                <LuPinOff className="text-xs"/>
-                            ) : (
-                                <LuPin className="text-xs" />
-                            )}
-                        </button>
-
-                        <button className="flex items-center gap-2 text-xs text-cyan-800 font-medium bg-cyan-50 px-3 py-1 mr-2 rounded text-nowrap border border-cyan-50 hover:border-cyan-200 cursor-pointer"
-                        onClick={()=> {
-                            setIsExpanded(true);
-                            onLearnMore();
-                        }}
-                        >
-                            <LuSparkles />
-                            <span className="hidden md:block">Learn More</span>
-                        </button>
-                    </div>
-
-                    <button className="text-gray-400 hover:text-gray-500 cursor-pointer"
-                    onClick={toggleExpand}>
-                        <LuChevronDown 
-                            size={20}
-                            className={`transform transition-transform duration-300 ${
-                                isExpanded ? "rotate-180" : ""
-                            }`}
-                        />
-                    </button>
-                </div>
-            </div>
-
-            <div className="overflow-hidden transition-all duration-300 easy-in-out"
-                style={{maxHeight: `${height}px`}}
-            >
-                <div
-                    ref={contentRef}
-                    className="mt-4 text-gray-700 bg-gray-50 px-5 py-3 rounded-lg"
-                >
-                    <AIResponsePreview content={answer} />
-                </div>
-            </div>
+        <div className="flex-1 min-w-0 pr-2">
+          <p
+            className={`text-sm sm:text-[15px] font-medium text-gray-900 leading-snug ${
+              isExpanded ? "" : "line-clamp-2"
+            }`}
+          >
+            {question}
+          </p>
+          {!isExpanded && (
+            <p className="text-xs text-gray-400 mt-1.5">Tap to view answer</p>
+          )}
         </div>
-    </>
-)
+
+        <LuChevronDown
+          size={20}
+          className={`flex-shrink-0 text-gray-400 transition-transform duration-300 mt-0.5 ${
+            isExpanded ? "rotate-180 text-orange-500" : ""
+          }`}
+        />
+      </button>
+
+      {/* Answer panel — CSS grid accordion */}
+      <div
+        className={`grid transition-[grid-template-rows] duration-300 ease-in-out ${
+          isExpanded ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
+        }`}
+      >
+        <div className="overflow-hidden">
+          <div className="px-4 sm:px-5 pb-5 pt-0">
+            <div className="border-t border-gray-100 pt-4">
+              <div className="flex items-center gap-2 mb-3">
+                <LuBookOpen size={14} className="text-orange-500" />
+                <span className="text-xs font-semibold uppercase tracking-wide text-gray-500">
+                  Model Answer
+                </span>
+              </div>
+
+              <div className="bg-gradient-to-b from-gray-50 to-white border border-gray-100 rounded-xl px-4 py-4 max-h-[min(60vh,520px)] overflow-y-auto">
+                <AIResponsePreview content={answer} />
+              </div>
+
+              {/* Deep dive CTA */}
+              <div className="mt-4 rounded-xl border border-cyan-100 bg-gradient-to-r from-cyan-50/80 to-white px-4 py-3.5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                <div className="min-w-0">
+                  <p className="text-xs font-semibold text-cyan-900">
+                    Want the complete picture?
+                  </p>
+                  <p className="text-xs text-gray-600 mt-0.5 leading-relaxed">
+                    Get a full deep-dive guide — concepts, examples, interview tips, and follow-ups.
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    stopProp(e);
+                    onLearnMore();
+                  }}
+                  className="inline-flex items-center justify-center gap-1.5 text-xs font-semibold px-4 py-2.5 rounded-lg bg-cyan-600 text-white hover:bg-cyan-700 shadow-sm transition-colors shrink-0"
+                >
+                  <LuSparkles size={14} />
+                  Deep dive
+                </button>
+              </div>
+
+              {/* Actions */}
+              <div className="flex flex-wrap items-center gap-2 mt-4">
+                {showPin && (
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      stopProp(e);
+                      onTogglePin();
+                    }}
+                    className={`inline-flex items-center gap-1.5 text-xs font-medium px-3 py-2 rounded-lg border transition-colors ${
+                      isPinned
+                        ? "bg-orange-50 text-orange-700 border-orange-200"
+                        : "bg-white text-gray-600 border-gray-200 hover:border-orange-200 hover:text-orange-700"
+                    }`}
+                  >
+                    {isPinned ? <LuPinOff size={14} /> : <LuPin size={14} />}
+                    {isPinned ? "Unpin" : "Pin question"}
+                  </button>
+                )}
+
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    stopProp(e);
+                    onToggle();
+                  }}
+                  className="inline-flex items-center gap-1.5 text-xs font-medium px-3 py-2 rounded-lg text-gray-500 hover:bg-gray-100 transition-colors ml-auto"
+                >
+                  Collapse
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </article>
+  );
 };
 
 export default QuestionCard;
