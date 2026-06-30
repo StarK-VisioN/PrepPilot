@@ -56,16 +56,24 @@ const SignUp = ({ setCurrentPage, onSuccess }) => {
         updateUser(response.data);
         console.log("👤 User context updated");
         
-        // Close modal and navigate
-        if (onSuccess) onSuccess();
-        navigate("/dashboard", { replace: true });
+        if (onSuccess) {
+          onSuccess();
+        } else if (sessionStorage.getItem("createSessionIntent")) {
+          navigate("/dashboard", { replace: true });
+        } else {
+          navigate("/", { replace: true });
+        }
       } else if (response.data.token) {
         updateUser(response.data);
         console.log("👤 User context updated");
         
-        // Close modal and navigate
-        if (onSuccess) onSuccess();
-        navigate("/dashboard", { replace: true });
+        if (onSuccess) {
+          onSuccess();
+        } else if (sessionStorage.getItem("createSessionIntent")) {
+          navigate("/dashboard", { replace: true });
+        } else {
+          navigate("/", { replace: true });
+        }
       } else {
         throw new Error("Invalid response structure from server");
       }

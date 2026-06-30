@@ -16,11 +16,12 @@ const PublicLayout = () => {
     );
   }
 
-  // If user is on login page and authenticated, redirect to dashboard
+  // If user is on login page and authenticated, redirect to home
   // But allow landing page to be visible even if authenticated
   const isLoginPage = window.location.pathname === '/login';
   if (isLoginPage && user) {
-    return <Navigate to="/dashboard" replace />;
+    const pendingIntent = sessionStorage.getItem('createSessionIntent');
+    return <Navigate to={pendingIntent ? '/dashboard' : '/'} replace />;
   }
 
   // Show public layout (landing page should be visible to all)
