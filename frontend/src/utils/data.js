@@ -127,28 +127,59 @@ export const PHASE1_FEATURES = [
     },
 ];
 
-export const COMING_SOON_FEATURES = [
-    {
-        id: 'mock',
-        title: 'AI Mock Interview',
-        description: 'Live chat-based interview simulator with dynamic follow-ups.',
-    },
-    {
-        id: 'behavioral',
-        title: 'STAR Behavioral Eval',
-        description: 'Behavioral questions scored with STAR method feedback.',
-    },
+export const PHASE2_FEATURES = [
     {
         id: 'coding',
         title: 'Coding Round Simulator',
-        description: 'Monaco editor with AI code review and test cases.',
+        description:
+            'Practice in JavaScript with a Monaco editor, test cases, submissions, and draft autosave.',
+        cta: 'Start Coding Practice',
+        icon: 'coding',
+        badge: 'New',
+        gradient: 'from-slate-700 to-slate-900',
     },
+];
+
+export const PHASE3_FEATURES = [
+    {
+        id: 'behavioral',
+        title: 'STAR Behavioral Eval',
+        description:
+            'Practice behavioral questions and get AI feedback scored on Situation, Task, Action, and Result.',
+        cta: 'Start Behavioral Practice',
+        icon: 'behavioral',
+        badge: 'New',
+        gradient: 'from-indigo-600 to-purple-700',
+    },
+];
+
+export const PHASE4_FEATURES = [
+    {
+        id: 'mock-interview',
+        title: 'AI Mock Interview',
+        description:
+            'Live chat-based mock interviews with dynamic AI follow-ups, personalities, and detailed feedback reports.',
+        cta: 'Start Mock Interview',
+        icon: 'mock-interview',
+        badge: 'New',
+        gradient: 'from-violet-600 to-purple-700',
+    },
+];
+
+export const PHASE5_FEATURES = [
     {
         id: 'analytics',
         title: 'Weakness Analytics',
-        description: 'Track weak topics and get a personalized learning roadmap.',
+        description:
+            'Track weak topics, readiness scores, and get a personalized learning roadmap across all modules.',
+        cta: 'View Analytics',
+        icon: 'analytics',
+        badge: 'New',
+        gradient: 'from-cyan-500 to-indigo-600',
     },
 ];
+
+export const COMING_SOON_FEATURES = [];
 
 export const APP_FEATURES = [
     {

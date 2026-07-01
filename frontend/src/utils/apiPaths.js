@@ -45,6 +45,47 @@ export const API_PATHS = {
         PIN: (id) => `${BASE_URL}/api/questions/${id}/pin`,
         UPDATE_NOTE: (id) => `${BASE_URL}/api/questions/${id}/note`,
     },
+
+    CODING: {
+        LANGUAGES: `${BASE_URL}/api/coding/languages`,
+        RUNTIMES: `${BASE_URL}/api/coding/runtimes`,
+        PREFERENCES: `${BASE_URL}/api/coding/preferences`,
+        CHALLENGES: `${BASE_URL}/api/coding/challenges`,
+        CHALLENGE_BY_ID: (id) => `${BASE_URL}/api/coding/challenges/${id}`,
+        CHALLENGE_BY_SLUG: (slug) => `${BASE_URL}/api/coding/challenges/slug/${slug}`,
+        RUN: `${BASE_URL}/api/coding/run`,
+        SUBMIT: `${BASE_URL}/api/coding/submit`,
+        SUBMISSIONS: (challengeId) => `${BASE_URL}/api/coding/submissions/${challengeId}`,
+        GET_DRAFT: (challengeId) => `${BASE_URL}/api/coding/draft/${challengeId}`,
+        SAVE_DRAFT: (challengeId) => `${BASE_URL}/api/coding/draft/${challengeId}`,
+    },
+
+    BEHAVIORAL: {
+        QUESTIONS: `${BASE_URL}/api/behavioral/questions`,
+        QUESTION_BY_ID: (id) => `${BASE_URL}/api/behavioral/questions/${id}`,
+        SUBMIT: `${BASE_URL}/api/behavioral/submit`,
+        HISTORY: `${BASE_URL}/api/behavioral/history`,
+        STATS: `${BASE_URL}/api/behavioral/stats`,
+    },
+
+    MOCK_INTERVIEW: {
+        CONFIG: `${BASE_URL}/api/mock-interview/config`,
+        START: `${BASE_URL}/api/mock-interview/start`,
+        MESSAGE: `${BASE_URL}/api/mock-interview/message`,
+        END: `${BASE_URL}/api/mock-interview/end`,
+        SESSION: (id) => `${BASE_URL}/api/mock-interview/session/${id}`,
+        REPORT: (id) => `${BASE_URL}/api/mock-interview/report/${id}`,
+        HISTORY: `${BASE_URL}/api/mock-interview/history`,
+    },
+
+    ANALYTICS: {
+        DASHBOARD: `${BASE_URL}/api/analytics/dashboard`,
+        TOPICS: `${BASE_URL}/api/analytics/topics`,
+        ROADMAP: `${BASE_URL}/api/analytics/roadmap`,
+        RECOMMENDATIONS: `${BASE_URL}/api/analytics/recommendations`,
+        GOALS: `${BASE_URL}/api/analytics/goals`,
+        HISTORY: `${BASE_URL}/api/analytics/history`,
+    },
 };
 
 /** Supports legacy array responses and new { questions, meta } shape */

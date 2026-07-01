@@ -8,6 +8,10 @@ import {
   LuLayoutDashboard,
   LuUser,
   LuSparkles,
+  LuCode,
+  LuMessageSquare,
+  LuMic,
+  LuChartBar,
 } from 'react-icons/lu';
 
 const ProfileInfoCard = () => {
@@ -128,6 +132,62 @@ const ProfileInfoCard = () => {
                   <LuLayoutDashboard size={16} />
                 </span>
                 My Dashboard
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  setOpen(false);
+                  navigate('/coding');
+                }}
+                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-gray-700 hover:bg-orange-50 hover:text-orange-700 transition-colors group"
+              >
+                <span className="p-1.5 rounded-lg bg-gray-100 group-hover:bg-orange-100 transition-colors">
+                  <LuCode size={16} />
+                </span>
+                Coding Round
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  setOpen(false);
+                  navigate('/behavioral');
+                }}
+                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-700 transition-colors group"
+              >
+                <span className="p-1.5 rounded-lg bg-gray-100 group-hover:bg-indigo-100 transition-colors">
+                  <LuMessageSquare size={16} />
+                </span>
+                STAR Behavioral
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  setOpen(false);
+                  navigate('/mock-interview');
+                }}
+                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-gray-700 hover:bg-violet-50 hover:text-violet-700 transition-colors group"
+              >
+                <span className="p-1.5 rounded-lg bg-gray-100 group-hover:bg-violet-100 transition-colors">
+                  <LuMic size={16} />
+                </span>
+                Mock Interview
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  setOpen(false);
+                  navigate('/analytics');
+                }}
+                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-gray-700 hover:bg-cyan-50 hover:text-cyan-700 transition-colors group"
+              >
+                <span className="p-1.5 rounded-lg bg-gray-100 group-hover:bg-cyan-100 transition-colors">
+                  <LuChartBar size={16} />
+                </span>
+                Analytics
               </button>
 
               <button

@@ -58,6 +58,18 @@ const SignUp = ({ setCurrentPage, onSuccess }) => {
         
         if (onSuccess) {
           onSuccess();
+        } else if (sessionStorage.getItem("codingIntent")) {
+          sessionStorage.removeItem("codingIntent");
+          navigate("/coding", { replace: true });
+        } else if (sessionStorage.getItem("behavioralIntent")) {
+          sessionStorage.removeItem("behavioralIntent");
+          navigate("/behavioral", { replace: true });
+        } else if (sessionStorage.getItem("mockInterviewIntent")) {
+          sessionStorage.removeItem("mockInterviewIntent");
+          navigate("/mock-interview", { replace: true });
+        } else if (sessionStorage.getItem("analyticsIntent")) {
+          sessionStorage.removeItem("analyticsIntent");
+          navigate("/analytics", { replace: true });
         } else if (sessionStorage.getItem("createSessionIntent")) {
           navigate("/dashboard", { replace: true });
         } else {
@@ -69,6 +81,18 @@ const SignUp = ({ setCurrentPage, onSuccess }) => {
         
         if (onSuccess) {
           onSuccess();
+        } else if (sessionStorage.getItem("codingIntent")) {
+          sessionStorage.removeItem("codingIntent");
+          navigate("/coding", { replace: true });
+        } else if (sessionStorage.getItem("behavioralIntent")) {
+          sessionStorage.removeItem("behavioralIntent");
+          navigate("/behavioral", { replace: true });
+        } else if (sessionStorage.getItem("mockInterviewIntent")) {
+          sessionStorage.removeItem("mockInterviewIntent");
+          navigate("/mock-interview", { replace: true });
+        } else if (sessionStorage.getItem("analyticsIntent")) {
+          sessionStorage.removeItem("analyticsIntent");
+          navigate("/analytics", { replace: true });
         } else if (sessionStorage.getItem("createSessionIntent")) {
           navigate("/dashboard", { replace: true });
         } else {
