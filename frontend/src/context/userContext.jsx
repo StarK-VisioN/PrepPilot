@@ -18,9 +18,9 @@ const UserProvider = ({children}) => {
 
         const fetchUser = async() => {
             try {
-                console.log("🔄 Fetching user profile...");
+                // console.log("🔄 Fetching user profile...");
                 const response = await axiosInstance.get(API_PATHS.AUTH.GET_ME);
-                console.log("✅ User profile fetched:", response.data);
+                // console.log("✅ User profile fetched:", response.data);
                 
                 if (response.data && response.data.data) {
                     setUser(response.data.data);
@@ -39,7 +39,7 @@ const UserProvider = ({children}) => {
     }, []);
 
     const updateUser = (userData) => {
-        console.log("🔄 Updating user context:", userData);
+        // console.log("🔄 Updating user context:", userData);
         
         if (userData.data) {
             setUser(userData.data);
