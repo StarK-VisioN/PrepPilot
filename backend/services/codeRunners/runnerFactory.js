@@ -19,7 +19,7 @@ function getRunner(language) {
 
     if (providerId !== "local-js") {
         throw new Error(
-            `BUG: runnerFactory.getRunner("${normalized}") resolved to "${providerId}" — use piston provider directly`
+            `BUG: runnerFactory.getRunner("${normalized}") resolved to unsupported provider "${providerId}"`
         );
     }
 

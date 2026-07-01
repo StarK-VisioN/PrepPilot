@@ -20,7 +20,7 @@ Interview Prep AI is a full-stack, AI-powered interview preparation platform. It
 ### Phase 2 — Coding Round Simulator
 - **50+ coding challenges** (easy / medium / hard) with Monaco editor
 - **Run Code** on visible test cases; **Submit** against hidden, edge, and stress tests
-- **JavaScript execution** (local runner or Piston API)
+- **JavaScript execution** via local Node.js runner
 - **Draft autosave** via Redis
 - Submission history and results per challenge
 
@@ -58,7 +58,7 @@ Interview Prep AI is a full-stack, AI-powered interview preparation platform. It
 | **Frontend** | React 19, Vite, Tailwind CSS 4, React Router, Axios, Monaco Editor, Recharts, React Toastify, React Icons |
 | **Backend** | Node.js, Express 5, MongoDB (Mongoose), Groq SDK, Upstash Redis, JWT, bcryptjs, Multer |
 | **Document parsing** | pdf-parse, mammoth (PDF/DOCX for JD & resume) |
-| **Code execution** | Local JavaScript runner, Piston API (optional) |
+| **Code execution** | Local JavaScript runner (Node.js child process) |
 | **Deployment** | Vercel (frontend + backend), MongoDB Atlas, Upstash Redis |
 
 ---
@@ -134,9 +134,6 @@ cd ../frontend && npm install
 | `MOCK_INTERVIEW_DAILY_LIMIT` | Mock interviews per day (default: `5`) |
 | `MOCK_INTERVIEW_MSG_PER_MIN` | Mock interview messages per minute (default: `15`) |
 | `GENERATE_AI_TEST_CASES` | `true` to enrich coding seeds with Groq-generated tests |
-| `CODE_EXECUTION_PROVIDER` | `local-js` or `piston` (optional override) |
-| `LOCAL_JS_RUNNER_ENABLED` | Set `false` to force Piston for JavaScript |
-| `PISTON_API_URL` | Piston API URL (default: emkc.org) |
 
 **Frontend (`frontend/.env`)**
 
