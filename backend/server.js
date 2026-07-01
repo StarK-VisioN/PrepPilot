@@ -34,6 +34,7 @@ const behavioralRoutes = require("./routes/behavioralRoutes");
 const mockInterviewRoutes = require("./routes/mockInterviewRoutes");
 const analyticsRoutes = require("./routes/analyticsRoutes");
 const debugRoutes = require("./routes/debugRoutes");
+const { getPublicConfig } = require("./controllers/configController");
 const { protect } = require("./middlewares/authMiddleware");
 const aiRateLimitMiddleware = require("./middlewares/aiRateLimitMiddleware");
 const aiController = require("./controllers/aiController");
@@ -136,6 +137,7 @@ app.get('/health', (req, res) => {
 });
 
 console.log("Setting up routes...");
+app.get("/api/config/public", getPublicConfig);
 app.use("/api/auth", authRoutes);
 app.use("/api/sessions", sessionRoutes);
 app.use("/api/questions", questionRoutes);

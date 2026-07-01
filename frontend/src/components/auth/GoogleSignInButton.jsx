@@ -3,6 +3,7 @@ import { GoogleLogin } from "@react-oauth/google";
 import axiosInstance from "../../utils/axiosInstance";
 import { API_PATHS } from "../../utils/apiPaths";
 import { UserContext } from "../../context/userContext";
+import { useAppConfig } from "../../context/appConfigContext";
 import { useNavigate } from "react-router-dom";
 import { handlePostAuthRedirect } from "../../utils/authRedirect";
 
@@ -14,11 +15,10 @@ const GoogleSignInButton = ({
     className = "",
 }) => {
     const { updateUser } = useContext(UserContext);
+    const { googleClientId } = useAppConfig();
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
-
-    const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 
     const handleGoogleSuccess = async (credentialResponse) => {
         const credential = credentialResponse?.credential;

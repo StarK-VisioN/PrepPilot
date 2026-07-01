@@ -21,13 +21,12 @@ import ProfileSettings from "./pages/settings/ProfileSettings";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import UserProvider from "./context/userContext";
+import AppConfigProvider, { useAppConfig } from "./context/appConfigContext";
 import PublicLayout from "./components/PublicLayout";
 import DashboardLayout from "./components/DashboardLayout";
 
-function App() {
-  const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
-
-  const appContent = (
+function AppRoutes() {
+  return (
     <>
       <ToastContainer
         position="top-right"
@@ -35,14 +34,12 @@ function App() {
       />
 
       <Routes>
-        {/* Public Routes - Landing Page accessible to all */}
         <Route element={<PublicLayout />}>
           <Route path="/" element={<LandingPage />} />
           <Route path="/login" element={<Login />} />
           <Route path="/auth/google/callback" element={<GoogleCallback />} />
         </Route>
 
-        {/* Protected Dashboard Routes */}
         <Route element={<DashboardLayout />}>
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/settings/profile" element={<ProfileSettings />} />
@@ -61,22 +58,43 @@ function App() {
           <Route path="/interview-prep/:sessionId" element={<InterviewPrep />} />
         </Route>
 
-        {/* Redirect any unknown routes to HOME PAGE */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </>
   );
+}
+
+function AppShell() {
+  const { googleClientId, loading } = useAppConfig();
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-white">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-500" />
+      </div>
+    );
+  }
+
+  const routes = <AppRoutes />;
 
   return (
     <UserProvider>
       {googleClientId ? (
         <GoogleOAuthProvider clientId={googleClientId}>
-          {appContent}
+          {routes}
         </GoogleOAuthProvider>
       ) : (
-        appContent
+        routes
       )}
     </UserProvider>
+  );
+}
+
+function App() {
+  return (
+    <AppConfigProvider>
+      <AppShell />
+    </AppConfigProvider>
   );
 }
 

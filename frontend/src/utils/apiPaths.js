@@ -13,6 +13,10 @@ export const API_PATHS = {
         GET_ME: `${BASE_URL}/api/auth/me`,
     },
 
+    CONFIG: {
+        PUBLIC: `${BASE_URL}/api/config/public`,
+    },
+
     IMAGE: {
         UPLOAD_IMAGE: `${BASE_URL}/api/auth/upload-image`,
     },

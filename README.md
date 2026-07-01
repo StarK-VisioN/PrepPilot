@@ -48,7 +48,7 @@ Interview Prep AI is a full-stack, AI-powered interview preparation platform. It
 > **Note:** Phase 1 also supports resume/JD upload for question generation via `/api/documents`. Phase 5 resume upload (`/api/analytics/resume/upload`) is separate — it stores analysis in MongoDB and powers the analytics dashboard.
 
 ### Platform
-- JWT authentication with bcrypt password hashing
+- JWT authentication with bcrypt password hashing and **Google OAuth sign-in**
 - Responsive React UI (landing page, dashboard, module-specific layouts)
 - Groq API for generation and evaluation
 - Upstash Redis for caching, rate limits, and drafts (optional)
@@ -72,7 +72,8 @@ Interview Prep AI is a full-stack, AI-powered interview preparation platform. It
 | Route | Description |
 |-------|-------------|
 | `/` | Landing page |
-| `/login` | Sign in |
+| `/login` | Sign in (email/password or Google) |
+| `/settings/profile` | Profile settings and connected accounts |
 | `/dashboard` | Main hub — prep sessions + module navigation |
 | `/interview-prep/:sessionId` | Q&A practice session |
 | `/coding` | Coding challenge list |
@@ -92,7 +93,7 @@ Interview Prep AI is a full-stack, AI-powered interview preparation platform. It
 
 | Prefix | Purpose |
 |--------|---------|
-| `/api/auth` | Register, login, profile |
+| `/api/auth` | Register, login, Google OAuth, profile, logout |
 | `/api/sessions` | Q&A prep sessions |
 | `/api/questions` | Question generation & management |
 | `/api/documents` | JD/resume upload & parsing |
@@ -140,6 +141,9 @@ cd ../frontend && npm install
 |----------|-------------|
 | `MONGO_URL` | MongoDB connection string |
 | `JWT_SECRET` | JWT signing secret |
+| `GOOGLE_CLIENT_ID` | Google OAuth client ID (Web application) |
+| `GOOGLE_CLIENT_SECRET` | Google OAuth client secret (optional for ID-token flow; required for redirect flow) |
+| `GOOGLE_CALLBACK_URL` | OAuth redirect URI (e.g. `https://your-api.vercel.app/api/auth/google/callback`) |
 | `GROQ_API_KEY` | Groq API key |
 | `FRONTEND_URL` | Frontend origin for CORS (e.g. `http://localhost:5173`) |
 | `UPSTASH_REDIS_REST_URL` | Upstash Redis URL (optional) |
@@ -154,6 +158,7 @@ cd ../frontend && npm install
 | Variable | Description |
 |----------|-------------|
 | `VITE_APP_BACKEND_URL` | Backend URL (e.g. `http://localhost:8000`) |
+| `VITE_GOOGLE_CLIENT_ID` | Google OAuth client ID (same as backend `GOOGLE_CLIENT_ID`) |
 
 Redis is optional. If Upstash vars are missing, the app runs without cache/rate limiting.
 
@@ -236,7 +241,12 @@ Interview Prep AI/
 | Database | MongoDB Atlas |
 | Cache | Upstash Redis |
 
-Set `FRONTEND_URL` and `VITE_APP_BACKEND_URL` to your production URLs.
+Set `FRONTEND_URL` and `VITE_APP_BACKEND_URL` to your production URLs. Configure Google OAuth in [Google Cloud Console](https://console.cloud.google.com/):
+
+1. Create OAuth 2.0 credentials (Web application).
+2. **Authorized JavaScript origins:** your frontend URL (e.g. `https://prep-pilot-sssb.vercel.app`).
+3. **Authorized redirect URIs:** `https://your-backend.vercel.app/api/auth/google/callback` (if using redirect flow).
+4. Set `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `GOOGLE_CALLBACK_URL`, and `VITE_GOOGLE_CLIENT_ID` in Vercel env vars.
 
 ---
 
