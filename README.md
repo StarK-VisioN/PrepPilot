@@ -1,32 +1,234 @@
-# **Interview Prep AI**
+# Interview Prep AI
 
-Interview Prep AI is a modern, AI-powered web platform designed to help candidates master technical and HR interviews through personalized practice sessions, intelligent question generation, and progress tracking.
+Interview Prep AI is a full-stack, AI-powered interview preparation platform. It helps candidates practice across **technical Q&A**, **coding rounds**, **behavioral (STAR) interviews**, **live mock interviews**, and **performance analytics** — all personalized to their role, resume, job description, and company style.
 
-Whether you’re a fresh graduate or an experienced professional preparing for your next career move, this platform equips you with the right tools to practice smarter, not harder.
+🌐 **Live Demo:** [prep-pilot-sssb.vercel.app](https://prep-pilot-sssb.vercel.app/)
 
-With Google Generative AI integration, it can instantly generate relevant interview questions, provide clear explanations, and help you focus on the areas you need to improve the most.
+---
 
-Featuring a responsive and intuitive UI, secure JWT authentication, Interview Prep ensures a smooth and personalized experience across devices.
+## Features
 
-It’s your all-in-one solution for interview readiness — from technical quizzes and behavioral questions to tracking your preparation progress in real time.
+### Phase 1 — Personalized Q&A Prep
+- **Job Description Prep** — Paste or upload a JD; AI extracts skills and generates tailored questions
+- **Resume-Based Prep** — Upload resume (PDF/DOCX); questions based on your actual stack
+- **Resume + JD Matching** — Combined prep from both sources
+- **Company-Specific Style** — Practice for Google, Amazon, Microsoft, Netflix, Uber, startup, and more
+- **Manual Role Prep** — Pick role, experience, and focus topics
+- **Session Management** — Create, organize, pin, and delete prep sessions
+- **Concept Deep Dives** — “Learn More” AI explanations on any question
 
-🌐 Live Demo
-🔗 [Click here to visit the live app](https://prep-pilot-sssb.vercel.app/)
+### Phase 2 — Coding Round Simulator
+- **50+ coding challenges** (easy / medium / hard) with Monaco editor
+- **Run Code** on visible test cases; **Submit** against hidden, edge, and stress tests
+- **JavaScript execution** (local runner or Piston API)
+- **Draft autosave** via Redis
+- Submission history and results per challenge
 
+### Phase 3 — STAR Behavioral Evaluation
+- **108 behavioral questions** across **12 categories** (Leadership, Conflict, Teamwork, etc.)
+- AI evaluation scored on **Situation, Task, Action, Result**
+- Practice history and improvement suggestions
 
-## 🚀 **Features**
+### Phase 4 — AI Mock Interview Simulator
+- Live chat-based mock interviews with **dynamic AI follow-ups**
+- Multiple interviewer personalities and session types
+- JD/resume-aware interviews
+- Detailed **feedback reports** and session history
+- Rate limiting for fair API usage
 
-* **User Authentication** – Register, log in, and manage your profile with JWT-based authentication.
-* **AI-Powered Question Generation** – Get tailored interview questions using Google Generative AI.
-* **Session Management** – Create, view, and delete interview practice sessions.
-* **Responsive Design** – Optimized for desktop and mobile both.
+### Phase 5 — Weakness Analytics
+- Cross-module analytics dashboard (Q&A, coding, behavioral, mock interview)
+- **Readiness score**, weak topic detection, and skill charts
+- AI-generated **learning roadmap** and recommendations
+- Custom learning goals
+- Redis-cached dashboard with cache invalidation on new activity
 
+### Platform
+- JWT authentication with bcrypt password hashing
+- Responsive React UI (landing page, dashboard, module-specific layouts)
+- Groq API for generation and evaluation
+- Upstash Redis for caching, rate limits, and drafts (optional)
 
-## 🛠 **Tech Stack**
+---
 
-| **Layer**      | **Technologies**                                                                                                                                  |
-| -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Frontend**   | React, Tailwind CSS, Axios, React Router DOM, React Toastify, React Icons                                                                         |
-| **Backend**    | Node.js, Express.js, MongoDB Atlas, Multer (file upload handling), CORS, BcryptJS, JSON Web Token (JWT), @google/genai (Google Generative AI API) |
-| **Deployment** | **Frontend:** Vercel <br> **Backend:** Vercel <br> **Database:** MongoDB Atlas                                                                    |
+## Tech Stack
 
+| Layer | Technologies |
+|-------|----------------|
+| **Frontend** | React 19, Vite, Tailwind CSS 4, React Router, Axios, Monaco Editor, Recharts, React Toastify, React Icons |
+| **Backend** | Node.js, Express 5, MongoDB (Mongoose), Groq SDK, Upstash Redis, JWT, bcryptjs, Multer |
+| **Document parsing** | pdf-parse, mammoth (PDF/DOCX for JD & resume) |
+| **Code execution** | Local JavaScript runner, Piston API (optional) |
+| **Deployment** | Vercel (frontend + backend), MongoDB Atlas, Upstash Redis |
+
+---
+
+## App Routes
+
+| Route | Description |
+|-------|-------------|
+| `/` | Landing page |
+| `/login` | Sign in |
+| `/dashboard` | Main hub — prep sessions + module navigation |
+| `/interview-prep/:sessionId` | Q&A practice session |
+| `/coding` | Coding challenge list |
+| `/coding/:slug` | Individual coding challenge |
+| `/behavioral` | Behavioral question browser |
+| `/behavioral/:questionId` | STAR practice page |
+| `/behavioral/history` | Behavioral submission history |
+| `/mock-interview` | Start mock interview |
+| `/mock-interview/session/:sessionId` | Live interview chat |
+| `/mock-interview/report/:sessionId` | Interview report |
+| `/mock-interview/history` | Past mock interviews |
+| `/analytics` | Weakness analytics dashboard |
+
+---
+
+## API Overview
+
+| Prefix | Purpose |
+|--------|---------|
+| `/api/auth` | Register, login, profile |
+| `/api/sessions` | Q&A prep sessions |
+| `/api/questions` | Question generation & management |
+| `/api/documents` | JD/resume upload & parsing |
+| `/api/companies` | Company interview styles |
+| `/api/coding` | Challenges, run, submit, drafts |
+| `/api/behavioral` | Behavioral questions & STAR evaluation |
+| `/api/mock-interview` | Mock interview sessions & reports |
+| `/api/analytics` | Dashboard, roadmap, recommendations, goals |
+
+---
+
+## Getting Started
+
+### Prerequisites
+- Node.js 18+
+- MongoDB Atlas (or local MongoDB)
+- Groq API key
+- Upstash Redis (optional but recommended)
+
+### 1. Clone & install
+
+```bash
+git clone <your-repo-url>
+cd "Interview Prep AI"
+
+cd backend && npm install
+cd ../frontend && npm install
+```
+
+### 2. Environment variables
+
+**Backend (`backend/.env`)**
+
+| Variable | Description |
+|----------|-------------|
+| `MONGO_URL` | MongoDB connection string |
+| `JWT_SECRET` | JWT signing secret |
+| `GROQ_API_KEY` | Groq API key |
+| `FRONTEND_URL` | Frontend origin for CORS (e.g. `http://localhost:5173`) |
+| `UPSTASH_REDIS_REST_URL` | Upstash Redis URL (optional) |
+| `UPSTASH_REDIS_REST_TOKEN` | Upstash Redis token (optional) |
+| `AI_DAILY_LIMIT` | Max AI requests per user per day (default: `20`) |
+| `MOCK_INTERVIEW_DAILY_LIMIT` | Mock interviews per day (default: `5`) |
+| `MOCK_INTERVIEW_MSG_PER_MIN` | Mock interview messages per minute (default: `15`) |
+| `GENERATE_AI_TEST_CASES` | `true` to enrich coding seeds with Groq-generated tests |
+| `CODE_EXECUTION_PROVIDER` | `local-js` or `piston` (optional override) |
+| `LOCAL_JS_RUNNER_ENABLED` | Set `false` to force Piston for JavaScript |
+| `PISTON_API_URL` | Piston API URL (default: emkc.org) |
+
+**Frontend (`frontend/.env`)**
+
+| Variable | Description |
+|----------|-------------|
+| `VITE_APP_BACKEND_URL` | Backend URL (e.g. `http://localhost:8000`) |
+
+Redis is optional. If Upstash vars are missing, the app runs without cache/rate limiting.
+
+### 3. Seed the database
+
+```bash
+cd backend
+
+# Coding challenges (50 problems)
+node scripts/seedCodingChallenges.js
+
+# Behavioral questions (108 questions)
+node scripts/seedBehavioralQuestions.js
+```
+
+### 4. Run locally
+
+```bash
+# Terminal 1 — backend
+cd backend
+npm run dev
+
+# Terminal 2 — frontend
+cd frontend
+npm run dev
+```
+
+Open `http://localhost:5173`
+
+> **Note:** After adding new backend routes, restart the server. An old process on port 8000 may serve stale routes and return 404s.
+
+---
+
+## Coding Challenge Test Cases
+
+Each challenge stores test cases in MongoDB:
+
+| Field | Description |
+|-------|-------------|
+| `input` | JSON array of function arguments |
+| `expected` | Expected return value |
+| `type` | `visible`, `hidden`, `edge`, or `stress` |
+| `isHidden` | Hides expected output from client |
+| `explanation` | Why the case exists |
+| `label` | Short display label |
+
+- **Run Code** — visible examples only
+- **Submit** — all tests (hidden show pass/fail only)
+
+When seeding with `GENERATE_AI_TEST_CASES=true`, Groq can generate extra hidden/edge/stress cases. Seeding continues with manual cases if Groq fails.
+
+---
+
+## Project Structure
+
+```
+Interview Prep AI/
+├── backend/
+│   ├── controllers/     # Route handlers
+│   ├── models/          # Mongoose schemas
+│   ├── routes/          # Express routes
+│   ├── services/        # AI, analytics, code execution, caching
+│   ├── data/            # Coding & behavioral question datasets
+│   └── scripts/         # Seed & test scripts
+├── frontend/
+│   └── src/
+│       ├── pages/       # Landing, dashboard, coding, behavioral, mock interview, analytics
+│       ├── components/  # Shared UI
+│       └── context/     # Auth state
+```
+
+---
+
+## Deployment
+
+| Service | Platform |
+|---------|----------|
+| Frontend | Vercel |
+| Backend | Vercel |
+| Database | MongoDB Atlas |
+| Cache | Upstash Redis |
+
+Set `FRONTEND_URL` and `VITE_APP_BACKEND_URL` to your production URLs.
+
+---
+
+## License
+
+ISC
