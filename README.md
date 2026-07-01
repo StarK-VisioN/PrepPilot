@@ -36,12 +36,16 @@ Interview Prep AI is a full-stack, AI-powered interview preparation platform. It
 - Detailed **feedback reports** and session history
 - Rate limiting for fair API usage
 
-### Phase 5 — Weakness Analytics
-- Cross-module analytics dashboard (Q&A, coding, behavioral, mock interview)
-- **Readiness score**, weak topic detection, and skill charts
-- AI-generated **learning roadmap** and recommendations
-- Custom learning goals
-- Redis-cached dashboard with cache invalidation on new activity
+### Phase 5 — Weakness Analytics & ATS Resume Analyzer
+- **Resume-first analytics** — Upload a PDF resume to anchor weakness insights before platform activity builds up
+- **ATS resume analysis** (Groq) — ATS score, strengths, weaknesses, missing skills, keyword match, formatting feedback, role fit, and improvement suggestions
+- **Personalized learning roadmap** — AI-generated 4-week plan from resume gaps, weak topics, and target role
+- Cross-module readiness scoring from **Q&A, coding, behavioral, and mock interview** data
+- Combined weakness insights when both resume analysis and platform activity exist
+- **Analytics dashboard** (`/analytics`) — resume ATS analysis, interview readiness, activity totals, weekly improvement chart, skill radar, learning roadmap, and AI recommendations
+- Redis-cached dashboard and resume analysis (`resume:analysis:{userId}`, 24h TTL) with cache invalidation on new activity or resume upload
+
+> **Note:** Phase 1 also supports resume/JD upload for question generation via `/api/documents`. Phase 5 resume upload (`/api/analytics/resume/upload`) is separate — it stores analysis in MongoDB and powers the analytics dashboard.
 
 ### Platform
 - JWT authentication with bcrypt password hashing
@@ -80,7 +84,7 @@ Interview Prep AI is a full-stack, AI-powered interview preparation platform. It
 | `/mock-interview/session/:sessionId` | Live interview chat |
 | `/mock-interview/report/:sessionId` | Interview report |
 | `/mock-interview/history` | Past mock interviews |
-| `/analytics` | Weakness analytics dashboard |
+| `/analytics` | Weakness analytics & ATS resume analyzer dashboard |
 
 ---
 
@@ -96,7 +100,17 @@ Interview Prep AI is a full-stack, AI-powered interview preparation platform. It
 | `/api/coding` | Challenges, run, submit, drafts |
 | `/api/behavioral` | Behavioral questions & STAR evaluation |
 | `/api/mock-interview` | Mock interview sessions & reports |
-| `/api/analytics` | Dashboard, roadmap, recommendations, goals |
+| `/api/analytics` | Dashboard, roadmap, recommendations, topic history |
+| `/api/analytics/resume` | Resume upload (PDF), latest analysis, history, delete |
+
+**Resume analytics endpoints**
+
+| Method | Path | Description |
+|--------|------|-------------|
+| `POST` | `/api/analytics/resume/upload` | Upload PDF resume → extract text → AI analysis |
+| `GET` | `/api/analytics/resume/latest` | Latest resume analysis for the user |
+| `GET` | `/api/analytics/resume/history` | Past resume analyses (metadata only) |
+| `DELETE` | `/api/analytics/resume/:id` | Delete a resume analysis record |
 
 ---
 
@@ -199,9 +213,9 @@ When seeding with `GENERATE_AI_TEST_CASES=true`, Groq can generate extra hidden/
 Interview Prep AI/
 ├── backend/
 │   ├── controllers/     # Route handlers
-│   ├── models/          # Mongoose schemas
+│   ├── models/          # Mongoose schemas (incl. ResumeAnalysis, UserTopicAnalytics)
 │   ├── routes/          # Express routes
-│   ├── services/        # AI, analytics, code execution, caching
+│   ├── services/        # AI, analytics, resume analysis, code execution, caching
 │   ├── data/            # Coding & behavioral question datasets
 │   └── scripts/         # Seed & test scripts
 ├── frontend/

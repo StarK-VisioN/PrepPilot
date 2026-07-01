@@ -2,6 +2,10 @@ const { recalculateUserAnalytics } = require("./analyticsCollectorService");
 const { generateRoadmap } = require("./analyticsRoadmapService");
 const { generateRecommendations } = require("./analyticsRecommendationService");
 const {
+    getLatestResumeAnalysis,
+    mergeWeaknessInsights,
+} = require("./resumeAnalysisService");
+const {
     invalidateAnalyticsCache,
     setCachedDashboard,
     setCachedRoadmap,
@@ -22,11 +26,15 @@ const UserLearningGoal = require("../models/UserLearningGoal");
 const pendingRefreshes = new Set();
 
 async function buildFullAnalytics(userId) {
-    const { topics, summary } = await recalculateUserAnalytics(userId);
-    const goals = await UserLearningGoal.findOne({ user: userId });
+    const [{ topics, summary }, resumeAnalysis, goals] = await Promise.all([
+        recalculateUserAnalytics(userId),
+        getLatestResumeAnalysis(userId),
+        UserLearningGoal.findOne({ user: userId }),
+    ]);
     const scores = buildScoreBreakdown(topics, summary);
     const weakTopics = getWeakTopics(topics);
     const strongTopics = getStrongTopics(topics);
+    const weaknessInsights = mergeWeaknessInsights({ resumeAnalysis, weakTopics, summary });
 
     const dashboard = {
         overallReadiness: scores.overallReadiness,
@@ -51,19 +59,24 @@ async function buildFullAnalytics(userId) {
         radarData: buildRadarData(scores),
         weakTopics,
         strongTopics,
+        combinedWeakTopics: weaknessInsights.combinedWeakTopics,
+        weaknessFoundation: weaknessInsights.foundation,
+        resumeAnalysis: resumeAnalysis || null,
         consistencyScore: Math.round(
             topics.filter((t) => t.attempts >= 2).length / Math.max(topics.length, 1) * 100
         ),
         generatedAt: new Date().toISOString(),
     };
 
-    const roadmap = await generateRoadmap(userId, topics, goals);
+    const roadmap = await generateRoadmap(userId, topics, goals, resumeAnalysis, weaknessInsights);
     const recommendations = await generateRecommendations({
         scores,
-        weakTopics,
+        weakTopics: weaknessInsights.combinedWeakTopics,
         strongTopics,
         goals,
         summary,
+        resumeAnalysis,
+        weaknessFoundation: weaknessInsights.foundation,
     });
 
     await Promise.all([

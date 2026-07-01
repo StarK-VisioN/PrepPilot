@@ -1,10 +1,26 @@
 const { callAIWithRetry, cleanAndParseAIResponse } = require("./aiService");
 const { buildRecommendationsPrompt } = require("../utils/prompts/analytics");
 
-function buildRuleBasedRecommendations({ scores, weakTopics, summary }) {
+function buildRuleBasedRecommendations({ scores, weakTopics, summary, resumeAnalysis, weaknessFoundation }) {
     const nextSteps = [];
     const studyRecommendations = [];
     const nextTopics = weakTopics.slice(0, 5).map((t) => t.topic);
+
+    if (resumeAnalysis?.analysisStatus === "complete") {
+        if (resumeAnalysis.missingSkills?.length) {
+            studyRecommendations.push(
+                `Address resume gaps: ${resumeAnalysis.missingSkills.slice(0, 3).join(", ")}`
+            );
+        }
+        if (resumeAnalysis.improvementSuggestions?.length) {
+            nextSteps.push(resumeAnalysis.improvementSuggestions[0]);
+        }
+        if (weaknessFoundation === "resume") {
+            nextSteps.push("Upload complete — start with resume-recommended topics below");
+        }
+    } else if (resumeAnalysis?.analysisStatus === "text_only") {
+        nextSteps.push("Resume saved — AI analysis will be available when the service recovers");
+    }
 
     if ((summary.coding?.challengesSolved || 0) < 5) {
         nextSteps.push("Solve 5 Array coding challenges");

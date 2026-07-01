@@ -85,6 +85,10 @@ export const API_PATHS = {
         RECOMMENDATIONS: `${BASE_URL}/api/analytics/recommendations`,
         GOALS: `${BASE_URL}/api/analytics/goals`,
         HISTORY: `${BASE_URL}/api/analytics/history`,
+        RESUME_UPLOAD: `${BASE_URL}/api/analytics/resume/upload`,
+        RESUME_LATEST: `${BASE_URL}/api/analytics/resume/latest`,
+        RESUME_HISTORY: `${BASE_URL}/api/analytics/resume/history`,
+        RESUME_DELETE: (id) => `${BASE_URL}/api/analytics/resume/${id}`,
     },
 };
 

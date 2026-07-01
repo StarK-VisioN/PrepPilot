@@ -30,10 +30,19 @@ function weaknessLevel(weakScore) {
     return "low";
 }
 
-async function generateRoadmap(userId, topics, goals = null) {
+async function generateRoadmap(userId, topics, goals = null, resumeAnalysis = null, weaknessInsights = null) {
     const userGoals =
         goals || (await UserLearningGoal.findOne({ user: userId })) || {};
     const companyTopics = getCompanyPriorities(userGoals.targetCompany);
+    const foundation = weaknessInsights?.foundation || "activity";
+    const hasResumeRoadmap =
+        resumeAnalysis?.learningRoadmap?.length > 0 && resumeAnalysis.analysisStatus === "complete";
+
+    const resumeTopicNames = [
+        ...(resumeAnalysis?.missingSkills || []),
+        ...(resumeAnalysis?.recommendedTopics || []),
+        ...(resumeAnalysis?.weaknesses || []),
+    ];
 
     const weakSorted = [...topics]
         .filter((t) => t.attempts > 0)
@@ -45,7 +54,12 @@ async function generateRoadmap(userId, topics, goals = null) {
 
     const weakTopicNames = weakSorted.map((t) => t.topic);
     const allRoadmapTopics = [
-        ...new Set([...companyTopics, ...weakTopicNames, ...ROADMAP_WEEKS.flatMap((w) => w.topics)]),
+        ...new Set([
+            ...companyTopics,
+            ...resumeTopicNames,
+            ...weakTopicNames,
+            ...ROADMAP_WEEKS.flatMap((w) => w.topics),
+        ]),
     ].slice(0, 16);
 
     const level = userGoals.skillLevel || "Intermediate";
@@ -99,12 +113,42 @@ async function generateRoadmap(userId, topics, goals = null) {
         };
     });
 
+    let resumeRoadmapWeeks = null;
+    if (hasResumeRoadmap && (foundation === "resume" || foundation === "combined")) {
+        resumeRoadmapWeeks = resumeAnalysis.learningRoadmap.map((week, idx) => ({
+            week: idx + 1,
+            label: week.week || `Week ${idx + 1}`,
+            focus: week.focus || week.topics?.join(", ") || "",
+            topics: (week.topics || []).map((topic) => ({
+                topic,
+                weaknessLevel: "medium",
+                estimatedTime: estimateTime("medium"),
+                priority: resumeTopicNames.includes(topic) ? "high" : "medium",
+                recommendedResources: week.tasks?.slice(0, 2) || [`Study ${topic}`],
+                recommendedQuestions: week.tasks?.slice(2, 4) || [`Practice ${topic} interview questions`],
+                milestones: week.tasks?.slice(0, 2) || [`Complete ${topic} exercises`],
+                currentScore: null,
+                attempts: 0,
+                fromResume: true,
+            })),
+            tasks: week.tasks || [],
+            fromResume: true,
+        }));
+    }
+
+  const displayWeeks =
+        foundation === "resume" && resumeRoadmapWeeks?.length ? resumeRoadmapWeeks : weeks;
+
     return {
         skillLevel: level,
         targetCompany: userGoals.targetCompany || "",
         targetRole: userGoals.targetRole || "Software Engineer",
         targetInterviewDate: userGoals.targetInterviewDate || null,
-        weeks,
+        weeks: displayWeeks,
+        activityWeeks: weeks,
+        resumeRoadmap: resumeRoadmapWeeks,
+        foundation,
+        resumeStrengths: resumeAnalysis?.strengths || [],
         prioritizedTopics: allRoadmapTopics.slice(0, 10),
         generatedAt: new Date().toISOString(),
     };

@@ -1,8 +1,20 @@
 const express = require("express");
 const { protect } = require("../middlewares/authMiddleware");
+const documentUpload = require("../middlewares/documentUploadMiddleware");
 const analyticsController = require("../controllers/analyticsController");
+const resumeAnalyticsController = require("../controllers/resumeAnalyticsController");
 
 const router = express.Router();
+
+router.post(
+    "/resume/upload",
+    protect,
+    documentUpload.single("file"),
+    resumeAnalyticsController.uploadResume
+);
+router.get("/resume/latest", protect, resumeAnalyticsController.getLatestResume);
+router.get("/resume/history", protect, resumeAnalyticsController.getResumeHistory);
+router.delete("/resume/:id", protect, resumeAnalyticsController.deleteResume);
 
 router.get("/dashboard", protect, analyticsController.getDashboard);
 router.get("/topics", protect, analyticsController.getTopics);
