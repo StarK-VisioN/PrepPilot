@@ -12,7 +12,9 @@ import {
   LuMessageSquare,
   LuMic,
   LuChartBar,
+  LuSettings,
 } from 'react-icons/lu';
+import { AUTH_PROVIDERS } from '../constants/authProviders';
 
 const ProfileInfoCard = () => {
   const { user, clearUser } = useContext(UserContext);
@@ -37,9 +39,9 @@ const ProfileInfoCard = () => {
     };
   }, []);
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     setOpen(false);
-    clearUser();
+    await clearUser();
     toast.success('Successfully logged out!');
     navigate('/', { replace: true });
   };
@@ -53,6 +55,7 @@ const ProfileInfoCard = () => {
 
   const initials = user?.name?.charAt(0)?.toUpperCase() || 'U';
   const firstName = user?.name?.split(' ')[0] || 'User';
+  const isGoogleUser = user?.provider === AUTH_PROVIDERS.GOOGLE || Boolean(user?.googleId);
 
   return (
     <div className="relative" ref={menuRef}>
@@ -85,7 +88,7 @@ const ProfileInfoCard = () => {
           </p>
           <p className="text-[10px] text-gray-500 leading-tight flex items-center gap-0.5">
             <LuSparkles size={9} className="text-orange-500" />
-            Prep member
+            {isGoogleUser ? 'Google member' : 'Prep member'}
           </p>
         </div>
 
@@ -188,6 +191,20 @@ const ProfileInfoCard = () => {
                   <LuChartBar size={16} />
                 </span>
                 Analytics
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  setOpen(false);
+                  navigate('/settings/profile');
+                }}
+                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-gray-700 hover:bg-gray-50 transition-colors group"
+              >
+                <span className="p-1.5 rounded-lg bg-gray-100 group-hover:bg-gray-200 transition-colors">
+                  <LuSettings size={16} />
+                </span>
+                Profile Settings
               </button>
 
               <button

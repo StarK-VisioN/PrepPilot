@@ -1,7 +1,9 @@
 import React from "react";
+import { GoogleOAuthProvider } from "@react-oauth/google";
 import { Route, Routes, Navigate } from "react-router-dom";
 import LandingPage from "./pages/LandingPage";
 import Login from "./pages/Auth/Login";
+import GoogleCallback from "./pages/Auth/GoogleCallback";
 import Dashboard from "./pages/Home/Dashboard";
 import InterviewPrep from "./pages/interviewPrep/InterviewPrep";
 import CodingList from "./pages/coding/CodingList";
@@ -15,6 +17,7 @@ import MockInterviewSessionPage from "./pages/mockInterview/MockInterviewSession
 import MockInterviewReportPage from "./pages/mockInterview/MockInterviewReportPage";
 import MockInterviewHistoryPage from "./pages/mockInterview/MockInterviewHistoryPage";
 import AnalyticsDashboard from "./pages/analytics/AnalyticsDashboard";
+import ProfileSettings from "./pages/settings/ProfileSettings";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import UserProvider from "./context/userContext";
@@ -22,8 +25,10 @@ import PublicLayout from "./components/PublicLayout";
 import DashboardLayout from "./components/DashboardLayout";
 
 function App() {
-  return (
-    <UserProvider>
+  const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+
+  const appContent = (
+    <>
       <ToastContainer
         position="top-right"
         style={{ top: '4.5rem', zIndex: 9999 }}
@@ -34,11 +39,13 @@ function App() {
         <Route element={<PublicLayout />}>
           <Route path="/" element={<LandingPage />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/auth/google/callback" element={<GoogleCallback />} />
         </Route>
 
         {/* Protected Dashboard Routes */}
         <Route element={<DashboardLayout />}>
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/settings/profile" element={<ProfileSettings />} />
           <Route element={<CodingRoutesLayout />}>
             <Route path="/coding" element={<CodingList />} />
             <Route path="/coding/:slug" element={<CodingChallengePage />} />
@@ -57,6 +64,18 @@ function App() {
         {/* Redirect any unknown routes to HOME PAGE */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
+    </>
+  );
+
+  return (
+    <UserProvider>
+      {googleClientId ? (
+        <GoogleOAuthProvider clientId={googleClientId}>
+          {appContent}
+        </GoogleOAuthProvider>
+      ) : (
+        appContent
+      )}
     </UserProvider>
   );
 }

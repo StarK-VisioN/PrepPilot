@@ -6,7 +6,11 @@ export const API_PATHS = {
     AUTH: {
         REGISTER: `${BASE_URL}/api/auth/register`,
         LOGIN: `${BASE_URL}/api/auth/login`,
+        GOOGLE: `${BASE_URL}/api/auth/google`,
+        LINK_GOOGLE: `${BASE_URL}/api/auth/link-google`,
+        LOGOUT: `${BASE_URL}/api/auth/logout`,
         GET_PROFILE: `${BASE_URL}/api/auth/profile`,
+        GET_ME: `${BASE_URL}/api/auth/me`,
     },
 
     IMAGE: {

@@ -1,10 +1,12 @@
 import React, { useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Input from '../../components/Input';
+import GoogleSignInButton from '../../components/auth/GoogleSignInButton';
 import { validateEmail, validatePassword } from '../../utils/helper';
 import axiosInstance from '../../utils/axiosInstance';
 import { API_PATHS } from '../../utils/apiPaths';
 import { UserContext } from '../../context/userContext';
+import { handlePostAuthRedirect } from '../../utils/authRedirect';
 
 const Login = ({ setCurrentPage, onSuccess }) => {
   const [email, setEmail] = useState("");
@@ -33,46 +35,18 @@ const Login = ({ setCurrentPage, onSuccess }) => {
     }
 
     try {
-      console.log("🔐 Attempting login for:", email);
-      
       const response = await axiosInstance.post(API_PATHS.AUTH.LOGIN, {
         email: email.toLowerCase().trim(),
         password,
       });
 
-      console.log("✅ Login response received:", response.data);
-
-      // Handle response structure
       if (response.data.data) {
         updateUser(response.data);
-        console.log("👤 User context updated");
-        
-        // Modal on home: stay put. /login page: home unless a prep intent is pending.
-        if (onSuccess) {
-          onSuccess();
-        } else if (sessionStorage.getItem("codingIntent")) {
-          sessionStorage.removeItem("codingIntent");
-          navigate("/coding", { replace: true });
-        } else if (sessionStorage.getItem("behavioralIntent")) {
-          sessionStorage.removeItem("behavioralIntent");
-          navigate("/behavioral", { replace: true });
-        } else if (sessionStorage.getItem("mockInterviewIntent")) {
-          sessionStorage.removeItem("mockInterviewIntent");
-          navigate("/mock-interview", { replace: true });
-        } else if (sessionStorage.getItem("analyticsIntent")) {
-          sessionStorage.removeItem("analyticsIntent");
-          navigate("/analytics", { replace: true });
-        } else if (sessionStorage.getItem("createSessionIntent")) {
-          navigate("/dashboard", { replace: true });
-        } else {
-          navigate("/", { replace: true });
-        }
+        handlePostAuthRedirect(navigate, onSuccess);
       } else {
         throw new Error("Invalid response structure from server");
       }
     } catch (error) {
-      console.error("❌ Login error:", error);
-      
       if (error.response?.data?.message) {
         setError(error.response.data.message);
       } else if (!error.response) {
@@ -89,6 +63,14 @@ const Login = ({ setCurrentPage, onSuccess }) => {
     <div className='w-full max-w-[400px] px-4 py-6 sm:p-7 flex flex-col mx-auto'>
       <h3 className='text-xl sm:text-2xl font-semibold text-black mb-2'>Welcome back</h3>
       <p className='text-sm sm:text-base text-slate-700 mb-6 sm:mb-8'>Please enter your details to log in</p>
+
+      <GoogleSignInButton onSuccess={onSuccess} disabled={loading} className="mb-4" />
+
+      <div className="flex items-center gap-3 mb-4">
+        <div className="flex-1 h-px bg-gray-200" />
+        <span className="text-xs text-gray-500 uppercase tracking-wide">or</span>
+        <div className="flex-1 h-px bg-gray-200" />
+      </div>
 
       <form onSubmit={handleSubmit} className='flex flex-col gap-4'>
         <Input
@@ -140,7 +122,7 @@ const Login = ({ setCurrentPage, onSuccess }) => {
       <p className='text-sm text-slate-600 mt-6 text-center'>
         Don't have an account?{" "}
         <span
-          onClick={() => !loading && setCurrentPage("signup")}
+          onClick={() => !loading && setCurrentPage?.("signup")}
           className={`font-medium cursor-pointer hover:underline ${
             loading ? 'text-gray-400' : 'text-orange-500'
           }`}

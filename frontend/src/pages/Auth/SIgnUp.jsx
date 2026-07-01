@@ -1,10 +1,12 @@
 import React, { useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Input from '../../components/Input';
+import GoogleSignInButton from '../../components/auth/GoogleSignInButton';
 import { validateEmail, validatePassword } from '../../utils/helper';
 import { UserContext } from '../../context/userContext';
 import axiosInstance from '../../utils/axiosInstance';
 import { API_PATHS } from '../../utils/apiPaths';
+import { handlePostAuthRedirect } from '../../utils/authRedirect';
 
 const SignUp = ({ setCurrentPage, onSuccess }) => {
   const [fullName, setFullName] = useState("");
@@ -40,8 +42,6 @@ const SignUp = ({ setCurrentPage, onSuccess }) => {
     }
 
     try {
-      console.log("📝 Attempting registration for:", email);
-
       const response = await axiosInstance.post(API_PATHS.AUTH.REGISTER, {
         name: fullName.trim(),
         email: email.toLowerCase().trim(),
@@ -49,62 +49,16 @@ const SignUp = ({ setCurrentPage, onSuccess }) => {
         profileImageUrl: "",
       });
 
-      console.log("✅ Registration response:", response.data);
-
-      // Handle both response structures
       if (response.data.success && response.data.data) {
         updateUser(response.data);
-        console.log("👤 User context updated");
-        
-        if (onSuccess) {
-          onSuccess();
-        } else if (sessionStorage.getItem("codingIntent")) {
-          sessionStorage.removeItem("codingIntent");
-          navigate("/coding", { replace: true });
-        } else if (sessionStorage.getItem("behavioralIntent")) {
-          sessionStorage.removeItem("behavioralIntent");
-          navigate("/behavioral", { replace: true });
-        } else if (sessionStorage.getItem("mockInterviewIntent")) {
-          sessionStorage.removeItem("mockInterviewIntent");
-          navigate("/mock-interview", { replace: true });
-        } else if (sessionStorage.getItem("analyticsIntent")) {
-          sessionStorage.removeItem("analyticsIntent");
-          navigate("/analytics", { replace: true });
-        } else if (sessionStorage.getItem("createSessionIntent")) {
-          navigate("/dashboard", { replace: true });
-        } else {
-          navigate("/", { replace: true });
-        }
+        handlePostAuthRedirect(navigate, onSuccess);
       } else if (response.data.token) {
         updateUser(response.data);
-        console.log("👤 User context updated");
-        
-        if (onSuccess) {
-          onSuccess();
-        } else if (sessionStorage.getItem("codingIntent")) {
-          sessionStorage.removeItem("codingIntent");
-          navigate("/coding", { replace: true });
-        } else if (sessionStorage.getItem("behavioralIntent")) {
-          sessionStorage.removeItem("behavioralIntent");
-          navigate("/behavioral", { replace: true });
-        } else if (sessionStorage.getItem("mockInterviewIntent")) {
-          sessionStorage.removeItem("mockInterviewIntent");
-          navigate("/mock-interview", { replace: true });
-        } else if (sessionStorage.getItem("analyticsIntent")) {
-          sessionStorage.removeItem("analyticsIntent");
-          navigate("/analytics", { replace: true });
-        } else if (sessionStorage.getItem("createSessionIntent")) {
-          navigate("/dashboard", { replace: true });
-        } else {
-          navigate("/", { replace: true });
-        }
+        handlePostAuthRedirect(navigate, onSuccess);
       } else {
         throw new Error("Invalid response structure from server");
       }
     } catch (error) {
-      console.error("❌ Registration error:", error);
-      console.error("❌ Error response:", error.response?.data);
-      
       if (error.response?.data?.message) {
         setError(error.response.data.message);
       } else if (error.code === "NETWORK_ERROR" || !error.response) {
@@ -120,7 +74,15 @@ const SignUp = ({ setCurrentPage, onSuccess }) => {
   return (
     <div className='w-full max-w-[400px] px-4 py-6 sm:p-7 flex flex-col mx-auto'>
       <h3 className='text-xl sm:text-2xl font-semibold text-black mb-1'>Create Account</h3>
-      <p className='text-sm sm:text-base text-slate-700 mb-2 sm:mb-6'>Join us today</p>
+      <p className='text-sm sm:text-base text-slate-700 mb-2 sm:mb-6'>Join us today — Google sign-up is recommended for verified accounts</p>
+
+      <GoogleSignInButton onSuccess={onSuccess} disabled={loading} className="mb-4" />
+
+      <div className="flex items-center gap-3 mb-4">
+        <div className="flex-1 h-px bg-gray-200" />
+        <span className="text-xs text-gray-500 uppercase tracking-wide">or</span>
+        <div className="flex-1 h-px bg-gray-200" />
+      </div>
 
       <form onSubmit={handleSignUp} className='flex flex-col gap-2'>
         <Input
@@ -179,7 +141,7 @@ const SignUp = ({ setCurrentPage, onSuccess }) => {
       <p className='text-sm text-slate-600 mt-6 text-center'>
         Already have an account?{" "}
         <span
-          onClick={() => !loading && setCurrentPage("login")}
+          onClick={() => !loading && setCurrentPage?.("login")}
           className={`font-medium cursor-pointer hover:underline ${
             loading ? 'text-gray-400' : 'text-orange-500'
           }`}

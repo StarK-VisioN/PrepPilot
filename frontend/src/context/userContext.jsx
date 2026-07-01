@@ -19,7 +19,7 @@ const UserProvider = ({children}) => {
         const fetchUser = async() => {
             try {
                 console.log("🔄 Fetching user profile...");
-                const response = await axiosInstance.get(API_PATHS.AUTH.GET_PROFILE);
+                const response = await axiosInstance.get(API_PATHS.AUTH.GET_ME);
                 console.log("✅ User profile fetched:", response.data);
                 
                 if (response.data && response.data.data) {
@@ -55,18 +55,44 @@ const UserProvider = ({children}) => {
         setLoading(false);
     };
 
-    const clearUser = () => {
+    const clearUser = async () => {
         console.log("🧹 Clearing user data");
+        const token = localStorage.getItem("token");
+        if (token) {
+            try {
+                await axiosInstance.post(API_PATHS.AUTH.LOGOUT);
+            } catch (error) {
+                console.warn("Logout request failed:", error);
+            }
+        }
         setUser(null);
         localStorage.removeItem("token");
     };
 
+    const refreshUser = async () => {
+        const accessToken = localStorage.getItem("token");
+        if (!accessToken) return null;
+
+        try {
+            const response = await axiosInstance.get(API_PATHS.AUTH.GET_ME);
+            if (response.data?.data) {
+                setUser(response.data.data);
+                return response.data.data;
+            }
+        } catch (error) {
+            console.error("Failed to refresh user:", error);
+            clearUser();
+        }
+        return null;
+    };
+
     const value = {
-        user, 
-        loading, 
-        updateUser, 
+        user,
+        loading,
+        updateUser,
         clearUser,
-        isAuthenticated: !!user && !!localStorage.getItem("token")
+        refreshUser,
+        isAuthenticated: !!user && !!localStorage.getItem("token"),
     };
 
     return (
