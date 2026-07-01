@@ -88,7 +88,12 @@ async function callAIWithRetry(prompt, maxRetries = 4, options = {}) {
                 ...(options.max_tokens ? { max_tokens: options.max_tokens } : {}),
             });
 
-            return response.choices[0].message.content;
+            const content = response.choices?.[0]?.message?.content;
+            if (!content || typeof content !== "string" || !content.trim()) {
+                throw new Error("Empty response from AI service");
+            }
+
+            return content;
         } catch (error) {
             const status = error?.status;
             const isRetryable = status === 429 || status === 503 || status === 408;
@@ -216,19 +221,32 @@ function stripMarkdownFences(text) {
 }
 
 function extractJsonBounds(text) {
-    const startArr = text.indexOf("[");
-    const endArr = text.lastIndexOf("]");
-    if (startArr !== -1 && endArr > startArr) {
-        return text.slice(startArr, endArr + 1);
+    const trimmed = text.trim();
+
+    const startObj = trimmed.indexOf("{");
+    const endObj = trimmed.lastIndexOf("}");
+    const startArr = trimmed.indexOf("[");
+    const endArr = trimmed.lastIndexOf("]");
+
+    const hasObject = startObj !== -1 && endObj > startObj;
+    const hasArray = startArr !== -1 && endArr > startArr;
+
+    if (hasObject && hasArray) {
+        if (startObj <= startArr) {
+            return trimmed.slice(startObj, endObj + 1);
+        }
+        return trimmed.slice(startArr, endArr + 1);
     }
 
-    const startObj = text.indexOf("{");
-    const endObj = text.lastIndexOf("}");
-    if (startObj !== -1 && endObj > startObj) {
-        return text.slice(startObj, endObj + 1);
+    if (hasObject) {
+        return trimmed.slice(startObj, endObj + 1);
     }
 
-    return text;
+    if (hasArray) {
+        return trimmed.slice(startArr, endArr + 1);
+    }
+
+    return trimmed;
 }
 
 function removeTrailingCommas(jsonText) {
@@ -389,8 +407,40 @@ function handleAIError(error, res, defaultMessage, options = {}) {
     });
 }
 
+async function callAIWithMessages(messages, maxRetries = 4, options = {}) {
+    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+        try {
+            const response = await groq.chat.completions.create({
+                model: "llama-3.3-70b-versatile",
+                messages,
+                temperature: options.temperature ?? 0.7,
+                ...(options.max_tokens ? { max_tokens: options.max_tokens } : {}),
+            });
+
+            const content = response.choices?.[0]?.message?.content;
+            if (!content || typeof content !== "string" || !content.trim()) {
+                throw new Error("Empty response from AI service");
+            }
+
+            return content.trim();
+        } catch (error) {
+            const status = error?.status;
+            const isRetryable = status === 429 || status === 503 || status === 408;
+
+            if (isRetryable && attempt < maxRetries) {
+                const delay = getRetryDelayMs(error, attempt);
+                if (delay > MAX_INLINE_RETRY_WAIT_MS) throw error;
+                await new Promise((resolve) => setTimeout(resolve, delay));
+                continue;
+            }
+            throw error;
+        }
+    }
+}
+
 module.exports = {
     callAIWithRetry,
+    callAIWithMessages,
     cleanAndParseAIResponse,
     parseDeepDiveResponse,
     parseTopicQuestionsResponse,
