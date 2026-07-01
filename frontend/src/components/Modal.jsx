@@ -26,7 +26,7 @@ const Modal = ({
       aria-modal="true"
     >
       <div
-        className={`relative flex flex-col bg-white shadow-2xl rounded-t-2xl sm:rounded-2xl overflow-hidden w-full ${SIZE_CLASSES[size] || SIZE_CLASSES.sm} max-h-[92vh] sm:max-h-[88vh]`}
+        className={`relative flex flex-col bg-white text-gray-900 shadow-2xl rounded-t-2xl sm:rounded-2xl overflow-hidden w-full ${SIZE_CLASSES[size] || SIZE_CLASSES.sm} max-h-[92vh] sm:max-h-[88vh]`}
         onClick={(e) => e.stopPropagation()}
       >
         {!hideHeader && (
