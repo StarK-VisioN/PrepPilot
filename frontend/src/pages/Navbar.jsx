@@ -2,6 +2,7 @@ import React, { useContext, useState } from "react";
 import { Link } from "react-router-dom";
 import { LuSparkles } from "react-icons/lu";
 import Login from "./Auth/Login";
+import ForgotPassword from "./Auth/ForgotPassword";
 import Modal from "../components/Modal";
 import SignUp from "./Auth/SIgnUp";
 import ProfileInfoCard from "../components/ProfileInfoCard";
@@ -80,6 +81,9 @@ const Navbar = () => {
             setCurrentPage={setCurrentPage}
             onSuccess={() => setOpenAuthModel(false)}
           />
+        )}
+        {currentPage === "forgot" && (
+          <ForgotPassword setCurrentPage={setCurrentPage} />
         )}
       </Modal>
     </>

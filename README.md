@@ -73,6 +73,8 @@ Interview Prep AI is a full-stack, AI-powered interview preparation platform. It
 |-------|-------------|
 | `/` | Landing page |
 | `/login` | Sign in (email/password or Google) |
+| `/forgot-password` | Request password reset link |
+| `/reset-password/:token` | Set a new password from email link |
 | `/settings/profile` | Profile settings and connected accounts |
 | `/dashboard` | Main hub — prep sessions + module navigation |
 | `/interview-prep/:sessionId` | Q&A practice session |
@@ -93,7 +95,7 @@ Interview Prep AI is a full-stack, AI-powered interview preparation platform. It
 
 | Prefix | Purpose |
 |--------|---------|
-| `/api/auth` | Register, login, Google OAuth, profile, logout |
+| `/api/auth` | Register, login, Google OAuth, profile, logout, password reset |
 | `/api/sessions` | Q&A prep sessions |
 | `/api/questions` | Question generation & management |
 | `/api/documents` | JD/resume upload & parsing |
@@ -152,6 +154,15 @@ cd ../frontend && npm install
 | `MOCK_INTERVIEW_DAILY_LIMIT` | Mock interviews per day (default: `5`) |
 | `MOCK_INTERVIEW_MSG_PER_MIN` | Mock interview messages per minute (default: `15`) |
 | `GENERATE_AI_TEST_CASES` | `true` to enrich coding seeds with Groq-generated tests |
+| `CLOUDINARY_CLOUD_NAME` | Cloudinary cloud name (required for avatar uploads on Vercel) |
+| `CLOUDINARY_API_KEY` | Cloudinary API key |
+| `CLOUDINARY_API_SECRET` | Cloudinary API secret |
+| `SMTP_HOST` | SMTP server host (e.g. `smtp.gmail.com`) |
+| `SMTP_PORT` | SMTP port (e.g. `587`) |
+| `SMTP_USER` | SMTP username / email |
+| `SMTP_PASS` | SMTP password or app password |
+| `FROM_EMAIL` | Sender email address for transactional mail |
+| `SMTP_SECURE` | Set `true` for port 465 SSL (optional) |
 
 **Frontend (`frontend/.env`)**
 
@@ -161,6 +172,8 @@ cd ../frontend && npm install
 | `VITE_GOOGLE_CLIENT_ID` | Google OAuth client ID (same as backend `GOOGLE_CLIENT_ID`) |
 
 Redis is optional. If Upstash vars are missing, the app runs without cache/rate limiting.
+
+Profile avatars use **Cloudinary** in production (Vercel). Without Cloudinary credentials, avatar upload works in local development only (saved under `backend/uploads/avatars/`).
 
 ### 3. Seed the database
 

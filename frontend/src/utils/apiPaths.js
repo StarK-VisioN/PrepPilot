@@ -9,8 +9,13 @@ export const API_PATHS = {
         GOOGLE: `${BASE_URL}/api/auth/google`,
         LINK_GOOGLE: `${BASE_URL}/api/auth/link-google`,
         LOGOUT: `${BASE_URL}/api/auth/logout`,
+        FORGOT_PASSWORD: `${BASE_URL}/api/auth/forgot-password`,
+        RESET_PASSWORD: (token) => `${BASE_URL}/api/auth/reset-password/${token}`,
         GET_PROFILE: `${BASE_URL}/api/auth/profile`,
         GET_ME: `${BASE_URL}/api/auth/me`,
+        UPDATE_PROFILE: `${BASE_URL}/api/auth/profile`,
+        UPLOAD_AVATAR: `${BASE_URL}/api/auth/profile/avatar`,
+        DELETE_AVATAR: `${BASE_URL}/api/auth/profile/avatar`,
     },
 
     CONFIG: {

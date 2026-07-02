@@ -15,6 +15,7 @@ const UserSchema = new mongoose.Schema(
             },
         },
         profileImageUrl: { type: String, default: null },
+        avatarCloudinaryPublicId: { type: String, default: null },
         provider: {
             type: String,
             enum: AUTH_PROVIDER_VALUES,
@@ -28,6 +29,8 @@ const UserSchema = new mongoose.Schema(
             enum: ["javascript"],
             default: "javascript",
         },
+        resetPasswordToken: { type: String, default: null, select: false },
+        resetPasswordExpires: { type: Date, default: null, select: false },
     },
     { timestamps: true }
 );

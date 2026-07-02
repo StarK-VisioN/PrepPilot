@@ -3,6 +3,8 @@ import { GoogleOAuthProvider } from "@react-oauth/google";
 import { Route, Routes, Navigate } from "react-router-dom";
 import LandingPage from "./pages/LandingPage";
 import Login from "./pages/Auth/Login";
+import ForgotPassword from "./pages/Auth/ForgotPassword";
+import ResetPassword from "./pages/Auth/ResetPassword";
 import GoogleCallback from "./pages/Auth/GoogleCallback";
 import Dashboard from "./pages/Home/Dashboard";
 import InterviewPrep from "./pages/interviewPrep/InterviewPrep";
@@ -37,6 +39,8 @@ function AppRoutes() {
         <Route element={<PublicLayout />}>
           <Route path="/" element={<LandingPage />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/forgot-password" element={<ForgotPassword standalone />} />
+          <Route path="/reset-password/:token" element={<ResetPassword />} />
           <Route path="/auth/google/callback" element={<GoogleCallback />} />
         </Route>
 

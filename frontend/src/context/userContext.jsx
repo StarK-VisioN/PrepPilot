@@ -39,8 +39,6 @@ const UserProvider = ({children}) => {
     }, []);
 
     const updateUser = (userData) => {
-        // console.log("🔄 Updating user context:", userData);
-        
         if (userData.data) {
             setUser(userData.data);
             if (userData.data.token) {
@@ -49,10 +47,16 @@ const UserProvider = ({children}) => {
         } else if (userData.token) {
             setUser(userData);
             localStorage.setItem("token", userData.token);
+        } else if (userData._id) {
+            setUser(userData);
         } else {
-            console.error("❌ Invalid user data structure:", userData);
+            console.error("Invalid user data structure:", userData);
         }
         setLoading(false);
+    };
+
+    const patchUser = (updates) => {
+        setUser((prev) => (prev ? { ...prev, ...updates } : null));
     };
 
     const clearUser = async () => {
@@ -90,6 +94,7 @@ const UserProvider = ({children}) => {
         user,
         loading,
         updateUser,
+        patchUser,
         clearUser,
         refreshUser,
         isAuthenticated: !!user && !!localStorage.getItem("token"),

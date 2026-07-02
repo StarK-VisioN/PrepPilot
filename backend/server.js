@@ -172,23 +172,26 @@ app.use((error, req, res, next) => {
     console.error("Global error handler:", error);
 
     if (error.code === "LIMIT_FILE_SIZE") {
-        return res.status(400).json({ success: false, message: "File size must be under 5MB" });
-    }
-
-    if (error.message && error.message.includes("Only PDF")) {
-        return res.status(400).json({ success: false, message: error.message });
+        const isAvatarRoute = req.path?.includes("/profile/avatar");
+        return res.status(400).json({
+            success: false,
+            message: isAvatarRoute ? "Image must be 2MB or smaller" : "File size must be under 5MB",
+        });
     }
 
     if (
         error.message &&
         (error.message.includes("Only JPEG") ||
+            error.message.includes("Only JPG") ||
+            error.message.includes("WEBP") ||
+            error.message.includes("Only PDF") ||
             error.message.includes("PDF") ||
             error.message.includes("DOCX"))
     ) {
         return res.status(400).json({ success: false, message: error.message });
     }
 
-    res.status(500).json({ 
+    res.status(500).json({
         success: false,
         message: "Internal server error", 
         error: process.env.NODE_ENV === 'production' ? {} : error.message 
@@ -208,6 +211,7 @@ const startServer = async () => {
             console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
             console.log(`Health check: http://localhost:${PORT}/health`);
             console.log(`Registration: http://localhost:${PORT}/api/auth/register`);
+            console.log(`Profile avatar: http://localhost:${PORT}/api/auth/profile/avatar`);
             console.log("=== SERVER READY ===");
         });
 

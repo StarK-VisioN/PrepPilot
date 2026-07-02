@@ -15,6 +15,7 @@ import {
   LuSettings,
 } from 'react-icons/lu';
 import { AUTH_PROVIDERS } from '../constants/authProviders';
+import { getUserAvatar, getUserInitials } from '../utils/userAvatar';
 
 const ProfileInfoCard = () => {
   const { user, clearUser } = useContext(UserContext);
@@ -53,9 +54,10 @@ const ProfileInfoCard = () => {
 
   if (!user) return null;
 
-  const initials = user?.name?.charAt(0)?.toUpperCase() || 'U';
+  const initials = getUserInitials(user);
   const firstName = user?.name?.split(' ')[0] || 'User';
   const isGoogleUser = user?.provider === AUTH_PROVIDERS.GOOGLE || Boolean(user?.googleId);
+  const avatar = getUserAvatar(user);
 
   return (
     <div className="relative" ref={menuRef}>
@@ -70,9 +72,9 @@ const ProfileInfoCard = () => {
         aria-expanded={open}
         aria-haspopup="true"
       >
-        {user?.profileImageUrl ? (
+        {avatar ? (
           <img
-            src={user.profileImageUrl}
+            src={avatar}
             alt={user.name}
             className="w-9 h-9 rounded-full object-cover ring-2 ring-white shadow-sm"
           />
@@ -106,9 +108,9 @@ const ProfileInfoCard = () => {
             {/* User info header */}
             <div className="px-4 py-4 bg-gradient-to-br from-orange-50 via-white to-purple-50 border-b border-gray-100">
               <div className="flex items-center gap-3">
-                {user?.profileImageUrl ? (
+                {avatar ? (
                   <img
-                    src={user.profileImageUrl}
+                    src={avatar}
                     alt={user.name}
                     className="w-11 h-11 rounded-full object-cover ring-2 ring-white shadow"
                   />
@@ -191,6 +193,20 @@ const ProfileInfoCard = () => {
                   <LuChartBar size={16} />
                 </span>
                 Analytics
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  setOpen(false);
+                  navigate('/settings/profile', { state: { scrollToEdit: true } });
+                }}
+                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-gray-700 hover:bg-orange-50 hover:text-orange-700 transition-colors group"
+              >
+                <span className="p-1.5 rounded-lg bg-gray-100 group-hover:bg-orange-100 transition-colors">
+                  <LuUser size={16} />
+                </span>
+                Edit Profile
               </button>
 
               <button

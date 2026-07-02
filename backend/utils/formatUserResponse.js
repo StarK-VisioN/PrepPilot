@@ -6,6 +6,7 @@ const formatUserResponse = (user, token) => {
         name: user.name,
         email: user.email,
         profileImageUrl: user.profileImageUrl,
+        avatar: user.profileImageUrl,
         provider: user.provider || "local",
         googleId: user.googleId || null,
         isEmailVerified: Boolean(user.isEmailVerified),

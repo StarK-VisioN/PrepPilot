@@ -93,6 +93,25 @@ const Login = ({ setCurrentPage, onSuccess }) => {
           required
         />
 
+        <div className="flex justify-end -mt-2">
+          <button
+            type="button"
+            onClick={() => {
+              if (loading) return;
+              if (setCurrentPage) {
+                setCurrentPage("forgot");
+              } else {
+                navigate("/forgot-password");
+              }
+            }}
+            className={`text-sm font-medium hover:underline ${
+              loading ? "text-gray-400 cursor-not-allowed" : "text-orange-500"
+            }`}
+          >
+            Forgot Password?
+          </button>
+        </div>
+
         {error && (
           <div className='bg-red-50 border border-red-200 rounded-md p-3'>
             <p className='text-red-600 text-sm'>{error}</p>
