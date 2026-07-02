@@ -59,41 +59,37 @@ const STEPS = [
   { step: "3", title: "Practice & improve", desc: "Review, pin, and learn deeper" },
 ];
 
-const GLASS_CARD =
-  "bg-white/[0.04] backdrop-blur-md border border-white/[0.08] hover:bg-white/[0.06] hover:border-white/[0.14] transition-all duration-200";
-const GLASS_PANEL = "bg-white/[0.03] backdrop-blur-md border border-white/[0.07]";
+const BTN_PRIMARY =
+  "bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-full transition-colors inline-flex items-center gap-2";
+const BTN_SECONDARY =
+  "bg-white text-blue-700 font-semibold rounded-full border-2 border-blue-600 hover:bg-blue-50 transition-colors";
+const CARD = "bg-white border border-gray-200 rounded-2xl shadow-sm hover:shadow-md transition-shadow";
 
 const PrepModeCard = ({ feature, onStart }) => {
   const Icon = FEATURE_ICONS[feature.icon] || LuSparkles;
 
   return (
-    <button
-      type="button"
-      onClick={onStart}
-      className={`group w-full text-left p-5 sm:p-6 rounded-2xl ${GLASS_CARD} flex flex-col h-full`}
-    >
+    <button type="button" onClick={onStart} className={`group w-full text-left p-5 sm:p-6 ${CARD} flex flex-col h-full`}>
       <div className="flex items-start justify-between mb-4">
-        <div
-          className={`w-12 h-12 bg-gradient-to-br ${feature.gradient} rounded-xl flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform`}
-        >
-          <Icon className="text-white text-xl" />
+        <div className="w-12 h-12 bg-blue-100 text-blue-700 rounded-xl flex items-center justify-center">
+          <Icon className="text-xl" />
         </div>
         {feature.badge && (
-          <span className="text-[10px] font-bold text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded-full border border-emerald-500/20">
+          <span className="text-[10px] font-bold text-blue-700 bg-blue-50 px-2.5 py-1 rounded-full border border-blue-100">
             {feature.badge}
           </span>
         )}
       </div>
 
-      <h3 className="text-lg font-bold text-white mb-1.5">{feature.title}</h3>
-      <p className="text-sm text-slate-300 leading-relaxed mb-4 flex-grow">{feature.description}</p>
+      <h3 className="text-lg font-bold text-black mb-1.5">{feature.title}</h3>
+      <p className="text-sm text-gray-600 leading-relaxed mb-4 flex-grow">{feature.description}</p>
 
       {feature.highlightCompany && (
         <div className="flex flex-wrap gap-1.5 mb-4">
           {COMPANY_CHIPS.map((name) => (
             <span
               key={name}
-              className="text-[10px] font-medium text-violet-300 bg-violet-500/10 px-2 py-0.5 rounded-full border border-violet-500/20"
+              className="text-[10px] font-medium text-gray-600 bg-gray-100 px-2 py-0.5 rounded-full border border-gray-200"
             >
               {name}
             </span>
@@ -101,11 +97,9 @@ const PrepModeCard = ({ feature, onStart }) => {
         </div>
       )}
 
-      <span
-        className={`inline-flex items-center gap-1.5 text-sm font-semibold text-white px-4 py-2 rounded-full bg-gradient-to-r ${feature.gradient} w-fit group-hover:opacity-90 transition-opacity`}
-      >
+      <span className={`text-sm px-4 py-2 ${BTN_PRIMARY} w-fit`}>
         {feature.cta}
-        <LuArrowRight size={14} className="group-hover:translate-x-0.5 transition-transform" />
+        <LuArrowRight size={14} />
       </span>
     </button>
   );
@@ -115,32 +109,23 @@ const ToolCard = ({ feature, onClick }) => {
   const Icon = FEATURE_ICONS[feature.icon] || LuSparkles;
 
   return (
-    <button
-      type="button"
-      onClick={onClick}
-      className={`group w-full text-left p-5 rounded-2xl ${GLASS_CARD}`}
-    >
+    <button type="button" onClick={onClick} className={`group w-full text-left p-5 ${CARD}`}>
       <div className="flex items-center gap-4">
-        <div
-          className={`shrink-0 w-11 h-11 bg-gradient-to-br ${feature.gradient} rounded-xl flex items-center justify-center`}
-        >
-          <Icon className="text-white text-lg" />
+        <div className="shrink-0 w-11 h-11 bg-blue-100 text-blue-700 rounded-xl flex items-center justify-center">
+          <Icon className="text-lg" />
         </div>
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-0.5">
-            <h3 className="text-base font-bold text-white">{feature.title}</h3>
+            <h3 className="text-base font-bold text-black">{feature.title}</h3>
             {feature.badge && (
-              <span className="text-[10px] font-bold text-violet-400 bg-violet-500/10 px-1.5 py-0.5 rounded-md border border-violet-500/20">
+              <span className="text-[10px] font-bold text-blue-700 bg-blue-50 px-1.5 py-0.5 rounded-md border border-blue-100">
                 {feature.badge}
               </span>
             )}
           </div>
-          <p className="text-xs text-slate-300 line-clamp-2 leading-relaxed">{feature.description}</p>
+          <p className="text-xs text-gray-600 line-clamp-2 leading-relaxed">{feature.description}</p>
         </div>
-        <LuChevronRight
-          size={18}
-          className="shrink-0 text-white/20 group-hover:text-white/50 group-hover:translate-x-0.5 transition-all"
-        />
+        <LuChevronRight size={18} className="shrink-0 text-gray-400 group-hover:text-blue-600 transition-colors" />
       </div>
     </button>
   );
@@ -206,19 +191,16 @@ const LandingPage = () => {
         <section className="pt-2 pb-12 lg:pb-16">
           <div className="flex flex-col lg:flex-row items-center gap-10 lg:gap-14">
             <div className="w-full lg:w-[48%] space-y-6 text-center lg:text-left">
-              <span className="inline-flex items-center gap-2 text-sm text-orange-300 font-semibold bg-orange-500/15 px-4 py-2 rounded-full border border-orange-400/25">
+              <span className="inline-flex items-center gap-2 text-sm text-blue-700 font-semibold bg-blue-50 px-4 py-2 rounded-full border border-blue-100">
                 <LuSparkles className="text-base" />
                 AI Powered Interview Prep
               </span>
 
-              <h1 className="text-4xl sm:text-5xl lg:text-[3.25rem] font-bold leading-[1.15] text-white">
-                Your interview prep,{" "}
-                <span className="bg-gradient-to-r from-orange-300 via-amber-200 to-orange-400 bg-clip-text text-transparent">
-                  tailored to you
-                </span>
+              <h1 className="text-4xl sm:text-5xl lg:text-[3.25rem] font-bold leading-[1.15] text-black">
+                Your interview prep, tailored to you
               </h1>
 
-              <p className="text-base sm:text-lg text-slate-300 leading-relaxed max-w-lg mx-auto lg:mx-0">
+              <p className="text-base sm:text-lg text-gray-700 leading-relaxed max-w-lg mx-auto lg:mx-0">
                 Upload your resume, paste a job description, or pick a company style — then practice
                 with coding, behavioral, mock interviews, and analytics.
               </p>
@@ -226,16 +208,16 @@ const LandingPage = () => {
               <div className="flex flex-wrap gap-3 justify-center lg:justify-start">
                 <button
                   type="button"
-                  className="bg-orange-500 text-white font-semibold text-base px-7 py-3 rounded-full shadow-lg shadow-orange-500/25 hover:bg-orange-400 transition-all inline-flex items-center gap-2 group"
+                  className={`${BTN_PRIMARY} text-base px-7 py-3 shadow-md shadow-blue-600/20`}
                   onClick={handleGetStarted}
                 >
                   Get Started Free
-                  <LuArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                  <LuArrowRight className="w-5 h-5" />
                 </button>
                 {user ? (
                   <button
                     type="button"
-                    className="bg-white/5 text-slate-200 font-semibold text-base px-7 py-3 rounded-full border border-white/10 hover:bg-white/10 hover:text-white transition-all"
+                    className={`${BTN_SECONDARY} text-base px-7 py-3`}
                     onClick={() => navigate("/dashboard")}
                   >
                     Go to Dashboard
@@ -243,7 +225,7 @@ const LandingPage = () => {
                 ) : (
                   <button
                     type="button"
-                    className="bg-white/5 text-slate-200 font-semibold text-base px-7 py-3 rounded-full border border-white/10 hover:bg-white/10 hover:text-white transition-all"
+                    className={`${BTN_SECONDARY} text-base px-7 py-3`}
                     onClick={() => navigate("/login")}
                   >
                     Sign In
@@ -252,7 +234,7 @@ const LandingPage = () => {
               </div>
 
               <div className="pt-2">
-                <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3">
+                <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">
                   Jump to a module
                 </p>
                 <div className="flex flex-wrap gap-2 justify-center lg:justify-start">
@@ -263,9 +245,9 @@ const LandingPage = () => {
                         key={mod.id}
                         type="button"
                         onClick={() => handleQuickModule(mod.action)}
-                        className="inline-flex items-center gap-2 text-sm font-medium text-slate-200 bg-white/[0.05] hover:bg-white/[0.09] border border-white/[0.08] hover:border-white/[0.15] px-4 py-2 rounded-full transition-all"
+                        className="inline-flex items-center gap-2 text-sm font-medium text-blue-700 bg-blue-50 hover:bg-blue-100 border border-blue-200 px-4 py-2 rounded-full transition-all"
                       >
-                        <Icon size={15} className="text-orange-400" />
+                        <Icon size={15} className="text-blue-600" />
                         {mod.label}
                       </button>
                     );
@@ -276,12 +258,12 @@ const LandingPage = () => {
 
             <div className="w-full lg:w-[52%]">
               <div className="relative">
-                <div className="absolute -inset-6 sm:-inset-8 bg-gradient-to-br from-orange-500/20 via-violet-500/15 to-cyan-500/10 rounded-[2rem] blur-3xl opacity-80" />
-                <div className="relative bg-gradient-to-br from-white/[0.12] to-white/[0.04] backdrop-blur-sm p-3 sm:p-4 rounded-3xl border border-white/15 shadow-2xl shadow-violet-950/40">
+                <div className="absolute -inset-6 sm:-inset-8 bg-gradient-to-br from-orange-200/40 via-violet-200/30 to-blue-200/30 rounded-[2rem] blur-3xl" />
+                <div className="relative bg-white p-3 sm:p-4 rounded-3xl border border-gray-200 shadow-lg">
                   <img
                     src={hero_img}
                     alt="Interview preparation dashboard preview"
-                    className="w-full rounded-2xl object-cover ring-1 ring-white/20"
+                    className="w-full rounded-2xl object-cover"
                   />
                 </div>
               </div>
@@ -291,19 +273,19 @@ const LandingPage = () => {
 
         {/* How it works */}
         <section className="mb-14">
-          <div className={`rounded-2xl p-5 sm:p-6 ${GLASS_PANEL}`}>
+          <div className={`rounded-2xl p-5 sm:p-6 ${CARD}`}>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-4">
               {STEPS.map((item) => (
                 <div
                   key={item.step}
                   className="flex items-start gap-3 sm:flex-col sm:items-center sm:text-center"
                 >
-                  <div className="shrink-0 w-9 h-9 bg-orange-500 text-white rounded-full flex items-center justify-center text-sm font-bold">
+                  <div className="shrink-0 w-9 h-9 bg-blue-600 text-white rounded-full flex items-center justify-center text-sm font-bold">
                     {item.step}
                   </div>
                   <div className="sm:mt-1">
-                    <h3 className="font-bold text-white text-sm mb-0.5">{item.title}</h3>
-                    <p className="text-xs text-slate-300 leading-relaxed">{item.desc}</p>
+                    <h3 className="font-bold text-black text-sm mb-0.5">{item.title}</h3>
+                    <p className="text-xs text-gray-600 leading-relaxed">{item.desc}</p>
                   </div>
                 </div>
               ))}
@@ -314,10 +296,8 @@ const LandingPage = () => {
         {/* Phase 1 — Prep modes */}
         <section id="prep-modes" className="mb-14 scroll-mt-6">
           <div className="mb-8">
-            <h2 className="text-2xl sm:text-3xl font-bold text-white mb-2">
-              Choose Your Prep Mode
-            </h2>
-            <p className="text-slate-300 text-sm sm:text-base max-w-xl">
+            <h2 className="text-2xl sm:text-3xl font-bold text-black mb-2">Choose Your Prep Mode</h2>
+            <p className="text-gray-600 text-sm sm:text-base max-w-xl">
               Start with personalized Q&A — pick how you want questions generated.
             </p>
           </div>
@@ -341,10 +321,8 @@ const LandingPage = () => {
         {/* Phases 2–5 */}
         <section id="more-tools" className="mb-14 scroll-mt-6">
           <div className="mb-8">
-            <h2 className="text-2xl sm:text-3xl font-bold text-white mb-2">
-              More Practice Tools
-            </h2>
-            <p className="text-slate-300 text-sm sm:text-base max-w-xl">
+            <h2 className="text-2xl sm:text-3xl font-bold text-black mb-2">More Practice Tools</h2>
+            <p className="text-gray-600 text-sm sm:text-base max-w-xl">
               Coding challenges, behavioral STAR scoring, live mock interviews, and weakness analytics.
             </p>
           </div>
@@ -363,25 +341,23 @@ const LandingPage = () => {
         {/* Platform features */}
         <section className="mb-14">
           <div className="mb-6">
-            <h2 className="text-xl sm:text-2xl font-bold text-white mb-1">
-              Built Into Every Session
-            </h2>
-            <p className="text-sm text-slate-300">Everything you need to study smarter.</p>
+            <h2 className="text-xl sm:text-2xl font-bold text-black mb-1">Built Into Every Session</h2>
+            <p className="text-sm text-gray-600">Everything you need to study smarter.</p>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             {APP_FEATURES.map((feature) => (
-              <div key={feature.id} className={`p-5 rounded-2xl ${GLASS_PANEL}`}>
-                <h3 className="font-bold text-white text-sm mb-1.5">{feature.title}</h3>
-                <p className="text-xs text-slate-300 leading-relaxed">{feature.description}</p>
+              <div key={feature.id} className={`p-5 ${CARD}`}>
+                <h3 className="font-bold text-black text-sm mb-1.5">{feature.title}</h3>
+                <p className="text-xs text-gray-600 leading-relaxed">{feature.description}</p>
               </div>
             ))}
           </div>
         </section>
 
         {/* Bottom CTA */}
-        <section className={`text-center rounded-3xl p-8 sm:p-12 ${GLASS_PANEL}`}>
-          <h2 className="text-2xl sm:text-3xl font-bold text-white mb-2">Ready to prep smarter?</h2>
-          <p className="text-slate-300 text-sm sm:text-base mb-6 max-w-md mx-auto">
+        <section className={`text-center rounded-3xl p-8 sm:p-12 ${CARD}`}>
+          <h2 className="text-2xl sm:text-3xl font-bold text-black mb-2">Ready to prep smarter?</h2>
+          <p className="text-gray-600 text-sm sm:text-base mb-6 max-w-md mx-auto">
             {user
               ? "Head to your dashboard to continue sessions or try a new practice module."
               : "Create a free account and generate your first session in minutes."}
@@ -389,7 +365,7 @@ const LandingPage = () => {
           <button
             type="button"
             onClick={() => (user ? navigate("/dashboard") : handleGetStarted())}
-            className="bg-orange-500 hover:bg-orange-600 text-white font-semibold px-8 py-3 rounded-full inline-flex items-center gap-2 transition-colors shadow-lg shadow-orange-500/20"
+            className={`${BTN_PRIMARY} px-8 py-3 shadow-md shadow-blue-600/20`}
           >
             {user ? "Go to Dashboard" : "Get Started Free"}
             <LuArrowRight size={18} />

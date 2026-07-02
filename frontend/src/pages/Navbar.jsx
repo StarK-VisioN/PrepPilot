@@ -22,12 +22,12 @@ const Navbar = () => {
               to="/"
               className="group inline-flex items-center gap-2.5 shrink-0"
             >
-              <span className="p-2 rounded-xl bg-gradient-to-br from-orange-400 to-orange-500 text-white shadow-md group-hover:scale-105 transition-transform">
+              <span className="p-2 rounded-xl bg-blue-600 text-white shadow-md group-hover:scale-105 transition-transform">
                 <LuSparkles size={20} />
               </span>
-              <span className="text-xl sm:text-2xl font-bold text-white">
+              <span className="text-xl sm:text-2xl font-bold text-black">
                 Interview Prep{" "}
-                <span className="text-orange-400">AI</span>
+                <span className="text-blue-600">AI</span>
               </span>
             </Link>
 
@@ -41,7 +41,7 @@ const Navbar = () => {
                     setCurrentPage("login");
                     setOpenAuthModel(true);
                   }}
-                  className="hidden sm:inline-flex text-sm font-semibold text-slate-300 px-4 py-2 rounded-full hover:text-white hover:bg-white/5 transition-colors"
+                  className="hidden sm:inline-flex text-sm font-semibold text-black px-4 py-2 rounded-full hover:bg-black/5 transition-colors"
                 >
                   Sign In
                 </button>
@@ -51,7 +51,7 @@ const Navbar = () => {
                     setCurrentPage("signup");
                     setOpenAuthModel(true);
                   }}
-                  className="bg-orange-500 hover:bg-orange-600 text-sm font-semibold text-white px-5 py-2.5 rounded-full shadow-md hover:shadow-lg transition-all"
+                  className="bg-blue-600 hover:bg-blue-700 text-sm font-semibold text-white px-5 py-2.5 rounded-full shadow-md transition-all"
                 >
                   Get Started
                 </button>
