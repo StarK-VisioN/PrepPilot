@@ -27,7 +27,7 @@ function buildRuleBasedRecommendations({ scores, weakTopics, summary, resumeAnal
         studyRecommendations.push("Start with easy Array and String problems on the coding simulator");
     }
     if ((summary.behavioral?.totalAttempts || 0) < 3) {
-        nextSteps.push("Practice 3 STAR behavioral responses");
+        nextSteps.push("Practice 3 Behavioral responses");
         studyRecommendations.push("Focus on structuring answers with Situation, Task, Action, Result");
     }
     if ((summary.mock?.completed || 0) < 1) {

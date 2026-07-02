@@ -19,7 +19,7 @@ export default defineConfig(({ mode }) => {
             .replaceAll('__SITE_TITLE__', 'Interview Prep AI — Your Interview Prep, Tailored to You')
             .replaceAll(
               '__SITE_DESCRIPTION__',
-              'AI-powered interview preparation: personalized Q&A from your resume or job description, coding practice, STAR behavioral feedback, mock interviews, and weakness analytics.'
+              'AI-powered interview preparation: personalized Q&A from your resume or job description, coding practice, Behavioral feedback, mock interviews, and weakness analytics.'
             )
         },
       },

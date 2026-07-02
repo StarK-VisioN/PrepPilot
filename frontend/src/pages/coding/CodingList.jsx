@@ -62,9 +62,9 @@ const CodingList = () => {
         </Link>
 
         <div className="flex items-center gap-3 mb-2">
-          <span className="p-3 rounded-2xl bg-blue-600 text-white shadow-md">
+          {/* <span className="p-3 rounded-2xl bg-blue-600 text-white shadow-md">
             <LuCode size={24} />
-          </span>
+          </span> */}
           <div>
             <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Coding Round Simulator</h1>
             <p className="text-gray-600 text-sm sm:text-base">

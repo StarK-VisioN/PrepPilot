@@ -1,5 +1,4 @@
 import { Link } from "react-router-dom";
-import { LuArrowRight, LuMessageSquare } from "react-icons/lu";
 
 const DIFFICULTY_COLORS = {
     Easy: "bg-emerald-100 text-emerald-700 border-emerald-200",
@@ -11,20 +10,15 @@ const BehavioralQuestionCard = ({ question }) => {
     return (
         <Link
             to={`/behavioral/${question._id}`}
-            className="group block bg-white/90 backdrop-blur-sm border border-white/60 rounded-2xl shadow-sm hover:shadow-lg transition-all p-5"
+            className="group relative block bg-white/90 backdrop-blur-sm border border-white/60 rounded-2xl shadow-sm hover:shadow-lg transition-all p-5"
         >
-            <div className="flex items-start justify-between gap-3 mb-3">
-                <span className="p-2 rounded-xl bg-blue-600 text-white">
-                    <LuMessageSquare size={16} />
-                </span>
-                <span
-                    className={`text-xs font-semibold px-2 py-0.5 rounded-full border ${DIFFICULTY_COLORS[question.difficulty] || DIFFICULTY_COLORS.Medium}`}
-                >
-                    {question.difficulty}
-                </span>
-            </div>
+            <span
+                className={`absolute top-5 right-5 text-xs font-semibold px-2 py-0.5 rounded-full border ${DIFFICULTY_COLORS[question.difficulty] || DIFFICULTY_COLORS.Medium}`}
+            >
+                {question.difficulty}
+            </span>
 
-            <h3 className="font-semibold text-gray-900 mb-2 group-hover:text-indigo-700 transition-colors line-clamp-2">
+            <h3 className="font-semibold text-gray-900 mb-2 pr-16 group-hover:text-indigo-700 transition-colors line-clamp-2">
                 {question.title}
             </h3>
 
@@ -46,7 +40,6 @@ const BehavioralQuestionCard = ({ question }) => {
 
             <span className="inline-flex items-center gap-1 text-sm font-medium text-indigo-600 group-hover:text-indigo-800">
                 Practice answer
-                <LuArrowRight size={14} className="group-hover:translate-x-0.5 transition-transform" />
             </span>
         </Link>
     );

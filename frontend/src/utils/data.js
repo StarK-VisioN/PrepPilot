@@ -143,7 +143,7 @@ export const PHASE2_FEATURES = [
 export const PHASE3_FEATURES = [
     {
         id: 'behavioral',
-        title: 'STAR Behavioral Eval',
+        title: 'Behavioral Eval',
         description:
             'Practice behavioral questions and get AI feedback scored on Situation, Task, Action, and Result.',
         cta: 'Start Behavioral Practice',

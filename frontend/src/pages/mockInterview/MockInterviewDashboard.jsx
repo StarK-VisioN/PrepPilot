@@ -90,9 +90,9 @@ const MockInterviewDashboard = () => {
 
             <div className="flex items-center justify-between gap-4 mb-8">
                 <div className="flex items-center gap-3">
-                    <span className="p-3 rounded-2xl bg-blue-600 text-white shadow-md">
+                    {/* <span className="p-3 rounded-2xl bg-blue-600 text-white shadow-md">
                         <LuMic size={24} />
-                    </span>
+                    </span> */}
                     <div>
                         <h1 className="text-2xl font-bold text-gray-900">AI Mock Interview</h1>
                         <p className="text-gray-600 text-sm">

@@ -49,7 +49,7 @@ const PHASE_MODULES = [
   },
   {
     id: 'phase-3',
-    title: 'Behavioral (STAR)',
+    title: 'Behavioral',
     subtitle: 'AI feedback on answers',
     icon: LuMessageSquare,
     iconClass: 'bg-indigo-50 text-indigo-600',
@@ -260,11 +260,11 @@ const Dashboard = () => {
 
           {/* Quick tip card */}
           <div className="mt-4 rounded-2xl bg-blue-600 p-4 text-white shadow-sm">
-            <div className="flex items-center gap-2 mb-2">
-              <LuSparkles size={16} />
-              <span className="text-xs font-semibold uppercase tracking-wide opacity-90">Tip</span>
+            <div className="flex items-center gap-2">
+              {/* <LuSparkles size={16} /> */}
+              <span className="text-xs font-semibold uppercase tracking-wide opacity-90">Personal Opinion:</span>
             </div>
-            <p className="text-sm leading-relaxed opacity-95">
+            <p className="text-xs leading-[1.0] opacity-95 pl-8">
               Start with a JD or resume session, then use Analytics to find weak spots.
             </p>
           </div>

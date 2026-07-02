@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
-import { LuArrowLeft, LuMessageSquare, LuHistory, LuTrendingUp } from "react-icons/lu";
+import { LuArrowLeft } from "react-icons/lu";
 import { toast } from "react-toastify";
 import axiosInstance from "../../utils/axiosInstance";
 import { API_PATHS } from "../../utils/apiPaths";
@@ -60,26 +60,20 @@ const BehavioralDashboard = () => {
                 </Link>
 
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                    <div className="flex items-center gap-3">
-                        <span className="p-3 rounded-2xl bg-blue-600 text-white shadow-md">
-                            <LuMessageSquare size={24} />
-                        </span>
-                        <div>
-                            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
-                                STAR Behavioral Practice
-                            </h1>
-                            <p className="text-gray-600 text-sm sm:text-base">
-                                Practice behavioral answers and get AI feedback on Situation, Task,
-                                Action, and Result.
-                            </p>
-                        </div>
+                    <div>
+                        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
+                            Behavioral Practice
+                        </h1>
+                        <p className="text-gray-600 text-sm sm:text-base mt-1">
+                            Practice behavioral answers and get AI feedback on Situation, Task,
+                            Action, and Result.
+                        </p>
                     </div>
 
                     <Link
                         to="/behavioral/history"
-                        className="inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-gray-200 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50"
+                        className="inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-gray-200 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 shrink-0"
                     >
-                        <LuHistory size={16} />
                         View History
                     </Link>
                 </div>
@@ -88,35 +82,19 @@ const BehavioralDashboard = () => {
             {stats && (
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-8">
                     {[
-                        {
-                            label: "Questions",
-                            value: stats.totalQuestions,
-                            icon: LuMessageSquare,
-                        },
-                        {
-                            label: "Attempted",
-                            value: stats.questionsAttempted,
-                            icon: LuTrendingUp,
-                        },
-                        {
-                            label: "Evaluations",
-                            value: stats.totalEvaluations,
-                            icon: LuHistory,
-                        },
+                        { label: "Questions", value: stats.totalQuestions },
+                        { label: "Attempted", value: stats.questionsAttempted },
+                        { label: "Evaluations", value: stats.totalEvaluations },
                         {
                             label: "Avg Score",
                             value: stats.averageScore !== null ? `${stats.averageScore}/100` : "—",
-                            icon: LuTrendingUp,
                         },
-                    ].map(({ label, value, icon: Icon }) => (
+                    ].map(({ label, value }) => (
                         <div
                             key={label}
                             className="bg-white/90 border border-white/60 rounded-2xl p-4 shadow-sm"
                         >
-                            <div className="flex items-center gap-2 text-gray-500 text-xs mb-1">
-                                <Icon size={14} />
-                                {label}
-                            </div>
+                            <p className="text-gray-500 text-xs mb-1">{label}</p>
                             <p className="text-xl font-bold text-gray-900">{value}</p>
                         </div>
                     ))}

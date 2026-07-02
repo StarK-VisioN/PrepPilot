@@ -329,9 +329,9 @@ const CreateSessionForm = ({ onSuccess, initialMode = 'manual', initialCompany =
             {/* Header */}
             <div className="px-5 pt-5 pb-4 border-b border-gray-100 bg-gradient-to-b from-gray-50 to-white shrink-0">
                 <div className="flex items-center gap-2 pr-8">
-                    <div className="p-2 rounded-lg bg-blue-100 text-blue-600">
+                    {/* <div className="p-2 rounded-lg bg-blue-100 text-blue-600">
                         <LuSparkles size={18} />
-                    </div>
+                    </div> */}
                     <div>
                         <h3 className="text-lg font-bold text-gray-900 leading-tight">
                             New Prep Session
@@ -556,7 +556,7 @@ const CreateSessionForm = ({ onSuccess, initialMode = 'manual', initialCompany =
 
                         <div className="flex flex-col gap-1 mb-3">
                             <label className="text-sm font-medium text-gray-700 flex items-center gap-1.5">
-                                <LuBuilding2 size={14} />
+                                {/* <LuBuilding2 size={14} /> */}
                                 Company interview style
                             </label>
                             <select

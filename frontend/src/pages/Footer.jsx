@@ -1,7 +1,6 @@
 import React, { useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import {
-  LuSparkles,
   LuMail,
   LuGithub,
   LuLinkedin,
@@ -177,7 +176,7 @@ const Footer = () => {
                     href="mailto:interviewPrep@gmail.com"
                     className="hover:text-blue-600 transition-colors break-all"
                   >
-                    interviewPrep@gmail.com
+                    interviewprepai@gmail.com
                   </a>
                 </li>
                 <li className="flex items-start gap-2">
@@ -201,13 +200,8 @@ const Footer = () => {
         </div>
 
         <div className="relative z-10 border-t border-gray-200 w-full">
-          <div className="max-w-7xl mx-auto px-6 sm:px-10 lg:px-16 py-5 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-gray-500">
+          <div className="max-w-7xl mx-auto px-6 sm:px-10 lg:px-16 py-5 flex justify-center text-xs text-gray-700 font-bold">
             <p>© {new Date().getFullYear()} Interview Prep AI. All rights reserved.</p>
-            <p className="flex items-center gap-1.5">
-              Built with
-              <LuSparkles size={12} className="text-blue-600" />
-              AI-powered interview preparation
-            </p>
           </div>
         </div>
       </div>

@@ -1,4 +1,3 @@
-import { LuArrowLeft, LuMessageSquare, LuHistory, LuTrendingUp } from "react-icons/lu";
 import { Link } from "react-router-dom";
 
 const CATEGORY_COLORS = {
@@ -34,22 +33,15 @@ const BehavioralCategoryCard = ({ category }) => {
     return (
         <Link
             to={`/behavioral?category=${encodeURIComponent(category.category)}`}
-            className="group block bg-white/90 backdrop-blur-sm border border-white/60 rounded-2xl shadow-sm hover:shadow-lg transition-all p-5"
+            className="group relative block bg-white/90 backdrop-blur-sm border border-white/60 rounded-2xl shadow-sm hover:shadow-lg transition-all p-5"
         >
-            <div className="flex items-start justify-between gap-3 mb-4">
-                <span
-                    className={`p-2.5 rounded-xl bg-gradient-to-br ${gradient} text-white shadow-sm`}
-                >
-                    <LuMessageSquare size={18} />
-                </span>
-                <span
-                    className={`text-xs font-semibold px-2.5 py-1 rounded-full border ${getStatusColor(category.status)}`}
-                >
-                    {getStatusLabel(category.status)}
-                </span>
-            </div>
+            <span
+                className={`absolute top-5 right-5 text-xs font-semibold px-2.5 py-1 rounded-full border ${getStatusColor(category.status)}`}
+            >
+                {getStatusLabel(category.status)}
+            </span>
 
-            <h3 className="font-semibold text-gray-900 mb-1 group-hover:text-indigo-700 transition-colors">
+            <h3 className="font-semibold text-gray-900 mb-1 pr-24 group-hover:text-indigo-700 transition-colors">
                 {category.category}
             </h3>
 

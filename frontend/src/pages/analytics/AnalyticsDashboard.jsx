@@ -128,9 +128,9 @@ const AnalyticsDashboard = () => {
             </Link>
 
             <div className="flex items-center gap-3 mb-8">
-                <span className="p-3 rounded-2xl bg-blue-600 text-white shadow-md">
+                {/* <span className="p-3 rounded-2xl bg-blue-600 text-white shadow-md">
                     <LuChartBar size={24} />
-                </span>
+                </span> */}
                 <div>
                     <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
                         Weakness Analytics

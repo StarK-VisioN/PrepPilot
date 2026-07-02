@@ -29,7 +29,7 @@ const ChallengeFilters = ({ difficulty, onDifficultyChange, tag, onTagChange, al
           onChange={(e) => onTagChange(e.target.value)}
           className="text-sm border border-gray-200 rounded-lg px-3 py-2 bg-white/80 text-gray-700 max-w-xs"
         >
-          <option value="">All tags</option>
+          <option value="">filter by topic you want!</option>
           {allTags.map((t) => (
             <option key={t} value={t}>
               {t}

@@ -41,9 +41,39 @@ const EXTRA_TOOLS = [
 ];
 
 const STEPS = [
-  { step: "1", title: "Pick a mode", desc: "JD, resume, company, or manual prep" },
-  { step: "2", title: "AI generates Q&A", desc: "Questions matched to your inputs" },
-  { step: "3", title: "Practice & improve", desc: "Review, pin, and learn deeper" },
+  {
+    step: "1",
+    title: "Pick a prep mode",
+    desc: "Tell the platform what you're interviewing for - we'll tailor everything from there.",
+    details: [
+      "Paste or upload a job description to match real role requirements",
+      "Upload your resume so questions reflect your actual experience and stack",
+      "Choose a company style (Google, Amazon, Microsoft, and more)",
+      "Or enter role, experience level, and focus topics manually",
+    ],
+  },
+  {
+    step: "2",
+    title: "AI generates your Q&A",
+    desc: "Groq-powered AI reads your inputs and builds a personalized question set with model answers.",
+    details: [
+      "Skills and topics extracted automatically from documents",
+      "Questions ranked by relevance to your target role",
+      "Model answers you can review, expand, and learn from",
+      "Generate more questions anytime as you progress",
+    ],
+  },
+  {
+    step: "3",
+    title: "Practice, track & improve",
+    desc: "Study smarter with sessions you can pin, revisit, and deepen - then level up across every module.",
+    details: [
+      "Pin important questions and use Learn More for concept deep-dives",
+      "Move into coding, behavioral STAR, mock interviews, and analytics",
+      "Track weak topics, ATS resume score, and readiness over time",
+      "Build a learning roadmap based on where you need the most work",
+    ],
+  },
 ];
 
 const CTA_HIGHLIGHTS = [
@@ -56,7 +86,7 @@ const CTA_HIGHLIGHTS = [
     desc: "Monaco editor, visible test cases, and submission history",
   },
   {
-    title: "STAR behavioral scoring",
+    title: "Behavioral scoring",
     desc: "AI feedback on Situation, Task, Action, and Result",
   },
   {
@@ -80,6 +110,48 @@ const BTN_PRIMARY =
 const BTN_SECONDARY =
   "bg-white text-blue-700 font-semibold rounded-full border-2 border-blue-600 hover:bg-blue-50 transition-colors";
 const CARD = "bg-white border border-gray-200 rounded-2xl shadow-sm hover:shadow-md transition-shadow";
+const SECTION_LABEL = "text-xs font-semibold text-blue-600 uppercase tracking-wider mb-2";
+
+const HowItWorksSection = () => (
+  <section id="how-it-works" className="mb-20 sm:mb-24 scroll-mt-6">
+    <div className="mb-8">
+      <p className={SECTION_LABEL}>How it works</p>
+      <h2 className="text-2xl sm:text-3xl font-bold text-black mb-2">
+        Three steps to interview-ready!
+      </h2>
+      <p className="text-gray-600 text-sm sm:text-base whitespace-nowrap">
+        Upload your context, get AI-generated practice, then improve across every interview round.
+      </p>
+    </div>
+
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-5 md:items-stretch">
+      {STEPS.map((item) => (
+        <div key={item.step} className={`${CARD} p-5 sm:p-6 flex flex-col h-full`}>
+          <div className="flex items-start gap-3 mb-3 min-h-10 md:min-h-11">
+            <span className="inline-flex w-8 h-8 shrink-0 items-center justify-center rounded-full bg-blue-600 text-white text-sm font-bold">
+              {item.step}
+            </span>
+            <h3 className="text-lg font-bold text-black leading-snug pt-0.5">{item.title}</h3>
+          </div>
+          <p className="text-sm text-gray-600 leading-relaxed mb-1 min-h-[2.75rem] md:min-h-[3rem]">
+            {item.desc}
+          </p>
+          <ul className="space-y-1">
+            {item.details.map((detail) => (
+              <li
+                key={detail}
+                className="flex items-start gap-2 text-sm text-gray-600 leading-relaxed"
+              >
+                <span className="mt-2 shrink-0 w-1.5 h-1.5 rounded-full bg-blue-500" />
+                <span>{detail}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
+    </div>
+  </section>
+);
 
 const PrepModeCard = ({ feature, onStart }) => {
   return (
@@ -116,18 +188,20 @@ const PrepModeCard = ({ feature, onStart }) => {
 
 const ToolCard = ({ feature, onClick }) => {
   return (
-    <button type="button" onClick={onClick} className={`group relative w-full text-left p-5 ${CARD}`}>
-      {feature.badge && (
-        <span className="absolute top-5 right-5 text-[10px] font-bold text-blue-700 bg-blue-50 px-1.5 py-0.5 rounded-md border border-blue-100">
-          {feature.badge}
-        </span>
-      )}
+    <button type="button" onClick={onClick} className={`group w-full text-left p-5 sm:p-6 ${CARD}`}>
       <div className="flex items-center gap-4">
         <div className="flex-1 min-w-0">
-          <h3 className={`text-base font-bold text-black mb-0.5 ${feature.badge ? "pr-12" : ""}`}>{feature.title}</h3>
-          <p className="text-xs text-gray-600 line-clamp-2 leading-relaxed">{feature.description}</p>
+          <h3 className="text-lg font-bold text-black mb-1.5">{feature.title}</h3>
+          <p className="text-sm text-gray-600 leading-relaxed line-clamp-2">{feature.description}</p>
         </div>
-        <LuChevronRight size={18} className="shrink-0 text-gray-400 group-hover:text-blue-600 transition-colors" />
+        <div className="flex flex-col items-center justify-center gap-2 shrink-0 self-stretch">
+          {feature.badge && (
+            <span className="text-[10px] font-bold text-blue-700 bg-blue-50 px-1.5 py-0.5 rounded-md border border-blue-100">
+              {feature.badge}
+            </span>
+          )}
+          <LuChevronRight size={18} className="text-gray-400 group-hover:text-blue-600 transition-colors" />
+        </div>
       </div>
     </button>
   );
@@ -165,7 +239,7 @@ const LandingPage = () => {
   const startCoding = () =>
     requireAuth("codingIntent", "Sign in to access the Coding Round Simulator", "/coding");
   const startBehavioral = () =>
-    requireAuth("behavioralIntent", "Sign in to access STAR Behavioral Practice", "/behavioral");
+    requireAuth("behavioralIntent", "Sign in to access Behavioral Practice", "/behavioral");
   const startMockInterview = () =>
     requireAuth("mockInterviewIntent", "Sign in to access AI Mock Interview", "/mock-interview");
   const startAnalytics = () =>
@@ -190,7 +264,7 @@ const LandingPage = () => {
     <div className="pb-20 relative">
       <div className="relative z-10 w-full">
         {/* Hero */}
-        <section className="pt-20 pb-12 lg:pb-16">
+        <section className="pt-20 pb-16 lg:pb-20">
           <div className="flex flex-col lg:flex-row items-center gap-10 lg:gap-14">
             <div className="w-full lg:w-[48%] space-y-6 text-center lg:text-left">
               {/* <span className="inline-flex items-center gap-2 text-sm text-blue-700 font-semibold bg-blue-50 px-4 py-2 rounded-full border border-blue-100">
@@ -273,34 +347,15 @@ const LandingPage = () => {
           </div>
         </section>
 
-        {/* How it works */}
-        <section className="mb-14">
-          <div className={`rounded-2xl p-5 sm:p-6 ${CARD}`}>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-4">
-              {STEPS.map((item) => (
-                <div
-                  key={item.step}
-                  className="flex items-start gap-3 sm:flex-col sm:items-center sm:text-center"
-                >
-                  <div className="shrink-0 w-9 h-9 bg-blue-600 text-white rounded-full flex items-center justify-center text-sm font-bold">
-                    {item.step}
-                  </div>
-                  <div className="sm:mt-1">
-                    <h3 className="font-bold text-black text-sm mb-0.5">{item.title}</h3>
-                    <p className="text-xs text-gray-600 leading-relaxed">{item.desc}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
+        <HowItWorksSection />
 
         {/* Phase 1 — Prep modes */}
-        <section id="prep-modes" className="mb-14 scroll-mt-6">
+        <section id="prep-modes" className="mb-20 sm:mb-24 scroll-mt-6">
           <div className="mb-8">
+            <p className={SECTION_LABEL}>Personalized Q&A</p>
             <h2 className="text-2xl sm:text-3xl font-bold text-black mb-2">Choose Your Prep Mode</h2>
             <p className="text-gray-600 text-sm sm:text-base max-w-xl">
-              Start with personalized Q&A — pick how you want questions generated.
+              Start with personalized Q&A - pick how you want questions generated.
             </p>
           </div>
 
@@ -321,10 +376,11 @@ const LandingPage = () => {
         </section>
 
         {/* Phases 2–5 */}
-        <section id="more-tools" className="mb-14 scroll-mt-6">
+        <section id="more-tools" className="mb-20 sm:mb-24 scroll-mt-6">
           <div className="mb-8">
+            <p className={SECTION_LABEL}>Practice tools</p>
             <h2 className="text-2xl sm:text-3xl font-bold text-black mb-2">More Practice Tools</h2>
-            <p className="text-gray-600 text-sm sm:text-base max-w-xl">
+            <p className="text-gray-600 text-sm sm:text-base whitespace-nowrap">
               Coding challenges, behavioral STAR scoring, live mock interviews, and weakness analytics.
             </p>
           </div>
@@ -341,16 +397,17 @@ const LandingPage = () => {
         </section>
 
         {/* Platform features */}
-        <section className="mb-14">
-          <div className="mb-6">
-            <h2 className="text-xl sm:text-2xl font-bold text-black mb-1">Built Into Every Session</h2>
-            <p className="text-sm text-gray-600">Everything you need to study smarter.</p>
+        <section className="mb-20 sm:mb-24">
+          <div className="mb-8">
+            <p className={SECTION_LABEL}>Study smarter</p>
+            <h2 className="text-2xl sm:text-3xl font-bold text-black mb-2">Built Into Every Session</h2>
+            <p className="text-gray-600 text-sm sm:text-base">Everything you need to study smarter.</p>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-5">
             {APP_FEATURES.map((feature) => (
-              <div key={feature.id} className={`p-5 ${CARD}`}>
-                <h3 className="font-bold text-black text-sm mb-1.5">{feature.title}</h3>
-                <p className="text-xs text-gray-600 leading-relaxed">{feature.description}</p>
+              <div key={feature.id} className={`p-5 sm:p-6 ${CARD}`}>
+                <h3 className="text-lg font-bold text-black mb-1.5">{feature.title}</h3>
+                <p className="text-sm text-gray-600 leading-relaxed">{feature.description}</p>
               </div>
             ))}
           </div>
@@ -363,9 +420,7 @@ const LandingPage = () => {
 
           <div className="relative grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 p-8 sm:p-10 lg:p-12">
             <div className="text-center lg:text-left">
-              <p className="text-xs font-semibold text-blue-600 uppercase tracking-wider mb-3">
-                All-in-one interview prep
-              </p>
+              <p className={SECTION_LABEL}>All in one prep</p>
               <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-black leading-tight mb-4">
                 Stop practicing generic questions.
                 <span className="block text-blue-600 mt-1">Start prepping for your role.</span>

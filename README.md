@@ -24,7 +24,7 @@ Interview Prep AI is a full-stack, AI-powered interview preparation platform. It
 - **Draft autosave** via Redis
 - Submission history and results per challenge
 
-### Phase 3 — STAR Behavioral Evaluation
+### Phase 3 — Behavioral Evaluation
 - **108 behavioral questions** across **12 categories** (Leadership, Conflict, Teamwork, etc.)
 - AI evaluation scored on **Situation, Task, Action, Result**
 - Practice history and improvement suggestions
