@@ -97,7 +97,7 @@ export const PHASE1_FEATURES = [
     {
         id: 'resume',
         title: 'Resume-Based Questions',
-        description: 'Upload your resume and get questions on your actual stack — Docker, Redis, Next.js, and everything you list.',
+        description: 'Upload your resume and get questions on your actual stack - Docker, Redis, Next.js, and everything you list.',
         cta: 'Prep from Resume',
         mode: 'resume',
         icon: 'resume',
@@ -107,7 +107,7 @@ export const PHASE1_FEATURES = [
     {
         id: 'company',
         title: 'Company-Specific Style',
-        description: 'Practice like it\'s the real interview — Amazon LP, Google depth, startup hands-on, and more.',
+        description: 'Practice like it\'s the real interview - Amazon LP, Google depth, startup hands-on, and more.',
         cta: 'Choose Company',
         mode: 'manual',
         icon: 'company',

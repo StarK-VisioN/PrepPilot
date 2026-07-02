@@ -1,11 +1,11 @@
 import React, { useContext, useState } from "react";
 import { Link } from "react-router-dom";
-import { LuSparkles } from "react-icons/lu";
 import Login from "./Auth/Login";
 import ForgotPassword from "./Auth/ForgotPassword";
 import Modal from "../components/Modal";
 import SignUp from "./Auth/SIgnUp";
 import ProfileInfoCard from "../components/ProfileInfoCard";
+import BrandLogo from "../components/BrandLogo";
 import { UserContext } from "../context/userContext";
 
 const Navbar = () => {
@@ -22,9 +22,7 @@ const Navbar = () => {
               to="/"
               className="group inline-flex items-center gap-2.5 shrink-0"
             >
-              <span className="p-2 rounded-xl bg-blue-600 text-white shadow-md group-hover:scale-105 transition-transform">
-                <LuSparkles size={20} />
-              </span>
+              <BrandLogo size="lg" className="group-hover:scale-105 transition-transform" />
               <span className="text-xl sm:text-2xl font-bold text-black">
                 Interview Prep{" "}
                 <span className="text-blue-600">AI</span>

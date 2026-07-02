@@ -13,6 +13,7 @@ import {
 } from 'react-icons/lu';
 import { UserContext } from '../context/userContext';
 import { toast } from 'react-toastify';
+import BrandLogo from '../components/BrandLogo';
 
 const Footer = () => {
   const { user } = useContext(UserContext);
@@ -61,9 +62,7 @@ const Footer = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-8">
             <div className="lg:col-span-1">
               <Link to="/" className="inline-flex items-center gap-2 group">
-                <span className="p-2 rounded-xl bg-blue-600 text-white shadow-md group-hover:scale-105 transition-transform">
-                  <LuSparkles size={18} />
-                </span>
+                <BrandLogo size="md" className="group-hover:scale-105 transition-transform" />
                 <span className="text-lg font-bold text-black">Interview Prep AI</span>
               </Link>
               <p className="mt-4 text-sm text-gray-600 leading-relaxed max-w-xs">

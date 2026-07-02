@@ -10,10 +10,6 @@ import {
 } from "../utils/data.js";
 import {
   LuArrowRight,
-  LuSparkles,
-  LuFileText,
-  LuUser,
-  LuBuilding2,
   LuTarget,
   LuCode,
   LuMessageSquare,
@@ -25,16 +21,6 @@ import { UserContext } from "../context/userContext.jsx";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
-const FEATURE_ICONS = {
-  jd: LuFileText,
-  resume: LuUser,
-  company: LuBuilding2,
-  manual: LuTarget,
-  coding: LuCode,
-  behavioral: LuMessageSquare,
-  "mock-interview": LuMic,
-  analytics: LuChartBar,
-};
 
 const COMPANY_CHIPS = ["Google", "Amazon", "Microsoft", "Netflix", "Uber", "Startup"];
 
@@ -66,22 +52,15 @@ const BTN_SECONDARY =
 const CARD = "bg-white border border-gray-200 rounded-2xl shadow-sm hover:shadow-md transition-shadow";
 
 const PrepModeCard = ({ feature, onStart }) => {
-  const Icon = FEATURE_ICONS[feature.icon] || LuSparkles;
-
   return (
-    <button type="button" onClick={onStart} className={`group w-full text-left p-5 sm:p-6 ${CARD} flex flex-col h-full`}>
-      <div className="flex items-start justify-between mb-4">
-        <div className="w-12 h-12 bg-blue-100 text-blue-700 rounded-xl flex items-center justify-center">
-          <Icon className="text-xl" />
-        </div>
-        {feature.badge && (
-          <span className="text-[10px] font-bold text-blue-700 bg-blue-50 px-2.5 py-1 rounded-full border border-blue-100">
-            {feature.badge}
-          </span>
-        )}
-      </div>
+    <button type="button" onClick={onStart} className={`group relative w-full text-left p-5 sm:p-6 ${CARD} flex flex-col h-full`}>
+      {feature.badge && (
+        <span className="absolute top-5 right-5 sm:top-6 sm:right-6 text-[10px] font-bold text-blue-700 bg-blue-50 px-2.5 py-1 rounded-full border border-blue-100">
+          {feature.badge}
+        </span>
+      )}
 
-      <h3 className="text-lg font-bold text-black mb-1.5">{feature.title}</h3>
+      <h3 className={`text-lg font-bold text-black mb-1.5 ${feature.badge ? "pr-12" : ""}`}>{feature.title}</h3>
       <p className="text-sm text-gray-600 leading-relaxed mb-4 flex-grow">{feature.description}</p>
 
       {feature.highlightCompany && (
@@ -106,23 +85,16 @@ const PrepModeCard = ({ feature, onStart }) => {
 };
 
 const ToolCard = ({ feature, onClick }) => {
-  const Icon = FEATURE_ICONS[feature.icon] || LuSparkles;
-
   return (
-    <button type="button" onClick={onClick} className={`group w-full text-left p-5 ${CARD}`}>
+    <button type="button" onClick={onClick} className={`group relative w-full text-left p-5 ${CARD}`}>
+      {feature.badge && (
+        <span className="absolute top-5 right-5 text-[10px] font-bold text-blue-700 bg-blue-50 px-1.5 py-0.5 rounded-md border border-blue-100">
+          {feature.badge}
+        </span>
+      )}
       <div className="flex items-center gap-4">
-        <div className="shrink-0 w-11 h-11 bg-blue-100 text-blue-700 rounded-xl flex items-center justify-center">
-          <Icon className="text-lg" />
-        </div>
         <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2 mb-0.5">
-            <h3 className="text-base font-bold text-black">{feature.title}</h3>
-            {feature.badge && (
-              <span className="text-[10px] font-bold text-blue-700 bg-blue-50 px-1.5 py-0.5 rounded-md border border-blue-100">
-                {feature.badge}
-              </span>
-            )}
-          </div>
+          <h3 className={`text-base font-bold text-black mb-0.5 ${feature.badge ? "pr-12" : ""}`}>{feature.title}</h3>
           <p className="text-xs text-gray-600 line-clamp-2 leading-relaxed">{feature.description}</p>
         </div>
         <LuChevronRight size={18} className="shrink-0 text-gray-400 group-hover:text-blue-600 transition-colors" />
@@ -188,20 +160,20 @@ const LandingPage = () => {
     <div className="pb-20 relative">
       <div className="relative z-10 w-full">
         {/* Hero */}
-        <section className="pt-2 pb-12 lg:pb-16">
+        <section className="pt-20 pb-12 lg:pb-16">
           <div className="flex flex-col lg:flex-row items-center gap-10 lg:gap-14">
             <div className="w-full lg:w-[48%] space-y-6 text-center lg:text-left">
-              <span className="inline-flex items-center gap-2 text-sm text-blue-700 font-semibold bg-blue-50 px-4 py-2 rounded-full border border-blue-100">
+              {/* <span className="inline-flex items-center gap-2 text-sm text-blue-700 font-semibold bg-blue-50 px-4 py-2 rounded-full border border-blue-100">
                 <LuSparkles className="text-base" />
                 AI Powered Interview Prep
-              </span>
+              </span> */}
 
-              <h1 className="text-4xl sm:text-5xl lg:text-[3.25rem] font-bold leading-[1.15] text-black">
+              <h1 className="text-4xl sm:text-5xl lg:text-[3.25rem] font-bold leading-[0.95] text-black">
                 Your interview prep, tailored to you
               </h1>
 
-              <p className="text-base sm:text-lg text-gray-700 leading-relaxed max-w-lg mx-auto lg:mx-0">
-                Upload your resume, paste a job description, or pick a company style — then practice
+              <p className="text-base sm:text-lg leading-[1.3] text-gray-700 max-w-lg mx-auto lg:mx-0">
+                Upload your resume, paste a job description, or pick a company style - then practice
                 with coding, behavioral, mock interviews, and analytics.
               </p>
 
