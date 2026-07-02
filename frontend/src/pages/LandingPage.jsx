@@ -16,6 +16,7 @@ import {
   LuMic,
   LuChartBar,
   LuChevronRight,
+  LuCheck,
 } from "react-icons/lu";
 import { UserContext } from "../context/userContext.jsx";
 import { useNavigate } from "react-router-dom";
@@ -43,6 +44,35 @@ const STEPS = [
   { step: "1", title: "Pick a mode", desc: "JD, resume, company, or manual prep" },
   { step: "2", title: "AI generates Q&A", desc: "Questions matched to your inputs" },
   { step: "3", title: "Practice & improve", desc: "Review, pin, and learn deeper" },
+];
+
+const CTA_HIGHLIGHTS = [
+  {
+    title: "Personalized Q&A",
+    desc: "Questions from your resume, job description, or target company",
+  },
+  {
+    title: "Coding practice",
+    desc: "Monaco editor, visible test cases, and submission history",
+  },
+  {
+    title: "STAR behavioral scoring",
+    desc: "AI feedback on Situation, Task, Action, and Result",
+  },
+  {
+    title: "Live mock interviews",
+    desc: "Dynamic follow-ups with detailed feedback reports",
+  },
+  {
+    title: "Weakness analytics",
+    desc: "ATS resume insights and a personalized learning roadmap",
+  },
+];
+
+const CTA_TRUST_POINTS = [
+  "Free to start — no credit card",
+  "Google sign-in supported",
+  "Practice across 5 modules in one place",
 ];
 
 const BTN_PRIMARY =
@@ -327,21 +357,76 @@ const LandingPage = () => {
         </section>
 
         {/* Bottom CTA */}
-        <section className={`text-center rounded-3xl p-8 sm:p-12 ${CARD}`}>
-          <h2 className="text-2xl sm:text-3xl font-bold text-black mb-2">Ready to prep smarter?</h2>
-          <p className="text-gray-600 text-sm sm:text-base mb-6 max-w-md mx-auto">
-            {user
-              ? "Head to your dashboard to continue sessions or try a new practice module."
-              : "Create a free account and generate your first session in minutes."}
-          </p>
-          <button
-            type="button"
-            onClick={() => (user ? navigate("/dashboard") : handleGetStarted())}
-            className={`${BTN_PRIMARY} px-8 py-3 shadow-md shadow-blue-600/20`}
-          >
-            {user ? "Go to Dashboard" : "Get Started Free"}
-            <LuArrowRight size={18} />
-          </button>
+        <section className="relative overflow-hidden rounded-3xl border border-gray-200 bg-white shadow-sm">
+          <div className="absolute -top-24 -right-24 w-72 h-72 bg-blue-200/30 rounded-full blur-3xl pointer-events-none" />
+          <div className="absolute -bottom-20 -left-16 w-64 h-64 bg-violet-200/20 rounded-full blur-3xl pointer-events-none" />
+
+          <div className="relative grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 p-8 sm:p-10 lg:p-12">
+            <div className="text-center lg:text-left">
+              <p className="text-xs font-semibold text-blue-600 uppercase tracking-wider mb-3">
+                All-in-one interview prep
+              </p>
+              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-black leading-tight mb-4">
+                Stop practicing generic questions.
+                <span className="block text-blue-600 mt-1">Start prepping for your role.</span>
+              </h2>
+              <p className="text-gray-600 text-sm sm:text-base leading-relaxed mb-6 max-w-xl mx-auto lg:mx-0">
+                {user
+                  ? "Pick up where you left off, launch a new session, or jump into coding, behavioral, mock interview, and analytics modules from your dashboard."
+                  : "Upload your resume or paste a job description — Interview Prep AI builds a practice plan across technical Q&A, coding rounds, behavioral interviews, mock sessions, and performance analytics."}
+              </p>
+
+              <ul className="space-y-2.5 mb-8 text-left max-w-md mx-auto lg:mx-0">
+                {CTA_TRUST_POINTS.map((point) => (
+                  <li key={point} className="flex items-start gap-2.5 text-sm text-gray-700">
+                    <span className="mt-0.5 shrink-0 w-5 h-5 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center">
+                      <LuCheck size={12} strokeWidth={3} />
+                    </span>
+                    {point}
+                  </li>
+                ))}
+              </ul>
+
+              <div className="flex flex-wrap gap-3 justify-center lg:justify-start">
+                <button
+                  type="button"
+                  onClick={() => (user ? navigate("/dashboard") : handleGetStarted())}
+                  className={`${BTN_PRIMARY} text-base px-7 py-3 shadow-md shadow-blue-600/20`}
+                >
+                  {user ? "Go to Dashboard" : "Get Started Free"}
+                  <LuArrowRight size={18} />
+                </button>
+                {!user && (
+                  <button
+                    type="button"
+                    onClick={() => navigate("/login")}
+                    className={`${BTN_SECONDARY} text-base px-7 py-3`}
+                  >
+                    Sign In
+                  </button>
+                )}
+                <button
+                  type="button"
+                  onClick={() => document.getElementById("prep-modes")?.scrollIntoView({ behavior: "smooth" })}
+                  className="text-sm font-semibold text-blue-600 hover:text-blue-700 px-4 py-3 transition-colors"
+                >
+                  Explore prep modes
+                </button>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 content-center">
+              {CTA_HIGHLIGHTS.map((item) => (
+                <div
+                  key={item.title}
+                  className="rounded-2xl border border-gray-200 bg-gray-50/80 p-4 hover:border-blue-200 hover:bg-blue-50/40 transition-colors"
+                >
+                  <h3 className="text-sm font-bold text-black mb-1">{item.title}</h3>
+                  <p className="text-xs text-gray-600 leading-relaxed">{item.desc}</p>
+                </div>
+              ))}
+            </div>
+          </div>
         </section>
       </div>
     </div>
