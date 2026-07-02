@@ -90,7 +90,7 @@ const SummaryCard = ({
 
       <div className="flex items-center justify-between pt-3 border-t border-slate-100">
         <span className="text-xs text-slate-400">{lastUpdated}</span>
-        <span className="inline-flex items-center gap-1 text-xs font-medium text-orange-500 opacity-0 group-hover:opacity-100 transition-opacity">
+        <span className="inline-flex items-center gap-1 text-xs font-medium text-blue-600 opacity-0 group-hover:opacity-100 transition-opacity">
           Open
           <LuArrowRight size={14} />
         </span>

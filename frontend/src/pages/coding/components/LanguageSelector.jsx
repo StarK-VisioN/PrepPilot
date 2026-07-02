@@ -44,8 +44,8 @@ const LanguageSelector = ({
               className={`px-3 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition-all ${
                 value === lang.id
                   ? isDark
-                    ? "bg-orange-500 text-white shadow-sm"
-                    : "bg-gray-900 text-white shadow-sm"
+                    ? "bg-blue-600 text-white shadow-sm"
+                    : "bg-gray-100 text-gray-700 shadow-sm hover:bg-gray-200"
                   : isDark
                     ? unavailable
                       ? "text-gray-600 cursor-not-allowed"

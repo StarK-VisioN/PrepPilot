@@ -67,10 +67,10 @@ const RoleInfoHeader = ({
   const showSkillSection = onSkillClick || onAddCustomSkill;
 
   return (
-    <div className="relative overflow-hidden border-b border-gray-200/60 bg-gradient-to-br from-slate-50 via-white to-orange-50/30">
+    <div className="relative overflow-hidden border-b border-gray-200/60 bg-gradient-to-br from-slate-50 via-white to-blue-50/30">
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
         <div className="absolute -top-24 -right-24 w-72 h-72 bg-teal-200/40 rounded-full blur-3xl" />
-        <div className="absolute -bottom-20 -left-20 w-64 h-64 bg-orange-200/30 rounded-full blur-3xl" />
+        <div className="absolute -bottom-20 -left-20 w-64 h-64 bg-blue-200/30 rounded-full blur-3xl" />
       </div>
 
       <div className="relative z-10 max-w-7xl mx-auto px-6 sm:px-8 md:px-10 lg:px-14 py-8 sm:py-10">
@@ -117,7 +117,7 @@ const RoleInfoHeader = ({
               <button
                 type="button"
                 onClick={() => setShowTopics(!showTopics)}
-                className="text-xs font-medium text-orange-600 hover:text-orange-700 mt-1"
+                className="text-xs font-medium text-blue-600 hover:text-blue-700 mt-1"
               >
                 {showTopics ? "Show less" : "Show full topics"}
               </button>
@@ -145,12 +145,12 @@ const RoleInfoHeader = ({
                   }}
                   placeholder="Add a skill or topic..."
                   disabled={isSavingCustomSkill}
-                  className="flex-1 text-sm border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-200 focus:border-orange-400 disabled:opacity-60"
+                  className="flex-1 text-sm border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-400 disabled:opacity-60"
                 />
                 <button
                   type="submit"
                   disabled={isSavingCustomSkill}
-                  className="inline-flex items-center justify-center gap-1.5 text-sm font-semibold text-white bg-gray-900 hover:bg-gray-800 px-4 py-2 rounded-lg transition-colors disabled:opacity-60 shrink-0"
+                  className="inline-flex items-center justify-center gap-1.5 text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg transition-colors disabled:opacity-60 shrink-0"
                 >
                   <LuPlus size={16} />
                   Add

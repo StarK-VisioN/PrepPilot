@@ -36,7 +36,7 @@ const PHASE_MODULES = [
     title: 'Interview Q&A',
     subtitle: 'JD, resume, or manual topics',
     icon: LuTarget,
-    iconClass: 'bg-orange-50 text-orange-600',
+    iconClass: 'bg-blue-50 text-blue-600',
     action: 'create',
   },
   {
@@ -206,7 +206,7 @@ const Dashboard = () => {
     return (
       <div className="min-h-[60vh] flex items-center justify-center">
         <div className="flex flex-col items-center gap-3">
-          <div className="animate-spin rounded-full h-10 w-10 border-2 border-slate-200 border-t-orange-500" />
+          <div className="animate-spin rounded-full h-10 w-10 border-2 border-gray-200 border-t-blue-600" />
           <p className="text-sm text-slate-500">Loading...</p>
         </div>
       </div>
@@ -220,8 +220,8 @@ const Dashboard = () => {
       {/* Welcome header */}
       <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-8">
         <div>
-          <p className="text-sm font-medium text-orange-500 mb-1">Dashboard</p>
-          <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">
+          <p className="text-sm font-medium text-blue-600 mb-1">Dashboard</p>
+          <h1 className="text-2xl sm:text-3xl font-bold text-black tracking-tight">
             Welcome back, {firstName}
           </h1>
           <p className="text-slate-500 mt-1.5 text-sm sm:text-base">
@@ -231,7 +231,7 @@ const Dashboard = () => {
         <button
           type="button"
           onClick={() => openCreateModal()}
-          className="inline-flex items-center justify-center gap-2 bg-slate-900 hover:bg-slate-800 text-sm font-semibold text-white px-5 py-2.5 rounded-xl transition-colors shadow-sm shrink-0 self-start sm:self-auto"
+          className="inline-flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-sm font-semibold text-white px-5 py-2.5 rounded-xl transition-colors shadow-sm shrink-0 self-start sm:self-auto"
         >
           <LuPlus size={18} />
           New Session
@@ -259,7 +259,7 @@ const Dashboard = () => {
           </div>
 
           {/* Quick tip card */}
-          <div className="mt-4 rounded-2xl bg-gradient-to-br from-orange-500 to-amber-500 p-4 text-white shadow-sm">
+          <div className="mt-4 rounded-2xl bg-blue-600 p-4 text-white shadow-sm">
             <div className="flex items-center gap-2 mb-2">
               <LuSparkles size={16} />
               <span className="text-xs font-semibold uppercase tracking-wide opacity-90">Tip</span>
@@ -295,8 +295,8 @@ const Dashboard = () => {
                         onClick={() => setActiveFilter(tab.id)}
                         className={`text-xs font-medium px-3 py-1.5 rounded-lg transition-colors ${
                           activeFilter === tab.id
-                            ? 'bg-slate-900 text-white'
-                            : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                            ? 'bg-blue-600 text-white'
+                            : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                         }`}
                       >
                         {tab.label}
@@ -314,7 +314,7 @@ const Dashboard = () => {
               {showSessionsLoader ? (
                 <div className="flex items-center justify-center py-24">
                   <div className="flex flex-col items-center gap-3">
-                    <div className="animate-spin rounded-full h-9 w-9 border-2 border-slate-200 border-t-orange-500" />
+                    <div className="animate-spin rounded-full h-9 w-9 border-2 border-gray-200 border-t-blue-600" />
                     <p className="text-sm text-slate-500">Loading sessions...</p>
                   </div>
                 </div>
@@ -331,7 +331,7 @@ const Dashboard = () => {
                   <button
                     type="button"
                     onClick={() => openCreateModal()}
-                    className="inline-flex items-center gap-2 text-sm font-semibold text-orange-600 hover:text-orange-700 transition-colors"
+                    className="inline-flex items-center gap-2 text-sm font-semibold text-blue-600 hover:text-blue-700 transition-colors"
                   >
                     Create your first session
                     <LuArrowRight size={16} />
@@ -343,7 +343,7 @@ const Dashboard = () => {
                   <button
                     type="button"
                     onClick={() => setActiveFilter('all')}
-                    className="mt-3 text-sm font-medium text-orange-600 hover:text-orange-700"
+                    className="mt-3 text-sm font-medium text-blue-600 hover:text-blue-700"
                   >
                     Show all sessions
                   </button>

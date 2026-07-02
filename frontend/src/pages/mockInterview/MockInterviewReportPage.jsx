@@ -85,7 +85,7 @@ const MockInterviewReportPage = () => {
                 </button>
             </div>
 
-            <div className="bg-gradient-to-br from-violet-600 to-purple-700 rounded-2xl p-6 text-white mb-6">
+            <div className="bg-blue-600 rounded-2xl p-6 text-white mb-6">
                 <p className="text-sm opacity-80 mb-1">Overall Score</p>
                 <p className="text-5xl font-bold">{report.score ?? "—"}/100</p>
                 <p className="mt-2 text-sm opacity-90">

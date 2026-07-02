@@ -162,7 +162,7 @@ const SkillDeepDiveSection = ({
                   className="inline-flex items-center gap-2 text-sm font-semibold text-violet-800 bg-violet-50 hover:bg-violet-100 border border-violet-200 px-5 py-2.5 rounded-xl transition-colors disabled:opacity-60"
                 >
                   {isLoadingMore ? (
-                    <SpinnerLoader size="sm" color="purple" />
+                    <SpinnerLoader size="sm" color="blue" />
                   ) : (
                     <LuPlus size={16} />
                   )}

@@ -66,8 +66,8 @@ const ProfileInfoCard = () => {
         onClick={() => setOpen((prev) => !prev)}
         className={`flex items-center gap-2 pl-1.5 pr-3 py-1.5 rounded-full border transition-all duration-200 ${
           open
-            ? 'bg-white border-orange-200 shadow-md ring-2 ring-orange-100'
-            : 'bg-white/80 border-gray-200/80 hover:border-orange-200 hover:shadow-sm backdrop-blur-sm'
+            ? 'bg-white border-blue-200 shadow-md ring-2 ring-blue-100'
+            : 'bg-white/80 border-gray-200/80 hover:border-blue-200 hover:shadow-sm backdrop-blur-sm'
         }`}
         aria-expanded={open}
         aria-haspopup="true"
@@ -79,7 +79,7 @@ const ProfileInfoCard = () => {
             className="w-9 h-9 rounded-full object-cover ring-2 ring-white shadow-sm"
           />
         ) : (
-          <div className="w-9 h-9 rounded-full bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center text-white text-sm font-bold shadow-sm ring-2 ring-white">
+          <div className="w-9 h-9 rounded-full bg-blue-600 flex items-center justify-center text-white text-sm font-bold shadow-sm ring-2 ring-white">
             {initials}
           </div>
         )}
@@ -89,7 +89,7 @@ const ProfileInfoCard = () => {
             {firstName}
           </p>
           <p className="text-[10px] text-gray-500 leading-tight flex items-center gap-0.5">
-            <LuSparkles size={9} className="text-orange-500" />
+            <LuSparkles size={9} className="text-blue-600" />
             {isGoogleUser ? 'Google member' : 'Prep member'}
           </p>
         </div>
@@ -97,7 +97,7 @@ const ProfileInfoCard = () => {
         <LuChevronDown
           size={16}
           className={`text-gray-400 shrink-0 transition-transform duration-200 ${
-            open ? 'rotate-180 text-orange-500' : ''
+            open ? 'rotate-180 text-blue-600' : ''
           }`}
         />
       </button>
@@ -106,7 +106,7 @@ const ProfileInfoCard = () => {
         <div className="absolute right-0 mt-2 w-64 origin-top-right">
           <div className="rounded-2xl border border-gray-100 bg-white shadow-xl shadow-gray-200/50 overflow-hidden">
             {/* User info header */}
-            <div className="px-4 py-4 bg-gradient-to-br from-orange-50 via-white to-purple-50 border-b border-gray-100">
+            <div className="px-4 py-4 bg-gradient-to-br from-blue-50 via-white to-gray-50 border-b border-gray-100">
               <div className="flex items-center gap-3">
                 {avatar ? (
                   <img
@@ -115,7 +115,7 @@ const ProfileInfoCard = () => {
                     className="w-11 h-11 rounded-full object-cover ring-2 ring-white shadow"
                   />
                 ) : (
-                  <div className="w-11 h-11 rounded-full bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center text-white font-bold shadow ring-2 ring-white">
+                  <div className="w-11 h-11 rounded-full bg-blue-600 flex items-center justify-center text-white font-bold shadow ring-2 ring-white">
                     {initials}
                   </div>
                 )}
@@ -131,9 +131,9 @@ const ProfileInfoCard = () => {
               <button
                 type="button"
                 onClick={goToDashboard}
-                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-gray-700 hover:bg-orange-50 hover:text-orange-700 transition-colors group"
+                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700 transition-colors group"
               >
-                <span className="p-1.5 rounded-lg bg-gray-100 group-hover:bg-orange-100 transition-colors">
+                <span className="p-1.5 rounded-lg bg-gray-100 group-hover:bg-blue-100 transition-colors">
                   <LuLayoutDashboard size={16} />
                 </span>
                 My Dashboard
@@ -145,9 +145,9 @@ const ProfileInfoCard = () => {
                   setOpen(false);
                   navigate('/coding');
                 }}
-                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-gray-700 hover:bg-orange-50 hover:text-orange-700 transition-colors group"
+                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700 transition-colors group"
               >
-                <span className="p-1.5 rounded-lg bg-gray-100 group-hover:bg-orange-100 transition-colors">
+                <span className="p-1.5 rounded-lg bg-gray-100 group-hover:bg-blue-100 transition-colors">
                   <LuCode size={16} />
                 </span>
                 Coding Round
@@ -159,9 +159,9 @@ const ProfileInfoCard = () => {
                   setOpen(false);
                   navigate('/behavioral');
                 }}
-                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-700 transition-colors group"
+                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700 transition-colors group"
               >
-                <span className="p-1.5 rounded-lg bg-gray-100 group-hover:bg-indigo-100 transition-colors">
+                <span className="p-1.5 rounded-lg bg-gray-100 group-hover:bg-blue-100 transition-colors">
                   <LuMessageSquare size={16} />
                 </span>
                 STAR Behavioral
@@ -173,9 +173,9 @@ const ProfileInfoCard = () => {
                   setOpen(false);
                   navigate('/mock-interview');
                 }}
-                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-gray-700 hover:bg-violet-50 hover:text-violet-700 transition-colors group"
+                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700 transition-colors group"
               >
-                <span className="p-1.5 rounded-lg bg-gray-100 group-hover:bg-violet-100 transition-colors">
+                <span className="p-1.5 rounded-lg bg-gray-100 group-hover:bg-blue-100 transition-colors">
                   <LuMic size={16} />
                 </span>
                 Mock Interview
@@ -187,9 +187,9 @@ const ProfileInfoCard = () => {
                   setOpen(false);
                   navigate('/analytics');
                 }}
-                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-gray-700 hover:bg-cyan-50 hover:text-cyan-700 transition-colors group"
+                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700 transition-colors group"
               >
-                <span className="p-1.5 rounded-lg bg-gray-100 group-hover:bg-cyan-100 transition-colors">
+                <span className="p-1.5 rounded-lg bg-gray-100 group-hover:bg-blue-100 transition-colors">
                   <LuChartBar size={16} />
                 </span>
                 Analytics
@@ -201,9 +201,9 @@ const ProfileInfoCard = () => {
                   setOpen(false);
                   navigate('/settings/profile', { state: { scrollToEdit: true } });
                 }}
-                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-gray-700 hover:bg-orange-50 hover:text-orange-700 transition-colors group"
+                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700 transition-colors group"
               >
-                <span className="p-1.5 rounded-lg bg-gray-100 group-hover:bg-orange-100 transition-colors">
+                <span className="p-1.5 rounded-lg bg-gray-100 group-hover:bg-blue-100 transition-colors">
                   <LuUser size={16} />
                 </span>
                 Edit Profile

@@ -61,7 +61,7 @@ const BehavioralDashboard = () => {
 
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                     <div className="flex items-center gap-3">
-                        <span className="p-3 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 text-white shadow-md">
+                        <span className="p-3 rounded-2xl bg-blue-600 text-white shadow-md">
                             <LuMessageSquare size={24} />
                         </span>
                         <div>

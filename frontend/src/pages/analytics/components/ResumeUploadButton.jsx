@@ -49,7 +49,7 @@ const ResumeUploadButton = ({ onUploaded, uploading, setUploading }) => {
                 type="button"
                 onClick={() => inputRef.current?.click()}
                 disabled={uploading}
-                className="inline-flex items-center gap-2 px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-60 text-white text-sm font-medium rounded-xl transition-colors"
+                className="inline-flex items-center gap-2 px-4 py-2.5 bg-blue-600 hover:bg-blue-700 disabled:opacity-60 text-white text-sm font-medium rounded-xl transition-colors"
             >
                 {uploading ? (
                     <LuLoader className="animate-spin" size={18} />

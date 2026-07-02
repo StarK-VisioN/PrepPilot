@@ -22,7 +22,7 @@ const WeakTopicCard = ({ topic }) => {
             </div>
             <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
                 <div
-                    className="h-full bg-gradient-to-r from-rose-400 to-orange-400 rounded-full"
+                    className="h-full bg-gradient-to-r from-blue-400 to-blue-500 rounded-full"
                     style={{ width: `${topic.averageScore}%` }}
                 />
             </div>

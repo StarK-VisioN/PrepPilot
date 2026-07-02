@@ -71,7 +71,7 @@ const GoalForm = ({ goals, onSave, saving }) => {
             <button
                 type="submit"
                 disabled={saving}
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-indigo-600 text-white text-sm font-medium hover:bg-indigo-700 disabled:opacity-50"
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-blue-600 text-white text-sm font-medium hover:bg-blue-700 disabled:opacity-50"
             >
                 <LuSave size={16} />
                 {saving ? "Saving..." : "Save Goals"}

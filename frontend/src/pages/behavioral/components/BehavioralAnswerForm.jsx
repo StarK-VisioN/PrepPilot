@@ -51,7 +51,7 @@ const BehavioralAnswerForm = ({
                 type="button"
                 onClick={onSubmit}
                 disabled={submitting || disabled || !answer.trim()}
-                className="mt-4 w-full py-3 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold text-sm hover:from-indigo-700 hover:to-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                className="mt-4 w-full py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
                 {submitting ? "Evaluating with STAR..." : "Submit for STAR Evaluation"}
             </button>

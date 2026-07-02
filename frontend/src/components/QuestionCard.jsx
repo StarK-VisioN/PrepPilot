@@ -27,9 +27,9 @@ const QuestionCard = ({
     <article
       className={`rounded-2xl border bg-white transition-all duration-300 overflow-hidden ${
         isExpanded
-          ? "border-orange-200 shadow-lg shadow-orange-100/40 ring-1 ring-orange-100"
+          ? "border-blue-200 shadow-lg shadow-blue-100/40 ring-1 ring-blue-100"
           : "border-gray-200/80 shadow-sm hover:border-gray-300 hover:shadow-md"
-      } ${isPinned ? "border-l-4 border-l-orange-400" : ""}`}
+      } ${isPinned ? "border-l-4 border-l-blue-500" : ""}`}
     >
       {/* Header — tap to expand/collapse */}
       <button
@@ -41,8 +41,8 @@ const QuestionCard = ({
         <span
           className={`flex-shrink-0 w-8 h-8 rounded-xl flex items-center justify-center text-xs font-bold transition-colors ${
             isExpanded
-              ? "bg-orange-500 text-white"
-              : "bg-gray-100 text-gray-600 group-hover:bg-orange-100 group-hover:text-orange-700"
+              ? "bg-blue-600 text-white"
+              : "bg-gray-100 text-gray-600 group-hover:bg-blue-100 group-hover:text-blue-700"
           }`}
         >
           {index}
@@ -64,7 +64,7 @@ const QuestionCard = ({
         <LuChevronDown
           size={20}
           className={`flex-shrink-0 text-gray-400 transition-transform duration-300 mt-0.5 ${
-            isExpanded ? "rotate-180 text-orange-500" : ""
+            isExpanded ? "rotate-180 text-blue-600" : ""
           }`}
         />
       </button>
@@ -79,7 +79,7 @@ const QuestionCard = ({
           <div className="px-4 sm:px-5 pb-5 pt-0">
             <div className="border-t border-gray-100 pt-4">
               <div className="flex items-center gap-2 mb-3">
-                <LuBookOpen size={14} className="text-orange-500" />
+                <LuBookOpen size={14} className="text-blue-600" />
                 <span className="text-xs font-semibold uppercase tracking-wide text-gray-500">
                   Model Answer
                 </span>
@@ -123,8 +123,8 @@ const QuestionCard = ({
                     }}
                     className={`inline-flex items-center gap-1.5 text-xs font-medium px-3 py-2 rounded-lg border transition-colors ${
                       isPinned
-                        ? "bg-orange-50 text-orange-700 border-orange-200"
-                        : "bg-white text-gray-600 border-gray-200 hover:border-orange-200 hover:text-orange-700"
+                        ? "bg-blue-50 text-blue-700 border-blue-200"
+                        : "bg-white text-gray-600 border-gray-200 hover:border-blue-200 hover:text-blue-700"
                     }`}
                   >
                     {isPinned ? <LuPinOff size={14} /> : <LuPin size={14} />}

@@ -86,7 +86,7 @@ const AvatarEditor = ({ disabled = false }) => {
                         className="w-24 h-24 rounded-full object-cover ring-4 ring-white shadow-md"
                     />
                 ) : (
-                    <div className="w-24 h-24 rounded-full bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center text-white text-3xl font-bold shadow-md ring-4 ring-white">
+                    <div className="w-24 h-24 rounded-full bg-blue-600 flex items-center justify-center text-white text-3xl font-bold shadow-md ring-4 ring-white">
                         {getUserInitials(user)}
                     </div>
                 )}

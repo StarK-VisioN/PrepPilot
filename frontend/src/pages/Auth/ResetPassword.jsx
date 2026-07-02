@@ -91,7 +91,7 @@ const ResetPassword = () => {
                         className={`w-full text-white font-semibold py-3 rounded-md text-sm sm:text-base transition min-h-[44px] ${
                             loading
                                 ? "bg-gray-400 cursor-not-allowed"
-                                : "bg-black hover:bg-gray-800"
+                                : "bg-blue-600 hover:bg-blue-700"
                         }`}
                     >
                         {loading ? "Resetting..." : "Reset Password"}

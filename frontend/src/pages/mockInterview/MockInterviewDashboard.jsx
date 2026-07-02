@@ -90,7 +90,7 @@ const MockInterviewDashboard = () => {
 
             <div className="flex items-center justify-between gap-4 mb-8">
                 <div className="flex items-center gap-3">
-                    <span className="p-3 rounded-2xl bg-gradient-to-br from-violet-600 to-purple-700 text-white shadow-md">
+                    <span className="p-3 rounded-2xl bg-blue-600 text-white shadow-md">
                         <LuMic size={24} />
                     </span>
                     <div>
@@ -122,7 +122,7 @@ const MockInterviewDashboard = () => {
                                 onClick={() => setSourceType(opt.id)}
                                 className={`px-3 py-1.5 rounded-full text-sm font-medium border transition-colors ${
                                     sourceType === opt.id
-                                        ? "bg-gray-900 text-white border-gray-900"
+                                        ? "bg-blue-600 text-white border-blue-600"
                                         : "bg-white text-gray-600 border-gray-200 hover:border-gray-300"
                                 }`}
                             >
@@ -228,7 +228,7 @@ const MockInterviewDashboard = () => {
                                 onClick={() => setDuration(d)}
                                 className={`px-4 py-2 rounded-xl text-sm font-medium border ${
                                     duration === d
-                                        ? "bg-indigo-600 text-white border-indigo-600"
+                                        ? "bg-blue-600 text-white border-blue-600"
                                         : "bg-white text-gray-600 border-gray-200"
                                 }`}
                             >
@@ -250,7 +250,7 @@ const MockInterviewDashboard = () => {
                                 onClick={() => setPersonality(p.id)}
                                 className={`px-3 py-1.5 rounded-full text-sm border ${
                                     personality === p.id
-                                        ? "bg-violet-600 text-white border-violet-600"
+                                        ? "bg-blue-600 text-white border-blue-600"
                                         : "bg-white text-gray-600 border-gray-200"
                                 }`}
                             >
@@ -264,7 +264,7 @@ const MockInterviewDashboard = () => {
                     type="button"
                     onClick={handleStart}
                     disabled={starting}
-                    className="w-full py-3.5 rounded-xl bg-gradient-to-r from-violet-600 to-purple-700 text-white font-semibold hover:opacity-90 disabled:opacity-50 flex items-center justify-center gap-2"
+                    className="w-full py-3.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold disabled:opacity-50 flex items-center justify-center gap-2 transition-colors"
                 >
                     {starting ? (
                         <>

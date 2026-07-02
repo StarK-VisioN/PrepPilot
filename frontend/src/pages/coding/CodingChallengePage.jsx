@@ -358,7 +358,7 @@ const CodingChallengePage = () => {
 
       <div className="flex items-center justify-center min-h-[60vh]">
 
-        <LuLoader size={32} className="animate-spin text-orange-500" />
+        <LuLoader size={32} className="animate-spin text-blue-600" />
 
       </div>
 
@@ -376,7 +376,7 @@ const CodingChallengePage = () => {
 
         <p className="text-gray-600 mb-4">Challenge not found.</p>
 
-        <Link to="/coding" className="text-orange-600 hover:underline">
+        <Link to="/coding" className="text-blue-600 hover:underline">
 
           Back to challenges
 
@@ -466,7 +466,7 @@ const CodingChallengePage = () => {
 
               disabled={running || submitting}
 
-              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium bg-gray-900 text-white hover:bg-gray-800 disabled:opacity-50"
+              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50"
 
             >
 
@@ -528,7 +528,7 @@ const CodingChallengePage = () => {
 
                     activeTab === tab.id
 
-                      ? "border-orange-500 text-orange-600"
+                      ? "border-blue-600 text-blue-600"
 
                       : "border-transparent text-gray-500 hover:text-gray-700"
 

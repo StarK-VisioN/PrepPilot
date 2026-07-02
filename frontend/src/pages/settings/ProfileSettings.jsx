@@ -132,7 +132,7 @@ const ProfileSettings = () => {
                             className={`w-full sm:w-auto px-6 py-3 rounded-xl text-white font-semibold transition ${
                                 saving || !name.trim()
                                     ? "bg-gray-400 cursor-not-allowed"
-                                    : "bg-black hover:bg-gray-800"
+                                    : "bg-blue-600 hover:bg-blue-700"
                             }`}
                         >
                             {saving ? "Saving..." : "Save changes"}
@@ -141,7 +141,7 @@ const ProfileSettings = () => {
                 </section>
 
                 <section className="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
-                    <div className="px-6 py-5 border-b border-gray-100 bg-gradient-to-r from-orange-50 to-white">
+                    <div className="px-6 py-5 border-b border-gray-100 bg-gradient-to-r from-blue-50 to-white">
                         <div className="flex items-center gap-4">
                             {avatar ? (
                                 <img
@@ -150,7 +150,7 @@ const ProfileSettings = () => {
                                     className="w-16 h-16 rounded-full object-cover ring-2 ring-white shadow"
                                 />
                             ) : (
-                                <div className="w-16 h-16 rounded-full bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center text-white text-xl font-bold shadow">
+                                <div className="w-16 h-16 rounded-full bg-blue-600 flex items-center justify-center text-white text-xl font-bold shadow">
                                     {user.name?.charAt(0)?.toUpperCase() || "U"}
                                 </div>
                             )}

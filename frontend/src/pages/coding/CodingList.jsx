@@ -62,7 +62,7 @@ const CodingList = () => {
         </Link>
 
         <div className="flex items-center gap-3 mb-2">
-          <span className="p-3 rounded-2xl bg-gradient-to-br from-orange-400 to-orange-500 text-white shadow-md">
+          <span className="p-3 rounded-2xl bg-blue-600 text-white shadow-md">
             <LuCode size={24} />
           </span>
           <div>

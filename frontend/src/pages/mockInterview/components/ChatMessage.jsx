@@ -7,7 +7,7 @@ const ChatMessage = ({ message }) => {
                 className={`max-w-[85%] sm:max-w-[75%] rounded-2xl px-4 py-3 ${
                     isAi
                         ? "bg-white border border-gray-200 text-gray-800 rounded-tl-sm"
-                        : "bg-gradient-to-br from-indigo-600 to-purple-600 text-white rounded-tr-sm"
+                        : "bg-blue-600 text-white rounded-tr-sm"
                 }`}
             >
                 {isAi && (

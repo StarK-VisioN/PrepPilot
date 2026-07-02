@@ -128,7 +128,7 @@ const AnalyticsDashboard = () => {
             </Link>
 
             <div className="flex items-center gap-3 mb-8">
-                <span className="p-3 rounded-2xl bg-gradient-to-br from-cyan-500 to-indigo-600 text-white shadow-md">
+                <span className="p-3 rounded-2xl bg-blue-600 text-white shadow-md">
                     <LuChartBar size={24} />
                 </span>
                 <div>
@@ -153,7 +153,7 @@ const AnalyticsDashboard = () => {
             />
 
             {/* Readiness hero */}
-            <div className="bg-gradient-to-br from-cyan-600 to-indigo-700 rounded-2xl p-6 text-white mb-6">
+            <div className="bg-blue-600 rounded-2xl p-6 text-white mb-6">
                 <p className="text-sm opacity-80 mb-1">Interview Readiness</p>
                 <div className="flex items-end gap-3">
                     <span className="text-5xl font-bold">{dashboard?.overallReadiness ?? 0}</span>

@@ -1,7 +1,7 @@
 const RATING_STYLES = {
     Excellent: "from-emerald-500 to-teal-600",
     Good: "from-blue-500 to-indigo-600",
-    Average: "from-amber-500 to-orange-500",
+    Average: "from-blue-400 to-blue-500",
     "Needs Improvement": "from-rose-500 to-red-600",
 };
 

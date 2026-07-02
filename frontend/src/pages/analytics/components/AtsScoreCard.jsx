@@ -10,7 +10,7 @@ const AtsScoreCard = ({ score, roleFitScore, foundation }) => {
 
     const ringColor = (val) => {
         if (val >= 75) return "from-emerald-500 to-teal-600";
-        if (val >= 50) return "from-amber-500 to-orange-600";
+        if (val >= 50) return "from-blue-400 to-blue-600";
         return "from-rose-500 to-red-600";
     };
 
@@ -38,7 +38,7 @@ const AtsScoreCard = ({ score, roleFitScore, foundation }) => {
                 </div>
                 <div className="text-center">
                     <div
-                        className={`inline-flex items-center justify-center w-24 h-24 rounded-full bg-gradient-to-br from-indigo-500 to-violet-600 text-white shadow-md mb-2`}
+                        className={`inline-flex items-center justify-center w-24 h-24 rounded-full bg-blue-600 text-white shadow-md mb-2`}
                     >
                         <div className="text-center">
                             <span className="text-3xl font-bold">{roleFit}</span>

@@ -105,7 +105,7 @@ const Login = ({ setCurrentPage, onSuccess }) => {
               }
             }}
             className={`text-sm font-medium hover:underline ${
-              loading ? "text-gray-400 cursor-not-allowed" : "text-orange-500"
+              loading ? "text-gray-400 cursor-not-allowed" : "text-blue-600"
             }`}
           >
             Forgot Password?
@@ -124,7 +124,7 @@ const Login = ({ setCurrentPage, onSuccess }) => {
           className={`w-full text-white font-semibold py-3 rounded-md text-sm sm:text-base transition min-h-[44px] mt-2 ${
             loading 
               ? 'bg-gray-400 cursor-not-allowed' 
-              : 'bg-black hover:bg-gray-800'
+              : 'bg-blue-600 hover:bg-blue-700'
           }`}
         >
           {loading ? (
@@ -143,7 +143,7 @@ const Login = ({ setCurrentPage, onSuccess }) => {
         <span
           onClick={() => !loading && setCurrentPage?.("signup")}
           className={`font-medium cursor-pointer hover:underline ${
-            loading ? 'text-gray-400' : 'text-orange-500'
+            loading ? 'text-gray-400' : 'text-blue-600'
           }`}
         >
           Sign Up

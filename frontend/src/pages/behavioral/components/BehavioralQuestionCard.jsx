@@ -14,7 +14,7 @@ const BehavioralQuestionCard = ({ question }) => {
             className="group block bg-white/90 backdrop-blur-sm border border-white/60 rounded-2xl shadow-sm hover:shadow-lg transition-all p-5"
         >
             <div className="flex items-start justify-between gap-3 mb-3">
-                <span className="p-2 rounded-xl bg-gradient-to-br from-indigo-400 to-purple-500 text-white">
+                <span className="p-2 rounded-xl bg-blue-600 text-white">
                     <LuMessageSquare size={16} />
                 </span>
                 <span

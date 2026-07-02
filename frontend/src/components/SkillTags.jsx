@@ -50,17 +50,17 @@ const SkillTags = ({
               disabled={interactive && !!loadingSkill}
               className={`inline-flex items-center gap-1 rounded-full border font-medium transition-all ${sizeClasses} ${
                 isSelected
-                  ? 'bg-orange-100 text-orange-800 border-orange-300 shadow-sm ring-1 ring-orange-200'
+                  ? 'bg-blue-100 text-blue-800 border-blue-300 shadow-sm ring-1 ring-blue-200'
                   : isCustom
                     ? 'bg-indigo-50 text-indigo-800 border-indigo-200 hover:bg-indigo-100 hover:border-indigo-300'
-                    : 'bg-gray-50 text-gray-700 border-gray-200 hover:bg-orange-50 hover:text-orange-700 hover:border-orange-200'
+                    : 'bg-gray-50 text-gray-700 border-gray-200 hover:bg-blue-50 hover:text-blue-700 hover:border-blue-200'
               } ${interactive ? 'cursor-pointer disabled:opacity-60 disabled:cursor-wait' : ''} ${
                 isCustom && onRemoveCustom ? 'rounded-r-none border-r-0 pr-2' : ''
               }`}
             >
               {isLoading && (
                 <span
-                  className="inline-block w-3 h-3 border-2 border-orange-300 border-t-orange-600 rounded-full animate-spin shrink-0"
+                  className="inline-block w-3 h-3 border-2 border-blue-300 border-t-blue-600 rounded-full animate-spin shrink-0"
                   aria-hidden="true"
                 />
               )}
@@ -80,7 +80,7 @@ const SkillTags = ({
                 }}
                 className={`inline-flex items-center justify-center rounded-r-full border border-l-0 font-medium transition-colors ${sizeClasses} ${
                   isSelected
-                    ? 'bg-orange-100 text-orange-700 border-orange-300 hover:bg-orange-200'
+                    ? 'bg-blue-100 text-blue-700 border-blue-300 hover:bg-blue-200'
                     : 'bg-indigo-50 text-indigo-600 border-indigo-200 hover:bg-indigo-100'
                 } px-1.5`}
                 aria-label={`Remove ${skill}`}

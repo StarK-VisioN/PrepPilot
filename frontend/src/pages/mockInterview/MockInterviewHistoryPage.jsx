@@ -33,7 +33,7 @@ const MockInterviewHistoryPage = () => {
             </Link>
 
             <div className="flex items-center gap-3 mb-6">
-                <span className="p-3 rounded-2xl bg-gradient-to-br from-violet-600 to-purple-700 text-white">
+                <span className="p-3 rounded-2xl bg-blue-600 text-white">
                     <LuMic size={22} />
                 </span>
                 <div>
@@ -69,7 +69,7 @@ const MockInterviewHistoryPage = () => {
                             <div key={i} className="flex-1 flex flex-col items-center gap-1">
                                 <span className="text-xs font-semibold">{point.score}</span>
                                 <div
-                                    className="w-full bg-gradient-to-t from-violet-500 to-purple-400 rounded-t"
+                                    className="w-full bg-gradient-to-t from-blue-500 to-blue-400 rounded-t"
                                     style={{ height: `${Math.max(point.score, 8)}%` }}
                                 />
                             </div>

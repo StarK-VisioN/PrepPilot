@@ -14,7 +14,7 @@ const ChallengeFilters = ({ difficulty, onDifficultyChange, tag, onTagChange, al
             onClick={() => onDifficultyChange(level === "All" ? "" : level)}
             className={`px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${
               (level === "All" && !difficulty) || difficulty === level
-                ? "bg-gray-900 text-white"
+                ? "bg-blue-600 text-white"
                 : "bg-white/80 text-gray-700 hover:bg-white border border-gray-200"
             }`}
           >

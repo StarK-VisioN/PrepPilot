@@ -580,7 +580,7 @@ const InterviewPrep = () => {
           <div className="flex justify-center mt-10 pt-6 border-t border-gray-100">
             <button
               type="button"
-              className="inline-flex items-center gap-2 text-sm font-semibold text-white bg-gray-900 hover:bg-gray-800 px-6 py-3 rounded-xl shadow-md transition-colors disabled:opacity-60"
+              className="inline-flex items-center gap-2 text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 px-6 py-3 rounded-xl shadow-md transition-colors disabled:opacity-60"
               disabled={isLoading || isUpdateLoader}
               onClick={uploadMoreQuestions}
             >

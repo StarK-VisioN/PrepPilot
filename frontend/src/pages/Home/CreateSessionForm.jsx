@@ -26,8 +26,8 @@ const GENERATION_MODES = [
         label: 'Manual',
         description: 'Enter role, experience & topics',
         icon: LuTarget,
-        color: 'border-orange-400 bg-orange-50 text-orange-800',
-        ring: 'ring-orange-400',
+        color: 'border-blue-400 bg-blue-50 text-blue-800',
+        ring: 'ring-blue-400',
     },
     {
         id: 'jd',
@@ -329,7 +329,7 @@ const CreateSessionForm = ({ onSuccess, initialMode = 'manual', initialCompany =
             {/* Header */}
             <div className="px-5 pt-5 pb-4 border-b border-gray-100 bg-gradient-to-b from-gray-50 to-white shrink-0">
                 <div className="flex items-center gap-2 pr-8">
-                    <div className="p-2 rounded-lg bg-orange-100 text-orange-600">
+                    <div className="p-2 rounded-lg bg-blue-100 text-blue-600">
                         <LuSparkles size={18} />
                     </div>
                     <div>
@@ -569,7 +569,7 @@ const CreateSessionForm = ({ onSuccess, initialMode = 'manual', initialCompany =
                                     if (error) setError(null);
                                 }}
                                 disabled={isLoading}
-                                className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-orange-200 focus:border-orange-400 bg-white"
+                                className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-400 bg-white"
                             >
                                 {companies.map((c) => (
                                     <option key={c.id} value={c.id}>
@@ -641,7 +641,7 @@ const CreateSessionForm = ({ onSuccess, initialMode = 'manual', initialCompany =
                             </div>
                             <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
                                 <div
-                                    className="h-full bg-orange-500 rounded-full transition-all duration-500"
+                                    className="h-full bg-blue-600 rounded-full transition-all duration-500"
                                     style={{ width: `${((loadingStepIndex + 1) / 3) * 100}%` }}
                                 />
                             </div>
@@ -651,7 +651,7 @@ const CreateSessionForm = ({ onSuccess, initialMode = 'manual', initialCompany =
                     <button
                         type="submit"
                         disabled={isLoading}
-                        className="w-full bg-gray-900 hover:bg-gray-800 disabled:bg-gray-400 text-white font-semibold py-3 rounded-xl text-sm transition flex items-center justify-center gap-2 min-h-[48px]"
+                        className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white font-semibold py-3 rounded-xl text-sm transition flex items-center justify-center gap-2 min-h-[48px]"
                     >
                         {isLoading ? (
                             <>

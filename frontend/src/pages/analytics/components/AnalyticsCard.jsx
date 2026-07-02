@@ -1,8 +1,8 @@
 const AnalyticsCard = ({ label, value, sub, accent = "indigo" }) => {
     const accents = {
-        indigo: "from-indigo-500 to-purple-600",
+        indigo: "from-blue-500 to-blue-600",
         emerald: "from-emerald-500 to-teal-600",
-        orange: "from-orange-500 to-amber-600",
+        orange: "from-blue-500 to-blue-600",
         violet: "from-violet-500 to-purple-700",
     };
 

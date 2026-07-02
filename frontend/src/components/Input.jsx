@@ -19,7 +19,7 @@ const Input = ({ value, onChange, label, placeholder, type, disabled, required }
           type={type === "password" ? (showPassword ? "text" : "password") : type}
           placeholder={placeholder}
           disabled={disabled}
-          className='w-full border border-gray-300 rounded-md px-2 py-3 text-sm text-gray-900 bg-white placeholder:text-gray-400 focus:outline-none focus:border-orange-400 focus:ring-2 focus:ring-orange-200 min-h-[44px] disabled:bg-gray-50 disabled:text-gray-500 disabled:cursor-not-allowed'
+          className='w-full border border-gray-300 rounded-md px-2 py-3 text-sm text-gray-900 bg-white placeholder:text-gray-400 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 min-h-[44px] disabled:bg-gray-50 disabled:text-gray-500 disabled:cursor-not-allowed'
           value={value}
           onChange={(e) => onChange(e)}
         />

@@ -23,7 +23,7 @@ const InterviewInput = ({ value, onChange, onSend, disabled, sending }) => {
                 type="button"
                 onClick={onSend}
                 disabled={disabled || sending || !value.trim()}
-                className="p-3 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 text-white disabled:opacity-50 hover:opacity-90 transition-opacity"
+                className="p-3 rounded-xl bg-blue-600 text-white disabled:opacity-50 hover:bg-blue-700 transition-colors"
             >
                 {sending ? <LuLoader className="animate-spin" size={20} /> : <LuSend size={20} />}
             </button>

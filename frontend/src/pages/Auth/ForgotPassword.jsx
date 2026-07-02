@@ -87,7 +87,7 @@ const ForgotPassword = ({ setCurrentPage, standalone = false }) => {
                     className={`w-full text-white font-semibold py-3 rounded-md text-sm sm:text-base transition min-h-[44px] ${
                         loading || success
                             ? "bg-gray-400 cursor-not-allowed"
-                            : "bg-black hover:bg-gray-800"
+                            : "bg-blue-600 hover:bg-blue-700"
                     }`}
                 >
                     {loading ? "Sending..." : "Send reset link"}
@@ -99,7 +99,7 @@ const ForgotPassword = ({ setCurrentPage, standalone = false }) => {
                 <span
                     onClick={() => !loading && goToLogin()}
                     className={`font-medium cursor-pointer hover:underline ${
-                        loading ? "text-gray-400" : "text-orange-500"
+                        loading ? "text-gray-400" : "text-blue-600"
                     }`}
                 >
                     Back to Log In
