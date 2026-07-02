@@ -8,6 +8,6 @@ export const SITE_DESCRIPTION =
 export const SITE_URL =
   import.meta.env.VITE_SITE_URL?.replace(/\/$/, '') || 'https://prep-pilot-sssb.vercel.app';
 
-export const OG_IMAGE_PATH = '/og-preview.png';
+export const OG_IMAGE_PATH = '/interview_prep_ai.png';
 
 export const OG_IMAGE_URL = `${SITE_URL}${OG_IMAGE_PATH}`;
