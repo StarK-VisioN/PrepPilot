@@ -48,7 +48,11 @@ Interview Prep AI is a full-stack, AI-powered interview preparation platform. It
 > **Note:** Phase 1 also supports resume/JD upload for question generation via `/api/documents`. Phase 5 resume upload (`/api/analytics/resume/upload`) is separate — it stores analysis in MongoDB and powers the analytics dashboard.
 
 ### Platform
-- JWT authentication with bcrypt password hashing and **Google OAuth sign-in**
+- **JWT authentication** with bcrypt password hashing
+- **Google OAuth sign-in** — Continue with Google on login/signup; optional account linking for local users
+- **Forgot / reset password** — Email-based reset flow via Nodemailer SMTP (30-minute single-use tokens)
+- **Profile management** — Edit name, upload/remove avatar (JPG, PNG, WEBP, max 2MB)
+- **Cloudinary avatars** — Profile images stored in Cloudinary (localhost and Vercel use the same storage when configured)
 - Responsive React UI (landing page, dashboard, module-specific layouts)
 - Groq API for generation and evaluation
 - Upstash Redis for caching, rate limits, and drafts (optional)
@@ -59,8 +63,8 @@ Interview Prep AI is a full-stack, AI-powered interview preparation platform. It
 
 | Layer | Technologies |
 |-------|----------------|
-| **Frontend** | React 19, Vite, Tailwind CSS 4, React Router, Axios, Monaco Editor, Recharts, React Toastify, React Icons |
-| **Backend** | Node.js, Express 5, MongoDB (Mongoose), Groq SDK, Upstash Redis, JWT, bcryptjs, Multer |
+| **Frontend** | React 19, Vite, Tailwind CSS 4, React Router, Axios, `@react-oauth/google`, Monaco Editor, Recharts, React Toastify |
+| **Backend** | Node.js, Express 5, MongoDB (Mongoose), Groq SDK, Upstash Redis, JWT, bcryptjs, Multer, Nodemailer, Cloudinary |
 | **Document parsing** | pdf-parse, mammoth (PDF/DOCX for JD & resume) |
 | **Code execution** | Local JavaScript runner (Node.js child process) |
 | **Deployment** | Vercel (frontend + backend), MongoDB Atlas, Upstash Redis |
@@ -75,7 +79,8 @@ Interview Prep AI is a full-stack, AI-powered interview preparation platform. It
 | `/login` | Sign in (email/password or Google) |
 | `/forgot-password` | Request password reset link |
 | `/reset-password/:token` | Set a new password from email link |
-| `/settings/profile` | Profile settings and connected accounts |
+| `/auth/google/callback` | Google OAuth redirect callback (redirect flow) |
+| `/settings/profile` | Edit profile, avatar, and connected accounts |
 | `/dashboard` | Main hub — prep sessions + module navigation |
 | `/interview-prep/:sessionId` | Q&A practice session |
 | `/coding` | Coding challenge list |
@@ -105,6 +110,25 @@ Interview Prep AI is a full-stack, AI-powered interview preparation platform. It
 | `/api/mock-interview` | Mock interview sessions & reports |
 | `/api/analytics` | Dashboard, roadmap, recommendations, topic history |
 | `/api/analytics/resume` | Resume upload (PDF), latest analysis, history, delete |
+| `/api/config` | Public app config (e.g. Google client ID fallback) |
+
+**Auth endpoints**
+
+| Method | Path | Auth | Description |
+|--------|------|------|-------------|
+| `POST` | `/api/auth/register` | — | Register with email/password |
+| `POST` | `/api/auth/login` | — | Login with email/password |
+| `POST` | `/api/auth/google` | — | Login/register with Google ID token |
+| `POST` | `/api/auth/forgot-password` | — | Request password reset email |
+| `POST` | `/api/auth/reset-password/:token` | — | Set new password |
+| `POST` | `/api/auth/logout` | — | Logout acknowledgment |
+| `GET` | `/api/auth/me` | JWT | Current user profile |
+| `GET` | `/api/auth/profile` | JWT | Current user profile (alias) |
+| `PUT` | `/api/auth/profile` | JWT | Update display name |
+| `POST` | `/api/auth/profile/avatar` | JWT | Upload profile image |
+| `DELETE` | `/api/auth/profile/avatar` | JWT | Remove profile image |
+| `POST` | `/api/auth/link-google` | JWT | Connect Google to local account |
+| `GET` | `/api/config/public` | — | Public config (`googleClientId`) |
 
 **Resume analytics endpoints**
 
@@ -124,6 +148,9 @@ Interview Prep AI is a full-stack, AI-powered interview preparation platform. It
 - MongoDB Atlas (or local MongoDB)
 - Groq API key
 - Upstash Redis (optional but recommended)
+- [Cloudinary](https://cloudinary.com) account (recommended for profile avatars — required on Vercel)
+- Google Cloud OAuth credentials (for Google sign-in)
+- SMTP credentials (for password reset emails in production; optional locally — reset link logged to console)
 
 ### 1. Clone & install
 
@@ -139,41 +166,88 @@ cd ../frontend && npm install
 
 **Backend (`backend/.env`)**
 
-| Variable | Description |
-|----------|-------------|
-| `MONGO_URL` | MongoDB connection string |
-| `JWT_SECRET` | JWT signing secret |
-| `GOOGLE_CLIENT_ID` | Google OAuth client ID (Web application) |
-| `GOOGLE_CLIENT_SECRET` | Google OAuth client secret (optional for ID-token flow; required for redirect flow) |
-| `GOOGLE_CALLBACK_URL` | OAuth redirect URI (e.g. `https://your-api.vercel.app/api/auth/google/callback`) |
-| `GROQ_API_KEY` | Groq API key |
-| `FRONTEND_URL` | Frontend origin for CORS (e.g. `http://localhost:5173`) |
-| `UPSTASH_REDIS_REST_URL` | Upstash Redis URL (optional) |
-| `UPSTASH_REDIS_REST_TOKEN` | Upstash Redis token (optional) |
-| `AI_DAILY_LIMIT` | Max AI requests per user per day (default: `20`) |
-| `MOCK_INTERVIEW_DAILY_LIMIT` | Mock interviews per day (default: `5`) |
-| `MOCK_INTERVIEW_MSG_PER_MIN` | Mock interview messages per minute (default: `15`) |
-| `GENERATE_AI_TEST_CASES` | `true` to enrich coding seeds with Groq-generated tests |
-| `CLOUDINARY_CLOUD_NAME` | Cloudinary cloud name (required for avatar uploads on Vercel) |
-| `CLOUDINARY_API_KEY` | Cloudinary API key |
-| `CLOUDINARY_API_SECRET` | Cloudinary API secret |
-| `SMTP_HOST` | SMTP server host (e.g. `smtp.gmail.com`) |
-| `SMTP_PORT` | SMTP port (e.g. `587`) |
-| `SMTP_USER` | SMTP username / email |
-| `SMTP_PASS` | SMTP password or app password |
-| `FROM_EMAIL` | Sender email address for transactional mail |
-| `SMTP_SECURE` | Set `true` for port 465 SSL (optional) |
+| Variable | Required | Description |
+|----------|----------|-------------|
+| `MONGO_URL` | Yes | MongoDB connection string |
+| `JWT_SECRET` | Yes | JWT signing secret |
+| `FRONTEND_URL` | Yes | Frontend origin for CORS and reset links (e.g. `http://localhost:5173`) |
+| `GROQ_API_KEY` | Yes | Groq API key |
+| `GOOGLE_CLIENT_ID` | For Google login | Google OAuth client ID (Web application) |
+| `GOOGLE_CLIENT_SECRET` | Optional | Required only for server redirect OAuth flow |
+| `GOOGLE_CALLBACK_URL` | Optional | OAuth redirect URI (e.g. `https://your-api.vercel.app/api/auth/google/callback`) |
+| `CLOUDINARY_CLOUD_NAME` | Vercel / avatars | Cloudinary cloud name |
+| `CLOUDINARY_API_KEY` | Vercel / avatars | Cloudinary API key |
+| `CLOUDINARY_API_SECRET` | Vercel / avatars | Cloudinary API secret |
+| `SMTP_HOST` | Production reset | SMTP host (e.g. `smtp.gmail.com`) |
+| `SMTP_PORT` | Production reset | SMTP port (e.g. `587`) |
+| `SMTP_USER` | Production reset | SMTP username |
+| `SMTP_PASS` | Production reset | SMTP password or Gmail app password |
+| `FROM_EMAIL` | Production reset | Sender address for transactional email |
+| `SMTP_SECURE` | Optional | Set `true` for port 465 SSL |
+| `UPSTASH_REDIS_REST_URL` | Optional | Upstash Redis URL |
+| `UPSTASH_REDIS_REST_TOKEN` | Optional | Upstash Redis token |
+| `AI_DAILY_LIMIT` | Optional | Max AI requests per user per day (default: `20`) |
+| `MOCK_INTERVIEW_DAILY_LIMIT` | Optional | Mock interviews per day (default: `5`) |
+| `MOCK_INTERVIEW_MSG_PER_MIN` | Optional | Mock interview messages per minute (default: `15`) |
+| `GENERATE_AI_TEST_CASES` | Optional | `true` to enrich coding seeds with Groq-generated tests |
+| `ALLOWED_ORIGINS` | Optional | Comma-separated extra CORS origins |
+| `PORT` | Optional | Server port (default: `8000`) |
+| `NODE_ENV` | Optional | `development` or `production` |
 
 **Frontend (`frontend/.env`)**
 
-| Variable | Description |
-|----------|-------------|
-| `VITE_APP_BACKEND_URL` | Backend URL (e.g. `http://localhost:8000`) |
-| `VITE_GOOGLE_CLIENT_ID` | Google OAuth client ID (same as backend `GOOGLE_CLIENT_ID`) |
+| Variable | Required | Description |
+|----------|----------|-------------|
+| `VITE_APP_BACKEND_URL` | Yes | Backend URL (e.g. `http://localhost:8000`) |
+| `VITE_GOOGLE_CLIENT_ID` | Recommended | Same value as backend `GOOGLE_CLIENT_ID` |
+
+> **Google client ID on Vercel:** If `VITE_GOOGLE_CLIENT_ID` is missing at build time, the frontend fetches it at runtime from `GET /api/config/public` (requires `GOOGLE_CLIENT_ID` on the backend and correct `VITE_APP_BACKEND_URL`).
 
 Redis is optional. If Upstash vars are missing, the app runs without cache/rate limiting.
 
-Profile avatars use **Cloudinary** in production (Vercel). Without Cloudinary credentials, avatar upload works in local development only (saved under `backend/uploads/avatars/`).
+### Profile avatars (Cloudinary)
+
+When all three `CLOUDINARY_*` variables are set, avatar uploads use **Cloudinary** on both localhost and Vercel (`interview-prep-ai/avatars/` folder).
+
+| Environment | Cloudinary configured | Behavior |
+|-------------|----------------------|----------|
+| Localhost | Yes | Upload to Cloudinary → `res.cloudinary.com/...` URL |
+| Localhost | No | Fallback to `backend/uploads/avatars/` (dev only) |
+| Vercel production | Yes | Upload to Cloudinary |
+| Vercel production | No | Returns error — local disk is not persistent on Vercel |
+
+**Example (`backend/.env`):**
+
+```env
+CLOUDINARY_CLOUD_NAME=your_cloud_name
+CLOUDINARY_API_KEY=your_api_key
+CLOUDINARY_API_SECRET=your_api_secret
+```
+
+Get credentials from [Cloudinary Console](https://console.cloudinary.com/) → Dashboard → **Product environment credentials**.
+
+### Password reset (SMTP)
+
+Forgot-password emails use Nodemailer. In **production**, all SMTP variables must be set.
+
+| Behavior | SMTP configured |
+|----------|-----------------|
+| Local development | Reset link printed to **backend console** |
+| Production | Email sent to user |
+
+Reset links expire in **30 minutes**. Tokens are single-use and stored hashed (SHA-256) in MongoDB.
+
+**Gmail:** Use an [App Password](https://myaccount.google.com/apppasswords) with 2FA enabled.
+
+```env
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_USER=your@gmail.com
+SMTP_PASS=your_app_password
+FROM_EMAIL=your@gmail.com
+```
+
+Google-only accounts do not receive reset emails (same generic success message is shown for security).
 
 ### 3. Seed the database
 
@@ -230,17 +304,19 @@ When seeding with `GENERATE_AI_TEST_CASES=true`, Groq can generate extra hidden/
 ```
 Interview Prep AI/
 ├── backend/
-│   ├── controllers/     # Route handlers
-│   ├── models/          # Mongoose schemas (incl. ResumeAnalysis, UserTopicAnalytics)
+│   ├── controllers/     # Route handlers (auth, profile, password reset, AI, …)
+│   ├── models/          # Mongoose schemas (User, sessions, analytics, …)
 │   ├── routes/          # Express routes
-│   ├── services/        # AI, analytics, resume analysis, code execution, caching
+│   ├── services/        # AI, Cloudinary, email, Google OAuth, password reset, …
+│   ├── middlewares/     # Auth, uploads, rate limits
+│   ├── constants/       # Auth provider enums
 │   ├── data/            # Coding & behavioral question datasets
 │   └── scripts/         # Seed & test scripts
 ├── frontend/
 │   └── src/
-│       ├── pages/       # Landing, dashboard, coding, behavioral, mock interview, analytics
-│       ├── components/  # Shared UI
-│       └── context/     # Auth state
+│       ├── pages/       # Landing, auth, dashboard, modules, settings
+│       ├── components/  # Shared UI, auth, profile
+│       └── context/     # User & app config state
 ```
 
 ---
@@ -253,13 +329,59 @@ Interview Prep AI/
 | Backend | Vercel |
 | Database | MongoDB Atlas |
 | Cache | Upstash Redis |
+| Profile images | Cloudinary |
+| Transactional email | SMTP (e.g. Gmail) |
 
-Set `FRONTEND_URL` and `VITE_APP_BACKEND_URL` to your production URLs. Configure Google OAuth in [Google Cloud Console](https://console.cloud.google.com/):
+### Vercel environment variables
 
-1. Create OAuth 2.0 credentials (Web application).
-2. **Authorized JavaScript origins:** your frontend URL (e.g. `https://prep-pilot-sssb.vercel.app`).
-3. **Authorized redirect URIs:** `https://your-backend.vercel.app/api/auth/google/callback` (if using redirect flow).
-4. Set `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `GOOGLE_CALLBACK_URL`, and `VITE_GOOGLE_CLIENT_ID` in Vercel env vars.
+**Backend project**
+
+| Variable | Notes |
+|----------|--------|
+| `MONGO_URL` | MongoDB Atlas connection string |
+| `JWT_SECRET` | Strong random secret |
+| `FRONTEND_URL` | Production frontend URL (e.g. `https://prep-pilot-sssb.vercel.app`) |
+| `GROQ_API_KEY` | Groq API key |
+| `GOOGLE_CLIENT_ID` | Google OAuth client ID |
+| `CLOUDINARY_CLOUD_NAME` | Required for avatar uploads |
+| `CLOUDINARY_API_KEY` | Required for avatar uploads |
+| `CLOUDINARY_API_SECRET` | Required for avatar uploads |
+| `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, `FROM_EMAIL` | Required for password reset emails |
+| `UPSTASH_REDIS_REST_URL`, `UPSTASH_REDIS_REST_TOKEN` | Optional |
+
+**Frontend project**
+
+| Variable | Notes |
+|----------|--------|
+| `VITE_APP_BACKEND_URL` | Production backend URL |
+| `VITE_GOOGLE_CLIENT_ID` | Same as `GOOGLE_CLIENT_ID` (optional if using `/api/config/public` fallback) |
+
+Redeploy **both** projects after changing environment variables. Vite embeds `VITE_*` vars at build time.
+
+### Google OAuth setup
+
+Configure in [Google Cloud Console](https://console.cloud.google.com/):
+
+1. Create **OAuth 2.0** credentials (Web application).
+2. **Authorized JavaScript origins:**
+   - `http://localhost:5173`
+   - `http://127.0.0.1:5173`
+   - `https://prep-pilot-sssb.vercel.app` (your production frontend)
+3. **Authorized redirect URIs** (redirect flow only):
+   - `https://your-backend.vercel.app/api/auth/google/callback`
+4. Set `GOOGLE_CLIENT_ID` on the backend; set `VITE_GOOGLE_CLIENT_ID` on the frontend (or rely on runtime config).
+
+### Post-deploy checks
+
+| Check | URL / action |
+|-------|----------------|
+| Backend health | `GET https://your-backend.vercel.app/health` |
+| Public config | `GET https://your-backend.vercel.app/api/config/public` → should return `googleClientId` |
+| Google sign-in | "Continue with Google" visible on login/signup |
+| Avatar upload | Profile Settings → upload → URL starts with `res.cloudinary.com` |
+| Password reset | Forgot Password → email received (or check Vercel function logs) |
+
+> **Note:** After adding new backend routes, redeploy or restart the server. A stale process may return 404s for new endpoints.
 
 ---
 
